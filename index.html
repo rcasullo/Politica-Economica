@@ -6,24 +6,28 @@
 <title>Politica Economica — Corso di recupero</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink: #1a1a1a;
-  --paper: #ffffff;
-  --muted: #555;
-  --rule: #ddd;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
   --link: #1a4480;
-  --base-size: 17px;
-  --max-width: 720px;
+  --base-size: 18px;
+  --max-width: 760px;
   --pad-v: 60px;
   --pad-h: 32px;
 }
 
-/* Modalità presentazione */
 body.presentation {
   --base-size: 22px;
-  --max-width: 1100px;
+  --max-width: 920px;
   --pad-v: 50px;
   --pad-h: 60px;
 }
@@ -35,7 +39,7 @@ body {
   color: var(--ink);
   font-family: 'Source Serif 4', Georgia, serif;
   font-size: var(--base-size);
-  line-height: 1.65;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   transition: font-size 0.2s ease;
 }
@@ -47,7 +51,6 @@ body {
   transition: max-width 0.2s ease, padding 0.2s ease;
 }
 
-/* Pulsante modalità presentazione */
 .pres-toggle {
   position: fixed;
   top: 16px;
@@ -64,12 +67,10 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: opacity 0.15s, background 0.15s;
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
-.pres-toggle:hover {
-  opacity: 1;
-}
+.pres-toggle:hover { opacity: 1; }
 
 body.presentation .pres-toggle {
   background: var(--ink);
@@ -82,86 +83,103 @@ body.presentation .pres-toggle {
 }
 
 header {
-  margin-bottom: 48px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--ink);
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
 }
 
 .meta {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.76em;
-  color: var(--muted);
-  margin-bottom: 12px;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
 }
 
 h1 {
   font-family: 'Source Serif 4', serif;
   font-weight: 700;
-  font-size: 2.1em;
-  line-height: 1.2;
-  margin-bottom: 8px;
+  font-size: 2.4em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.015em;
 }
 
 .subtitle {
-  font-size: 1.12em;
+  font-size: 1.18em;
   color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
 }
 
 .intro {
-  margin-bottom: 56px;
+  margin-bottom: 64px;
 }
 
 .intro p {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  max-width: 65ch;
 }
 
 h2 {
   font-family: 'Source Serif 4', serif;
   font-weight: 700;
-  font-size: 1.3em;
-  margin: 0 0 24px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--ink);
+  font-size: 1.45em;
+  margin-bottom: 32px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
 }
 
 .lezione {
-  padding: 20px 0;
+  padding: 28px 0;
   border-bottom: 1px solid var(--rule);
 }
 
 .lezione:last-child {
   border-bottom: none;
+  padding-bottom: 0;
+}
+
+.lezione:first-of-type {
+  padding-top: 0;
 }
 
 .lezione-num {
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.7em;
-  color: var(--muted);
+  color: var(--muted-light);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .lezione-titolo {
   font-family: 'Source Serif 4', serif;
   font-weight: 600;
-  font-size: 1.12em;
-  margin-bottom: 6px;
+  font-size: 1.22em;
+  margin-bottom: 10px;
   color: var(--ink);
+  letter-spacing: -0.005em;
 }
 
 .lezione-desc {
   color: var(--muted);
   font-size: 0.95em;
-  margin-bottom: 12px;
-  line-height: 1.55;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  max-width: 62ch;
 }
 
 .lezione-links {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.85em;
+  align-items: center;
 }
 
 .lezione-links a {
@@ -177,33 +195,33 @@ h2 {
 }
 
 .lezione-links a.disabled {
-  color: var(--muted);
+  color: var(--muted-light);
   cursor: not-allowed;
   pointer-events: none;
   font-weight: 400;
+  font-style: italic;
 }
 
 .lezione-links a.disabled::after {
   content: " (in preparazione)";
-  font-size: 0.85em;
+  font-size: 0.92em;
   font-weight: 400;
-  color: var(--muted);
 }
 
 footer {
-  margin-top: 80px;
-  padding-top: 20px;
-  border-top: 1px solid var(--ink);
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.78em;
+  font-size: 0.82em;
   color: var(--muted);
   text-align: center;
 }
 
 @media (max-width: 600px) {
   .wrap { padding: 40px 20px 80px; }
-  h1 { font-size: 1.65em; }
-  .lezione-links { flex-direction: column; gap: 6px; }
+  h1 { font-size: 1.8em; }
+  .lezione-links { flex-direction: column; align-items: flex-start; gap: 8px; }
   .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
 }
 </style>
@@ -275,7 +293,6 @@ footer {
 </div>
 
 <script>
-// Modalità presentazione
 (function() {
   const btn = document.getElementById('presToggle');
   const body = document.body;
@@ -292,17 +309,14 @@ footer {
     }
   }
   
-  // Ripristina lo stato dalla sessione
   try {
     if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
   } catch(e) {}
   
   btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
   
-  // Tasto P per toggle
   document.addEventListener('keydown', (e) => {
     if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      // Solo se non sto digitando in un input
       const tag = (e.target.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea') return;
       e.preventDefault();
