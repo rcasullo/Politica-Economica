@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Lezione 1 — Politica Economica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #ffffff;
+  --muted: #555;
+  --rule: #ddd;
+  --link: #1a4480;
+  --green: #2d6a3a;
+  --red: #9b2920;
+  --base-size: 17px;
+  --max-width: 720px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --max-width: 1100px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.4;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print {
+  .pres-toggle { display: none; }
+}
+
+header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.65em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 1em;
+  color: var(--muted);
+}
+
+.progress-info {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  margin: 24px 0 8px;
+}
+
+.progress-bar {
+  background: #f0f0f0;
+  height: 3px;
+  margin-bottom: 32px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.question { display: none; }
+.question.active { display: block; }
+
+.q-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.q-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.12em;
+  line-height: 1.4;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.options {
+  list-style: none;
+  margin: 0;
+}
+
+.option {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.94em;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+
+.option:hover:not(.disabled) {
+  border-color: var(--ink);
+}
+
+.option-letter {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.88em;
+  color: var(--muted);
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+.option.correct {
+  border-color: var(--green);
+  border-left: 3px solid var(--green);
+}
+.option.correct .option-letter { color: var(--green); }
+
+.option.wrong {
+  border-color: var(--red);
+  border-left: 3px solid var(--red);
+}
+.option.wrong .option-letter { color: var(--red); }
+
+.option.disabled { cursor: default; }
+.option.disabled:not(.correct):not(.wrong) { opacity: 0.55; }
+
+.feedback {
+  display: none;
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: #f5f5f5;
+  border-left: 3px solid var(--muted);
+  font-size: 0.88em;
+  line-height: 1.55;
+}
+.feedback.show { display: block; }
+.feedback.correct { border-left-color: var(--green); }
+.feedback.wrong { border-left-color: var(--red); }
+
+.feedback-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.feedback.correct .feedback-label { color: var(--green); }
+.feedback.wrong .feedback-label { color: var(--red); }
+
+.actions {
+  margin-top: 28px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+  transition: opacity 0.15s;
+}
+
+button:hover:not(:disabled) { opacity: 0.85; }
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.results {
+  display: none;
+  text-align: center;
+  padding: 40px 0;
+}
+.results.show { display: block; }
+
+.score-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.score-display {
+  font-family: 'Source Serif 4', serif;
+  font-size: 3.3em;
+  font-weight: 700;
+  margin: 8px 0 24px;
+}
+.score-display .total {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.65em;
+}
+
+.score-message {
+  font-size: 1em;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.review {
+  margin-top: 48px;
+  text-align: left;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+.review h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.12em;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--rule);
+  display: flex;
+  gap: 12px;
+  font-size: 0.88em;
+}
+
+.review-mark {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+
+.review-mark.ok { color: var(--green); }
+.review-mark.no { color: var(--red); }
+
+footer {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 40px 20px 80px; }
+  h1 { font-size: 1.41em; }
+  .actions { flex-direction: column-reverse; }
+  .actions button { width: 100%; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="wrap">
+
+<header>
+  <div class="meta">Quiz · Lezione 1 · Politica Economica</div>
+  <h1>Verifica di ripasso</h1>
+  <p class="subtitle">Quindici domande a scelta multipla. Risposta unica.</p>
+</header>
+
+<div class="progress-info">
+  <span id="progressText">Domanda 1 di 15</span>
+  <span id="scoreText">Risposte corrette: 0</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="quiz-area" id="quizArea"></div>
+
+<div class="results" id="results">
+  <div class="score-label">Punteggio finale</div>
+  <div class="score-display"><span id="finalScore">0</span><span class="total">/15</span></div>
+  <div class="score-message" id="scoreMessage"></div>
+  <button onclick="restartQuiz()">Rifai il quiz</button>
+
+  <div class="review">
+    <h3>Riepilogo</h3>
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Quiz Lezione 1 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione1_note.html">← Note della lezione</a></p>
+</footer>
+
+</div>
+
+<script>
+const questionsRaw = [
+  {
+    q: "Quale tra le seguenti NON è una delle condizioni che definiscono un sistema in concorrenza perfetta (CP)?",
+    options: [
+      "Presenza di un'autorità di regolazione che fissi i prezzi di equilibrio",
+      "Assenza di intese tacite tra gli operatori, oltre che di accordi espliciti",
+      "Numero limitato di operatori, ciascuno con quota di mercato significativa",
+      "Pieno controllo dello stato sull'attività produttiva delle imprese"
+    ],
+    explanation: "Le condizioni di CP sono sei: omogeneità dei beni, atomismo (elevata numerosità degli operatori, non un numero limitato), assenza di accordi espliciti e intese tacite, libertà di entrata e di uscita, perfetta informazione, assenza di esternalità. Non è prevista alcuna autorità che fissi i prezzi: i prezzi sono dati dal mercato."
+  },
+  {
+    q: "Il Primo Teorema dell'Economia del Benessere (I TEB) stabilisce che:",
+    options: [
+      "In corrispondenza di preferenze convesse, continue e monotòne, se Y è un equilibrio di CP con mercati completi, esso è anche un Ottimo Paretiano",
+      "In corrispondenza di preferenze convesse e monotòne, ogni equilibrio di CP è preferibile a qualsiasi altra allocazione possibile",
+      "Ogni posizione di OP può essere realizzata come equilibrio concorrenziale, attraverso un'appropriata distribuzione delle dotazioni iniziali",
+      "Il libero mercato genera sempre la distribuzione del reddito più equa possibile"
+    ],
+    explanation: "Il I TEB stabilisce il legame CP → OP: sotto preferenze convesse, continue e monotòne, l'equilibrio di CP con mercati completi è anche un Ottimo Paretiano. La sfumatura della seconda opzione: il I TEB non dice che l'equilibrio di CP è 'preferibile a qualsiasi altra allocazione' (Pareto è un criterio parziale, non un ordinamento totale). La terza opzione descrive il II TEB."
+  },
+  {
+    q: "Secondo il teorema del second best:",
+    options: [
+      "Una situazione in cui un numero di condizioni di CP, ma non tutte, sono soddisfatte non è necessariamente superiore a una in cui ne sono soddisfatte un numero inferiore",
+      "Una situazione di second best si stabilisce sempre minimizzando gli allontanamenti dalle condizioni di CP",
+      "Quando una condizione di CP non è soddisfatta, occorre rispettare tutte le altre per avvicinarsi all'OP",
+      "Il second best è una situazione in cui tutte le condizioni di CP sono soddisfatte tranne quella della perfetta informazione"
+    ],
+    explanation: "Il teorema del secondo ottimo stabilisce che il rispetto di un maggior numero di condizioni di CP non implica necessariamente una situazione preferibile, per ragioni di sostituibilità nel consumo o di interdipendenze verticali nei processi produttivi. La seconda opzione è la sfumatura sbagliata: dice il contrario di ciò che il teorema afferma."
+  },
+  {
+    q: "Si ha monopolio naturale quando:",
+    options: [
+      "Le caratteristiche della tecnologia, in rapporto alle dimensioni del mercato, richiedono la presenza di una unica impresa, in presenza di rendimenti crescenti di scala",
+      "Le caratteristiche della tecnologia richiedono la presenza di una unica impresa in presenza di rendimenti decrescenti di scala",
+      "Lo stato concede per legge il diritto esclusivo di operare a una sola impresa",
+      "Una sola impresa decide spontaneamente di servire l'intero mercato per ragioni di marketing"
+    ],
+    explanation: "Il monopolio naturale si ha quando le caratteristiche della tecnologia, in rapporto alle dimensioni del mercato, richiedono la presenza di una unica impresa. Sono i rendimenti crescenti di scala (non decrescenti, come nella sfumatura) a determinare la situazione: la dimensione efficiente si ha solo per q(m) < q(CP), per cui P(m) > P(CP)."
+  },
+  {
+    q: "In presenza di esternalità negativa:",
+    options: [
+      "Il costo privato è minore del costo sociale e si produce più del livello ottimale (q > q*)",
+      "Il costo privato è minore del costo sociale e si produce meno del livello ottimale (q < q*)",
+      "Il costo privato è maggiore del costo sociale e si produce meno del livello ottimale",
+      "Non vi è alcuna divergenza tra costo privato e costo sociale, ma solo un errore di valutazione del consumatore"
+    ],
+    explanation: "In presenza di esternalità negativa C(priv) < C(soc): chi produce non sopporta interamente il costo, e quindi q > q*. La sfumatura sta nella direzione: con C(priv) < C(soc) il produttore percepisce costi più bassi del vero, e quindi produce di più (non di meno) rispetto al livello ottimale. La terza opzione descrive invece la situazione di esternalità positiva."
+  },
+  {
+    q: "Secondo il teorema di Coase:",
+    options: [
+      "In assenza di costi di transazione, e previa assegnazione di diritti di proprietà, gli individui raggiungono accordi mutuamente vantaggiosi indipendentemente dal modo in cui i diritti sono stati assegnati",
+      "In presenza di costi di transazione, e previa assegnazione di diritti di proprietà, gli individui raggiungono accordi mutuamente vantaggiosi indipendentemente da come i diritti sono stati assegnati",
+      "Le esternalità si possono risolvere solo con un intervento regolamentativo dello stato che fissi limiti per legge",
+      "I diritti di proprietà sui beni non possono essere oggetto di scambio privato e devono essere garantiti dallo stato"
+    ],
+    explanation: "Il teorema di Coase richiede l'assenza di costi di transazione (non la presenza, come nella sfumatura): in tal caso, e previa assegnazione di diritti di proprietà, gli individui raggiungono accordi mutuamente vantaggiosi senza intervento governativo, indipendentemente da come i diritti sono stati assegnati. In presenza di costi di transazione, invece, diventa rilevante il modo in cui i diritti sono assegnati."
+  },
+  {
+    q: "Un bene pubblico puro è definito da:",
+    options: [
+      "Non rivalità nel consumo e non escludibilità",
+      "Rivalità nel consumo e non escludibilità",
+      "Produzione esclusivamente da parte dello stato e finanziamento fiscale generale",
+      "Prezzo amministrato dall'autorità pubblica al di sotto del prezzo di mercato"
+    ],
+    explanation: "Un bene pubblico puro è definito da entrambe le caratteristiche: non rivalità (il consumo da parte di un individuo non riduce il consumo degli altri) e non escludibilità (non è possibile, o è troppo costoso, discriminarne il consumo). Beni rivali ma non escludibili (sfumatura) sono invece beni comuni, una categoria diversa."
+  },
+  {
+    q: "Nell'esempio del mercato del credito (selezione avversa), una banca non distingue clienti affidabili (A) da inaffidabili (B). I clienti A accetterebbero il 6%, i B fino al 12%. La banca chiede un tasso medio del 7,5%. Cosa accade?",
+    options: [
+      "I clienti A non effettuano lo scambio; il mercato aumenta di rischiosità media (lemons), contraendosi",
+      "I clienti A non effettuano lo scambio, ma il mercato resta efficiente perché i clienti B accettano il tasso del 7,5%",
+      "I clienti B rinunciano al prestito perché il tasso del 7,5% è troppo basso per coprire il loro rischio",
+      "Il mercato funziona correttamente perché la banca diversifica il rischio applicando un tasso medio"
+    ],
+    explanation: "Al tasso del 7,5% i clienti A non effettuano lo scambio (per loro è troppo elevato). Il mercato aumenta di rischiosità media (lemons), contraendosi. La sfumatura sbagliata: pur essendo vero che A esce, il mercato non resta efficiente — al contrario, perde i clienti migliori e si contrae. È il meccanismo tipico della selezione avversa per asimmetria informativa."
+  },
+  {
+    q: "I beni meritori:",
+    options: [
+      "Pur non definendo situazioni non OP, giustificano schemi di intervento pubblico di tipo paternalistico",
+      "Definiscono sempre situazioni non OP e ne giustificano la correzione attraverso l'intervento pubblico",
+      "Sono caratterizzati da non rivalità e non escludibilità, come i beni pubblici puri",
+      "Sono beni che il mercato scambia esattamente nelle quantità desiderabili senza necessità di intervento"
+    ],
+    explanation: "I beni meritori sono beni che non verrebbero scambiati a sufficienza per la presenza di comportamenti miopici (preferenze intertemporali iperboliche) o decisioni irrazionali. Sfumatura importante: pur non definendo situazioni non OP, giustificano comunque schemi di intervento pubblico di tipo paternalistico. Esempi: risparmio previdenziale, copertura sanitaria, spesa per istruzione."
+  },
+  {
+    q: "Secondo il II TEB, la divisione istituzionale dei compiti tra stato e mercato prevede che:",
+    options: [
+      "Lo stato realizzi l'equità attraverso la redistribuzione delle dotazioni iniziali, e il mercato concorrenziale realizzi l'efficienza",
+      "Lo stato realizzi l'equità attraverso la redistribuzione dei redditi prodotti dal mercato, e il mercato concorrenziale realizzi l'efficienza",
+      "Lo stato realizzi l'efficienza attraverso politiche industriali e il mercato realizzi l'equità tramite la concorrenza",
+      "Stato e mercato debbano agire entrambi sull'efficienza, lasciando le questioni di equità alla società civile"
+    ],
+    explanation: "Dal II TEB deriva l'idea di una divisione istituzionale: lo stato realizza l'equità attraverso la redistribuzione delle dotazioni iniziali (non dei redditi prodotti dal mercato, come nella sfumatura), e il mercato concorrenziale realizza l'efficienza. La sfumatura coglie un punto cruciale: il II TEB raccomanda di agire ex ante sulle dotazioni, non ex post sui redditi, perché solo così non si introducono distorsioni."
+  },
+  {
+    q: "L'ottimalità paretiana è definita come:",
+    options: [
+      "Una situazione in cui nessuno scambio ulteriore può aumentare l'utilità di un individuo senza importare una riduzione dell'utilità di un altro individuo",
+      "Una situazione in cui nessuno scambio ulteriore può aumentare l'utilità totale della collettività",
+      "Una situazione in cui la somma delle utilità individuali è massima e la distribuzione del reddito è perfettamente equa",
+      "Una situazione in cui tutti gli individui hanno la stessa utilità marginale dei beni"
+    ],
+    explanation: "L'ottimalità paretiana è definita come una situazione in cui nessuno scambio ulteriore può aumentare l'utilità di un individuo senza importare una riduzione dell'utilità di un altro individuo. La sfumatura sbagliata: l'OP non riguarda la massimizzazione dell'utilità totale (che è un criterio utilitarista, diverso da Pareto). Il criterio paretiano è parziale e prescinde da considerazioni distributive."
+  },
+  {
+    q: "Quale è il principale limite del I TEB richiamato nelle slide?",
+    options: [
+      "L'insieme delle scelte possibili è limitato dalle dotazioni iniziali: se un individuo possiede tutto e l'altro nulla, l'OP richiede di non procedere ad alcuna modificazione",
+      "L'insieme delle scelte possibili è limitato dalle preferenze individuali, che possono essere irrazionali",
+      "Il I TEB vale solo in mercati con un numero limitato di beni e operatori",
+      "Il I TEB presuppone che lo stato conosca le preferenze di tutti gli individui"
+    ],
+    explanation: "Il limite richiamato nelle slide è che l'insieme delle scelte possibili è limitato dalle dotazioni iniziali: nel caso un individuo possegga tutto e l'altro nulla, il criterio di OP richiede, per necessità di efficienza, che non si proceda ad alcuna modificazione. Il possessore dell'intera ricchezza è al suo massimo e ogni modificazione ne comporterebbe una contrazione. Da qui la necessità del II TEB."
+  },
+  {
+    q: "Il criterio di Pareto, secondo le slide, è:",
+    options: [
+      "Un criterio non neutrale, giustificato dal concetto di insindacabilità delle preferenze individuali, che ha natura etica e non tecnica",
+      "Un criterio neutrale e oggettivo, che prescinde da qualsiasi giudizio di valore",
+      "Un criterio puramente tecnico che misura l'efficienza in modo univoco",
+      "Un criterio matematico che fornisce sempre un'unica soluzione di equilibrio"
+    ],
+    explanation: "Il criterio di Pareto non è un criterio neutrale, al pari di altri criteri: esso viene giustificato dal concetto di insindacabilità delle utilità e delle preferenze individuali, che tuttavia ha natura etica e non tecnica (individualismo etico, welfarismo). Anche il criterio di Pareto presuppone quindi un giudizio etico, nell'ipotesi di inviolabilità delle preferenze individuali."
+  },
+  {
+    q: "Quale tra le seguenti accezioni di equità è coerente con il II TEB e il rispetto delle condizioni di OP?",
+    options: [
+      "Equità delle dotazioni iniziali (ex ante), che sotto CP garantisce una distribuzione finale perfettamente equa",
+      "Equità dei redditi finali (ex post), realizzata attraverso una tassazione progressiva sui redditi prodotti dal mercato",
+      "Equità delle utilità marginali, ottenuta imponendo identiche funzioni di utilità a tutti gli individui",
+      "Equità dei prezzi di mercato, fissati dallo stato in modo identico per tutti i beni"
+    ],
+    explanation: "Sotto CP, una equa distribuzione iniziale (ex ante) garantisce una distribuzione finale perfettamente equa. La sfumatura sbagliata: l'equità ex post realizzata tramite tassazione sui redditi prodotti è invece distorsiva e non rispetta le condizioni di OP. Il II TEB raccomanda di agire sulle dotazioni iniziali, non sui redditi finali, per non alterare le utilità al margine."
+  },
+  {
+    q: "Quale affermazione esprime correttamente la critica avanzata nelle slide riguardo all'applicabilità pratica del II TEB?",
+    options: [
+      "Resta il problema se lo stato possieda davvero le informazioni e gli strumenti necessari per svolgere il ruolo fondamentale che gli assegna il II TEB",
+      "Il II TEB richiede che lo stato sia composto esclusivamente da economisti competenti per essere applicato correttamente",
+      "Il II TEB è valido solo in regimi politici democratici, escludendo sistemi autoritari",
+      "Il II TEB presuppone l'esistenza di una moneta comune internazionale"
+    ],
+    explanation: "La critica richiamata nelle slide è di natura informativa e operativa: resta il problema se lo stato possieda davvero le informazioni e gli strumenti necessari per svolgere il ruolo fondamentale che gli assegna il II TEB. Conoscere le dotazioni di tutti gli individui e ridistribuirle senza distorsioni è un compito enorme, che mette in dubbio l'applicabilità pratica del teorema."
+  }
+];
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let questions = [];
+function buildQuestions() {
+  questions = questionsRaw.map(qRaw => {
+    const indexed = qRaw.options.map((opt, i) => ({ text: opt, originalIdx: i }));
+    const shuffled = shuffleArray(indexed);
+    const correctIdx = shuffled.findIndex(o => o.originalIdx === 0);
+    return {
+      q: qRaw.q,
+      options: shuffled.map(o => o.text),
+      correct: correctIdx,
+      explanation: qRaw.explanation
+    };
+  });
+}
+
+let currentQuestion = 0;
+let userAnswers = [];
+let score = 0;
+
+const quizArea = document.getElementById('quizArea');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const results = document.getElementById('results');
+
+function renderQuestion(idx) {
+  const q = questions[idx];
+  const html = `
+    <div class="question active" id="q${idx}">
+      <div class="q-num">Domanda ${idx + 1} di ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options" id="options-${idx}">
+        ${q.options.map((opt, i) => `
+          <li class="option" data-idx="${i}" onclick="selectOption(${idx}, ${i})">
+            <span class="option-letter">${String.fromCharCode(65 + i)}.</span>
+            <span>${opt}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="feedback" id="feedback-${idx}">
+        <div class="feedback-label" id="feedback-label-${idx}"></div>
+        <div id="feedback-text-${idx}"></div>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="prevQuestion()" ${idx === 0 ? 'disabled' : ''}>← Precedente</button>
+        <button id="next-btn-${idx}" onclick="nextQuestion()" disabled>${idx === questions.length - 1 ? 'Vedi risultati →' : 'Prossima →'}</button>
+      </div>
+    </div>
+  `;
+  quizArea.innerHTML = html;
+  updateProgress();
+
+  if (userAnswers[idx] !== undefined) {
+    showAnswerState(idx);
+  }
+}
+
+function selectOption(qIdx, optIdx) {
+  if (userAnswers[qIdx] !== undefined) return;
+  
+  userAnswers[qIdx] = optIdx;
+  const correct = questions[qIdx].correct;
+  if (optIdx === correct) score++;
+  
+  showAnswerState(qIdx);
+  updateProgress();
+}
+
+function showAnswerState(qIdx) {
+  const q = questions[qIdx];
+  const userAnswer = userAnswers[qIdx];
+  const options = document.querySelectorAll(`#options-${qIdx} .option`);
+  
+  options.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === q.correct) {
+      opt.classList.add('correct');
+    } else if (i === userAnswer) {
+      opt.classList.add('wrong');
+    }
+  });
+
+  const feedback = document.getElementById(`feedback-${qIdx}`);
+  const label = document.getElementById(`feedback-label-${qIdx}`);
+  const text = document.getElementById(`feedback-text-${qIdx}`);
+  
+  const isCorrect = userAnswer === q.correct;
+  feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  label.textContent = isCorrect ? 'Risposta corretta' : 'Risposta errata';
+  text.innerHTML = q.explanation;
+
+  document.getElementById(`next-btn-${qIdx}`).disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    renderQuestion(currentQuestion);
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion(currentQuestion);
+  }
+}
+
+function updateProgress() {
+  const answered = userAnswers.filter(a => a !== undefined).length;
+  const pct = (answered / questions.length) * 100;
+  progressFill.style.width = pct + '%';
+  progressText.textContent = `Domanda ${currentQuestion + 1} di ${questions.length}`;
+  scoreText.textContent = `Risposte corrette: ${score}`;
+}
+
+function showResults() {
+  quizArea.style.display = 'none';
+  document.querySelector('.progress-info').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  results.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  
+  const total = questions.length;
+  const pct = score / total;
+  const msg = pct === 1   ? "Risultato eccellente." :
+              pct >= 0.8  ? "Buon risultato." :
+              pct >= 0.6  ? "Risultato sufficiente." :
+              pct >= 0.4  ? "Risultato da consolidare." :
+                            "Si consiglia di rivedere le note della lezione.";
+  document.getElementById('scoreMessage').textContent = msg;
+
+  const reviewList = document.getElementById('reviewList');
+  reviewList.innerHTML = questions.map((q, i) => {
+    const correct = userAnswers[i] === q.correct;
+    return `
+      <div class="review-item">
+        <span class="review-mark ${correct ? 'ok' : 'no'}">${correct ? '✓' : '✗'}</span>
+        <span><strong>D${i + 1}.</strong> ${q.q}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function restartQuiz() {
+  buildQuestions();
+  currentQuestion = 0;
+  userAnswers = [];
+  score = 0;
+  results.classList.remove('show');
+  quizArea.style.display = 'block';
+  document.querySelector('.progress-info').style.display = 'flex';
+  document.querySelector('.progress-bar').style.display = 'block';
+  renderQuestion(0);
+}
+
+// Modalità presentazione
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  
+  try {
+    if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
+  } catch(e) {}
+  
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+// Avvio quiz
+buildQuestions();
+renderQuestion(0);
+</script>
+</body>
+</html>

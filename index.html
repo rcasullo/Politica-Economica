@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politica Economica — Corso di recupero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #ffffff;
+  --muted: #555;
+  --rule: #ddd;
+  --link: #1a4480;
+  --base-size: 17px;
+  --max-width: 720px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+/* Modalità presentazione */
+body.presentation {
+  --base-size: 22px;
+  --max-width: 1100px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+}
+
+/* Pulsante modalità presentazione */
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.4;
+}
+
+.pres-toggle:hover {
+  opacity: 1;
+}
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print {
+  .pres-toggle { display: none; }
+}
+
+header {
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.1em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 1.12em;
+  color: var(--muted);
+}
+
+.intro {
+  margin-bottom: 56px;
+}
+
+.intro p {
+  margin-bottom: 14px;
+}
+
+h2 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.3em;
+  margin: 0 0 24px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.lezione {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.lezione:last-child {
+  border-bottom: none;
+}
+
+.lezione-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.lezione-titolo {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+  font-size: 1.12em;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.lezione-desc {
+  color: var(--muted);
+  font-size: 0.95em;
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.lezione-links {
+  display: flex;
+  gap: 16px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85em;
+}
+
+.lezione-links a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+
+.lezione-links a:hover {
+  border-bottom-color: var(--link);
+}
+
+.lezione-links a.disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+  pointer-events: none;
+  font-weight: 400;
+}
+
+.lezione-links a.disabled::after {
+  content: " (in preparazione)";
+  font-size: 0.85em;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+footer {
+  margin-top: 80px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 40px 20px 80px; }
+  h1 { font-size: 1.65em; }
+  .lezione-links { flex-direction: column; gap: 6px; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="wrap">
+
+<header>
+  <div class="meta">Corso di recupero · A.A. 2024/2025</div>
+  <h1>Politica Economica</h1>
+  <p class="subtitle">Note di lezione e quiz di ripasso</p>
+</header>
+
+<div class="intro">
+  <p>Il corso è organizzato in quattro lezioni: la prima dedicata ai fondamenti microeconomici della disciplina, le tre successive ai temi di natura macroeconomica.</p>
+  <p>Ciascuna lezione è accompagnata da un quiz di ripasso a scelta multipla che consente di verificare la comprensione dei principali concetti.</p>
+</div>
+
+<section>
+  <h2>Lezioni</h2>
+
+  <div class="lezione">
+    <div class="lezione-num">Lezione 1 · Microeconomia</div>
+    <div class="lezione-titolo">Fondamenti microeconomici</div>
+    <div class="lezione-desc">Concorrenza perfetta, teoremi del benessere, fallimenti del mercato e politiche pubbliche microeconomiche.</div>
+    <div class="lezione-links">
+      <a href="lezione1_note.html">Note di lezione</a>
+      <a href="lezione1_quiz.html">Quiz di ripasso</a>
+    </div>
+  </div>
+
+  <div class="lezione">
+    <div class="lezione-num">Lezione 2 · Macroeconomia</div>
+    <div class="lezione-titolo">Fallimenti macroeconomici e modelli teorici</div>
+    <div class="lezione-desc">Ciclo economico, disoccupazione, inflazione. Modello keynesiano e sintesi neoclassica (IS-LM, IS-LM-BP), monetarismo, Nuova Macroeconomia Classica, modelli AD-AS e IS-AS.</div>
+    <div class="lezione-links">
+      <a class="disabled">Note di lezione</a>
+      <a class="disabled">Quiz di ripasso</a>
+    </div>
+  </div>
+
+  <div class="lezione">
+    <div class="lezione-num">Lezione 3 · Macroeconomia</div>
+    <div class="lezione-titolo">Teoria normativa e politica monetaria</div>
+    <div class="lezione-desc">Teoria normativa della politica economica: obiettivi, strumenti, modello, controllabilità, critica di Lucas. Politica monetaria in cambi fissi e flessibili.</div>
+    <div class="lezione-links">
+      <a class="disabled">Note di lezione</a>
+      <a class="disabled">Quiz di ripasso</a>
+    </div>
+  </div>
+
+  <div class="lezione">
+    <div class="lezione-num">Lezione 4 · Macroeconomia</div>
+    <div class="lezione-titolo">Politica fiscale, dei redditi e bilancia dei pagamenti</div>
+    <div class="lezione-desc">Politica fiscale in cambi fissi e flessibili, debito pubblico e sostenibilità. Politica dei redditi e dei prezzi. Politiche per la bilancia dei pagamenti.</div>
+    <div class="lezione-links">
+      <a class="disabled">Note di lezione</a>
+      <a class="disabled">Quiz di ripasso</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Materiale didattico basato sulle slide del corso di Politica Economica</p>
+</footer>
+
+</div>
+
+<script>
+// Modalità presentazione
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  
+  // Ripristina lo stato dalla sessione
+  try {
+    if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
+  } catch(e) {}
+  
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  
+  // Tasto P per toggle
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      // Solo se non sto digitando in un input
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+</script>
+</body>
+</html>
