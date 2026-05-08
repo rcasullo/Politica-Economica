@@ -6,23 +6,31 @@
 <title>Lezione 1 — Politica Economica: fondamenti microeconomici</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink: #1a1a1a;
-  --paper: #ffffff;
-  --muted: #555;
-  --rule: #ddd;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
   --link: #1a4480;
-  --base-size: 17px;
-  --max-width: 720px;
+  --accent: #6b4423;
+  --base-size: 18px;
+  --max-width: 1200px;
+  --content-width: 720px;
+  --sidebar-width: 240px;
   --pad-v: 60px;
   --pad-h: 32px;
 }
 
 body.presentation {
   --base-size: 22px;
-  --max-width: 1100px;
+  --content-width: 920px;
   --pad-v: 50px;
   --pad-h: 60px;
 }
@@ -36,20 +44,115 @@ body {
   color: var(--ink);
   font-family: 'Source Serif 4', Georgia, serif;
   font-size: var(--base-size);
-  line-height: 1.65;
+  line-height: 1.7;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   transition: font-size 0.2s ease;
 }
 
-.wrap {
+/* Layout principale */
+.layout {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: var(--pad-v) var(--pad-h) 100px;
-  transition: max-width 0.2s ease, padding 0.2s ease;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 60px;
+  transition: padding 0.2s ease;
 }
 
-/* Pulsante modalità presentazione */
+body.presentation .layout {
+  grid-template-columns: 1fr;
+  max-width: var(--content-width);
+}
+
+/* Sidebar */
+aside.sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-family: 'Source Sans 3', sans-serif;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+body.presentation aside.sidebar {
+  display: none;
+}
+
+.sidebar-title {
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar nav ol {
+  list-style: none;
+  counter-reset: sec;
+}
+
+.sidebar nav > ol > li {
+  counter-increment: sec;
+  margin-bottom: 6px;
+}
+
+.sidebar nav a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.78em;
+  padding: 6px 0 6px 26px;
+  position: relative;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar nav > ol > li > a {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sidebar nav > ol > li > a::before {
+  content: counter(sec);
+  position: absolute;
+  left: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-light);
+  font-weight: 500;
+}
+
+.sidebar nav a:hover {
+  color: var(--ink);
+  border-left-color: var(--rule-strong);
+}
+
+.sidebar nav a.active {
+  color: var(--ink);
+  border-left-color: var(--ink);
+  font-weight: 600;
+}
+
+.sidebar nav ol ol {
+  list-style: none;
+  margin-left: 0;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.sidebar nav ol ol a {
+  font-size: 0.74em;
+  padding: 3px 0 3px 26px;
+  font-weight: 400;
+}
+
+/* Pulsante presentazione */
 .pres-toggle {
   position: fixed;
   top: 16px;
@@ -66,7 +169,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: opacity 0.15s, background 0.15s;
-  opacity: 0.4;
+  opacity: 0.5;
 }
 
 .pres-toggle:hover { opacity: 1; }
@@ -81,155 +184,243 @@ body.presentation .pres-toggle {
   .pres-toggle { display: none; }
 }
 
+/* Contenuto principale */
+main.content {
+  max-width: var(--content-width);
+  min-width: 0; /* fix per il grid che fa overflow */
+}
+
+/* Header */
 header.lezione-header {
-  margin-bottom: 40px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--ink);
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
 }
 
 .lezione-meta {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.76em;
-  color: var(--muted);
-  margin-bottom: 12px;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
 }
 
 h1 {
   font-family: 'Source Serif 4', serif;
   font-weight: 700;
-  font-size: 1.88em;
-  line-height: 1.2;
-  margin-bottom: 6px;
+  font-size: 2.4em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.015em;
 }
 
 .subtitle {
-  font-size: 1.06em;
+  font-size: 1.18em;
   color: var(--muted);
   font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
 }
 
-.indice {
-  margin: 40px 0;
-  padding: 20px 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-}
-
-.indice-titolo {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.76em;
-  font-weight: 600;
-  color: var(--muted);
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.indice ol {
-  list-style: none;
-  counter-reset: idx;
-}
-
-.indice ol li {
-  counter-increment: idx;
-  padding: 4px 0;
-  font-size: 0.94em;
-}
-
-.indice ol li::before {
-  content: counter(idx) ". ";
-  color: var(--muted);
-}
-
-.indice a {
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.indice a:hover { text-decoration: underline; }
-
+/* Sezioni e titoli */
 section {
-  margin: 56px 0 0;
+  margin: 72px 0 0;
   scroll-margin-top: 24px;
 }
 
 h2 {
   font-family: 'Source Serif 4', serif;
   font-weight: 700;
-  font-size: 1.41em;
+  font-size: 1.65em;
   line-height: 1.25;
-  margin-bottom: 24px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--ink);
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
+}
+
+h2 .h2-num {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--muted-light);
+  vertical-align: middle;
+  margin-right: 16px;
+  letter-spacing: 0.05em;
 }
 
 h3 {
   font-family: 'Source Serif 4', serif;
   font-weight: 600;
-  font-size: 1.12em;
-  margin: 32px 0 12px;
+  font-size: 1.22em;
+  margin: 44px 0 16px;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
 }
 
 h4 {
-  font-family: 'Source Serif 4', serif;
+  font-family: 'Source Sans 3', sans-serif;
   font-weight: 600;
-  font-size: 1em;
-  margin: 24px 0 10px;
-  font-style: italic;
+  font-size: 0.82em;
+  margin: 28px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
 }
 
+/* Paragrafi */
 p {
-  margin-bottom: 16px;
-  text-align: justify;
+  margin-bottom: 18px;
+  text-align: left;
   hyphens: auto;
+  max-width: 65ch;
 }
 
-strong { font-weight: 600; }
+body.presentation p {
+  max-width: 75ch;
+}
+
+/* Lead paragraph */
+.lead {
+  font-size: 1.08em;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+
+strong { font-weight: 600; color: var(--ink); }
 em { font-style: italic; }
 
 ul, ol {
-  margin: 12px 0 18px 28px;
+  margin: 16px 0 22px 28px;
+  max-width: 62ch;
 }
 
 li {
-  margin-bottom: 8px;
-  line-height: 1.6;
+  margin-bottom: 10px;
+  line-height: 1.65;
 }
 
+/* Codice e formule */
 code {
   font-family: 'Source Sans 3', monospace;
-  font-size: 0.95em;
-  background: #f5f5f5;
-  padding: 1px 5px;
+  font-size: 0.92em;
+  background: var(--paper-warm);
+  padding: 1px 6px;
   border-radius: 2px;
+  font-weight: 500;
 }
 
+/* Riquadri */
+.box {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  padding: 20px 24px;
+  margin: 24px 0;
+  max-width: 65ch;
+  position: relative;
+}
+
+.box-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.box p {
+  margin-bottom: 12px;
+}
+.box p:last-child { margin-bottom: 0; }
+
+.box.teorema {
+  background: #f0eee3;
+  border-left-color: var(--ink);
+  padding: 24px 28px;
+}
+
+.box.teorema .box-label {
+  color: var(--ink);
+}
+
+.box.teorema .teorema-enunciato {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 1.05em;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.box.definizione {
+  background: var(--paper-cool);
+  border-left-color: var(--rule-strong);
+}
+
+.box.esempio {
+  background: var(--paper-warm);
+  border-left-color: var(--rule-strong);
+}
+
+/* Schemi e diagrammi SVG */
+.figure {
+  margin: 32px 0;
+  max-width: 100%;
+}
+
+.figure svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.figure-caption {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 12px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+/* Tabelle */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 0.88em;
+  margin: 24px 0;
+  font-size: 0.86em;
+  font-family: 'Source Sans 3', sans-serif;
 }
 
 th, td {
-  padding: 8px 10px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--rule);
   vertical-align: top;
+  line-height: 1.5;
 }
 
 th {
-  background: #f5f5f5;
-  font-family: 'Source Sans 3', sans-serif;
+  background: var(--paper-warm);
   font-weight: 600;
   font-size: 0.94em;
   border-bottom: 2px solid var(--ink);
+  color: var(--ink);
 }
 
+/* Footer */
 footer {
-  margin-top: 80px;
-  padding-top: 20px;
-  border-top: 1px solid var(--ink);
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.82em;
   color: var(--muted);
@@ -239,201 +430,420 @@ footer {
 footer a {
   color: var(--link);
   text-decoration: none;
+  font-weight: 500;
 }
 
 footer a:hover { text-decoration: underline; }
 
+/* Responsive */
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  aside.sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
+  }
+  .sidebar nav { display: none; }
+  .sidebar.expanded nav { display: block; }
+  .sidebar-title { cursor: pointer; }
+  .sidebar-title::after {
+    content: " ▾";
+    color: var(--muted-light);
+  }
+  .sidebar.expanded .sidebar-title::after {
+    content: " ▴";
+  }
+}
+
 @media (max-width: 640px) {
-  .wrap { padding: 40px 20px 80px; }
-  h1 { font-size: 1.53em; }
-  h2 { font-size: 1.24em; }
+  .layout { padding: 40px 20px 80px; }
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.35em; }
   .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+  body { font-size: 17px; }
 }
 
 @media print {
-  body { font-size: 11pt; }
-  .wrap { max-width: 100%; padding: 0; }
+  body { font-size: 11pt; background: white; }
+  .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+  aside.sidebar { display: none; }
   h2 { page-break-after: avoid; }
   h3, h4 { page-break-after: avoid; }
+  .box, .figure { page-break-inside: avoid; }
 }
 </style>
 </head>
 <body>
 <button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
 
-<div class="wrap">
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title" onclick="this.parentElement.classList.toggle('expanded')">Indice</div>
+  <nav>
+    <ol>
+      <li>
+        <a href="#sec1">L'ipotesi di concorrenza perfetta</a>
+        <ol>
+          <li><a href="#sec1-1">Concetto di ottimalità</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec2">I due Teoremi del Benessere</a>
+        <ol>
+          <li><a href="#sec2-1">I TEB</a></li>
+          <li><a href="#sec2-2">II TEB</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec3">Cause del fallimento del mercato</a>
+        <ol>
+          <li><a href="#sec3-1">Second best</a></li>
+          <li><a href="#sec3-2">Monopolio naturale</a></li>
+          <li><a href="#sec3-3">Contendibilità</a></li>
+          <li><a href="#sec3-4">Esternalità</a></li>
+          <li><a href="#sec3-5">Beni pubblici</a></li>
+          <li><a href="#sec3-6">Asimmetrie informative</a></li>
+          <li><a href="#sec3-7">Beni meritori</a></li>
+          <li><a href="#sec3-8">Equità</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec4">Politiche pubbliche micro</a>
+        <ol>
+          <li><a href="#sec4-1">Stato minimo</a></li>
+          <li><a href="#sec4-2">Antimonopolistiche</a></li>
+          <li><a href="#sec4-3">Esternalità</a></li>
+          <li><a href="#sec4-4">Beni pubblici</a></li>
+          <li><a href="#sec4-5">Garanzie pubbliche</a></li>
+          <li><a href="#sec4-6">Welfare</a></li>
+          <li><a href="#sec4-7">Redistribuzione</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec5">Politiche commerciali</a>
+        <ol>
+          <li><a href="#sec5-1">Liberismo</a></li>
+          <li><a href="#sec5-2">Protezionismo</a></li>
+          <li><a href="#sec5-3">Strumenti</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+</aside>
+
+<main class="content">
 
 <header class="lezione-header">
-  <div class="lezione-meta">Lezione 1 — Politica Economica</div>
+  <div class="lezione-meta">Lezione 1 / 4 — Politica Economica</div>
   <h1>Fondamenti microeconomici</h1>
   <p class="subtitle">Concorrenza perfetta, teoremi del benessere, fallimenti del mercato e politiche pubbliche microeconomiche</p>
 </header>
 
-<div class="indice">
-  <div class="indice-titolo">Indice</div>
-  <ol>
-    <li><a href="#sec1">L'ipotesi di concorrenza perfetta</a></li>
-    <li><a href="#sec2">I due Teoremi dell'Economia del Benessere</a></li>
-    <li><a href="#sec3">Le cause del fallimento del mercato</a></li>
-    <li><a href="#sec4">Le politiche pubbliche microeconomiche</a></li>
-    <li><a href="#sec5">Politiche commerciali</a></li>
-  </ol>
-</div>
-
 <section id="sec1">
-  <h2>1. L'ipotesi di concorrenza perfetta</h2>
+  <h2><span class="h2-num">§1</span>L'ipotesi di concorrenza perfetta</h2>
 
-  <p>Un sistema economico è in concorrenza perfetta (CP) se si verificano simultaneamente le seguenti condizioni: omogeneità nei beni, nel consumo e nella produzione; elevata numerosità degli operatori (atomismo delle imprese); assenza di accordi espliciti e di intese tacite tra di essi; libertà di entrata e di uscita nel/dal mercato (assenza di costi); perfetta informazione (simmetria delle informazioni nello scambio); assenza di esternalità positive e negative.</p>
+  <p class="lead">Un sistema economico è in concorrenza perfetta (CP) se si verificano simultaneamente sei condizioni. La CP costituisce il riferimento teorico rispetto al quale si valuta il funzionamento dei mercati reali e si definiscono i casi di fallimento del mercato.</p>
 
-  <h3>1.1 Concetto di ottimalità e scelta individuale</h3>
+  <div class="box definizione">
+    <span class="box-label">Le sei condizioni della concorrenza perfetta</span>
+    <ol>
+      <li><strong>Omogeneità</strong> nei beni, nel consumo e nella produzione.</li>
+      <li>Elevata <strong>numerosità degli operatori</strong> (atomismo delle imprese).</li>
+      <li><strong>Assenza di accordi espliciti</strong> e di intese tacite tra operatori.</li>
+      <li><strong>Libertà di entrata e di uscita</strong> nel/dal mercato (assenza di costi).</li>
+      <li><strong>Perfetta informazione</strong> (simmetria delle informazioni nello scambio).</li>
+      <li><strong>Assenza di esternalità</strong> positive e negative.</li>
+    </ol>
+  </div>
 
-  <p>Sia data una dotazione iniziale X di due risorse (beni 1 e 2) per due individui (A e B) con struttura psicologica <em>self-interested</em>, ossia interessati alla massimizzazione della propria utilità U(A) e U(B), e per la quale vale l'ipotesi di utilità marginale decrescente (convessità nelle preferenze). La massimizzazione della propria utilità richiede che essi scelgano autonomamente di procedere a scambi fino a che almeno uno dei due individui aumenta la propria utilità.</p>
+  <h3 id="sec1-1">1.1 Concetto di ottimalità e scelta individuale</h3>
 
-  <p>A titolo di esemplificazione, si consideri una dotazione iniziale X in cui A possiede la coppia (2,15) e B la coppia (8,5). Le funzioni di utilità individuali siano <code>U(A) = b₁·b₂</code> e <code>U(B) = b₁ + 0,5·b₂</code>. Nella situazione X si ha U(A) = 30 e U(B) = 10,5. Si supponga uno scambio in cui A cede due unità di b₂ e B cede una unità di b₁, passando alla dotazione (3,13) per A e (7,7) per B (rapporto di scambio 2:1, definito dalla scarsità relativa 20/10). In questa situazione si ha U(A) = 39 e U(B) = 10,5: A preferisce scambiare mentre B è indifferente. Se invece le preferenze di B fossero definite da <code>U(B) = b₁ + b₂</code> si avrebbe U(A) = 39 e U(B) = 14: entrambi preferiscono scambiare. Se le preferenze di B fossero <code>U(B) = b₁ + 0,2·b₂</code> si avrebbe U(A) = 39 e U(B) = 8,4: A preferisce scambiare mentre B no. Lo scambio si avrà solo nei primi due casi, con aumento del benessere totale, misurato dalla somma delle utilità di A e di B.</p>
+  <p>Sia data una dotazione iniziale X di due risorse (beni 1 e 2) per due individui (A e B) con struttura psicologica <em>self-interested</em>, ossia interessati alla massimizzazione della propria utilità U(A) e U(B), e per la quale vale l'ipotesi di utilità marginale decrescente (convessità nelle preferenze).</p>
 
-  <p>L'esemplificazione mostra che, sotto condizioni di CP, lo scambio volontario effettuato sulla base di valutazioni esclusivamente soggettive porta a soluzioni sociali preferibili dal punto di vista del benessere. Una situazione ottimale si ha quando nessuno scambio ulteriore può aumentare l'utilità di un individuo senza importare una riduzione dell'utilità di un altro individuo (<strong>ottimalità paretiana</strong>).</p>
+  <p>La massimizzazione della propria utilità richiede che essi scelgano autonomamente di procedere a scambi fino a che almeno uno dei due individui aumenta la propria utilità.</p>
+
+  <div class="box esempio">
+    <span class="box-label">Esempio numerico</span>
+    <p>A possiede la coppia (2,15) e B la coppia (8,5). Le funzioni di utilità individuali siano <code>U(A) = b₁·b₂</code> e <code>U(B) = b₁ + 0,5·b₂</code>. Nella situazione X si ha U(A) = 30 e U(B) = 10,5.</p>
+    <p>Si supponga uno scambio in cui A cede due unità di b₂ e B cede una unità di b₁, passando alla dotazione (3,13) per A e (7,7) per B (rapporto di scambio 2:1, definito dalla scarsità relativa 20/10). Si ha U(A) = 39 e U(B) = 10,5: A preferisce scambiare mentre B è indifferente.</p>
+    <p>Se le preferenze di B fossero <code>U(B) = b₁ + b₂</code>, si avrebbe U(A) = 39 e U(B) = 14: entrambi preferiscono scambiare. Se invece fossero <code>U(B) = b₁ + 0,2·b₂</code>, si avrebbe U(A) = 39 e U(B) = 8,4: A preferisce scambiare mentre B no.</p>
+    <p>Lo scambio si avrà solo nei primi due casi, con aumento del benessere totale, misurato dalla somma delle utilità di A e di B.</p>
+  </div>
+
+  <p>L'esemplificazione mostra che, sotto condizioni di CP, lo scambio volontario effettuato sulla base di valutazioni esclusivamente soggettive porta a soluzioni sociali preferibili dal punto di vista del benessere.</p>
+
+  <div class="box definizione">
+    <span class="box-label">Ottimalità paretiana (OP)</span>
+    <p>Una situazione ottimale si ha quando nessuno scambio ulteriore può aumentare l'utilità di un individuo senza importare una riduzione dell'utilità di un altro individuo.</p>
+  </div>
 </section>
 
 <section id="sec2">
-  <h2>2. I due Teoremi dell'Economia del Benessere</h2>
+  <h2><span class="h2-num">§2</span>I due Teoremi dell'Economia del Benessere</h2>
 
-  <h3>2.1 Il Primo Teorema dell'Economia del Benessere (I TEB)</h3>
+  <h3 id="sec2-1">2.1 Il Primo Teorema (I TEB)</h3>
 
-  <p>Dalle condizioni e dalle conclusioni discusse viene derivato il I TEB: <em>in corrispondenza di preferenze convesse, continue e monotòne, se Y è un equilibrio di CP con mercati completi, esso è anche un Ottimo Paretiano (OP)</em>. In altri termini, le condizioni di CP stabiliscono anche quelle di ottimalità nel senso di Pareto.</p>
+  <p>Dalle condizioni e dalle conclusioni discusse viene derivato il I TEB.</p>
 
-  <p>Sono evidenti i legami con il concetto di <em>mano invisibile</em> di Adam Smith, del quale il I TEB fornisce una precisazione rispetto alle caratteristiche richieste nella forma di mercato, al criterio di valutazione (quello di Pareto) e alla connessione tra forme di mercato ed efficienza allocativa.</p>
+  <div class="box teorema">
+    <span class="box-label">I Teorema dell'Economia del Benessere</span>
+    <p class="teorema-enunciato">In corrispondenza di preferenze convesse, continue e monotòne, se Y è un equilibrio di CP con mercati completi, esso è anche un Ottimo Paretiano (OP).</p>
+  </div>
 
-  <p>Il teorema presenta tuttavia alcuni limiti. Cosa succede in presenza di funzioni di utilità o di produzione non convesse? Inoltre, l'insieme delle scelte possibili è limitato dalle dotazioni iniziali. Nel caso un individuo possegga tutto e l'altro nulla, il criterio di OP richiede, per necessità di efficienza, che non si proceda ad alcuna modificazione: il possessore dell'intera ricchezza è al suo massimo e ogni modificazione ne comporterebbe una contrazione. Viene in soccorso il II TEB.</p>
+  <p>In altri termini, le condizioni di CP stabiliscono anche quelle di ottimalità nel senso di Pareto. Sono evidenti i legami con il concetto di <em>mano invisibile</em> di Adam Smith, del quale il I TEB fornisce una precisazione rispetto alle caratteristiche richieste nella forma di mercato, al criterio di valutazione (quello di Pareto) e alla connessione tra forme di mercato ed efficienza allocativa.</p>
 
-  <h3>2.2 Il Secondo Teorema dell'Economia del Benessere (II TEB)</h3>
+  <h4>Limiti del I TEB</h4>
 
-  <p>Premesso che esiste un sistema concorrenziale e quindi vale il I TEB, le utilità finali degli individui dipendono dalle dotazioni iniziali, poiché esse definiscono l'insieme delle scelte libere possibili. Su queste basi, il II TEB stabilisce che <em>ogni posizione di OP può essere realizzata come equilibrio concorrenziale, attraverso un'appropriata distribuzione delle dotazioni iniziali degli individui</em>. In altri termini, per ottenere la distribuzione finale di utilità che si desidera è necessario distribuire opportunamente le risorse iniziali e poi lasciar fare al sistema concorrenziale, che assicura l'efficienza.</p>
+  <p>Il teorema presenta alcuni limiti. Cosa succede in presenza di funzioni di utilità o di produzione non convesse? Inoltre, l'insieme delle scelte possibili è limitato dalle dotazioni iniziali. Nel caso un individuo possegga tutto e l'altro nulla, il criterio di OP richiede, per necessità di efficienza, che non si proceda ad alcuna modificazione: il possessore dell'intera ricchezza è al suo massimo e ogni modificazione ne comporterebbe una contrazione. Viene in soccorso il II TEB.</p>
 
-  <p>Le implicazioni del II TEB sono rilevanti. Lo stato realizza l'equità, attraverso la redistribuzione delle dotazioni iniziali, e il mercato concorrenziale realizza l'efficienza: da ciò deriva l'idea di una divisione istituzionale tra compiti dello stato e del mercato. Alla base di tale divisione c'è una visione dell'efficienza di tipo paretiano, che non è un criterio neutrale, al pari di altri criteri: esso viene giustificato dal concetto di insindacabilità delle utilità e delle preferenze individuali, che tuttavia ha natura etica e non tecnica (individualismo etico e <em>welfarismo</em>). Resta inoltre il problema se lo stato possieda davvero le informazioni e gli strumenti necessari per svolgere il ruolo fondamentale che gli assegna il II TEB.</p>
+  <h3 id="sec2-2">2.2 Il Secondo Teorema (II TEB)</h3>
+
+  <p>Premesso che esiste un sistema concorrenziale e quindi vale il I TEB, le utilità finali degli individui dipendono dalle dotazioni iniziali, poiché esse definiscono l'insieme delle scelte libere possibili. Su queste basi, il II TEB stabilisce che:</p>
+
+  <div class="box teorema">
+    <span class="box-label">II Teorema dell'Economia del Benessere</span>
+    <p class="teorema-enunciato">Ogni posizione di OP può essere realizzata come equilibrio concorrenziale, attraverso un'appropriata distribuzione delle dotazioni iniziali degli individui.</p>
+  </div>
+
+  <p>In altri termini, per ottenere la distribuzione finale di utilità che si desidera è necessario distribuire opportunamente le risorse iniziali e poi lasciar fare al sistema concorrenziale, che assicura l'efficienza.</p>
+
+  <h4>Implicazioni</h4>
+
+  <p>Lo stato realizza l'equità, attraverso la redistribuzione delle dotazioni iniziali, e il mercato concorrenziale realizza l'efficienza: da ciò deriva l'idea di una <strong>divisione istituzionale</strong> tra compiti dello stato e del mercato.</p>
+
+  <p>Alla base di tale divisione c'è una visione dell'efficienza di tipo paretiano, che non è un criterio neutrale, al pari di altri criteri: esso viene giustificato dal concetto di insindacabilità delle utilità e delle preferenze individuali, che tuttavia ha natura etica e non tecnica (individualismo etico e <em>welfarismo</em>).</p>
+
+  <p>Resta inoltre il problema se lo stato possieda davvero le informazioni e gli strumenti necessari per svolgere il ruolo fondamentale che gli assegna il II TEB.</p>
 </section>
 
 <section id="sec3">
-  <h2>3. Le cause del fallimento del mercato</h2>
+  <h2><span class="h2-num">§3</span>Le cause del fallimento del mercato</h2>
 
-  <p>L'efficienza è realizzata dalla CP (I TEB), che è alla base delle valutazioni sulla preferibilità di date allocazioni rispetto ad altre. Il fallimento delle condizioni di CP determina il mancato rispetto del criterio di OP e quindi la caduta del giudizio di preferibilità della soluzione pura di mercato. Ne segue che i casi di violazione delle condizioni di CP sono casi in cui è richiesto l'intervento pubblico in economia. Si parla in tal caso di <strong>fallimenti del mercato</strong>.</p>
+  <p class="lead">L'efficienza è realizzata dalla CP (I TEB), che è alla base delle valutazioni sulla preferibilità di date allocazioni rispetto ad altre. Il fallimento delle condizioni di CP determina il mancato rispetto del criterio di OP e quindi la caduta del giudizio di preferibilità della soluzione pura di mercato. I casi di violazione delle condizioni di CP sono casi in cui è richiesto l'intervento pubblico in economia: si parla in tal caso di <strong>fallimenti del mercato</strong>.</p>
 
-  <h3>3.1 Regimi non concorrenziali e teorema del second best</h3>
+  <h3 id="sec3-1">3.1 Regimi non concorrenziali e teorema del second best</h3>
 
   <p>Ogni situazione reale che non soddisfi almeno uno dei requisiti che definiscono l'esistenza di un regime di mercato di CP comporta una violazione delle condizioni di OP e quindi un fallimento del mercato. Ne segue che l'allontanamento dall'OP sia tanto più forte quanto maggiori siano gli scostamenti dalle condizioni di CP.</p>
 
-  <p>Il <strong>teorema del secondo ottimo</strong> (<em>second best</em>) stabilisce il contrario: una situazione nella quale un numero di condizioni di CP, ma non tutte, siano soddisfatte non necessariamente è superiore a una situazione in cui ne siano soddisfatte un numero inferiore. Una situazione di second best può essere stabilita non necessariamente minimizzando gli allontanamenti dalla CP (ad esempio nel caso di un solo settore non in CP in un mercato con n settori, per questioni di sostituibilità nel consumo o di interdipendenze verticali nei processi produttivi).</p>
+  <div class="box">
+    <span class="box-label">Teorema del second best</span>
+    <p>Una situazione nella quale un numero di condizioni di CP, ma non tutte, siano soddisfatte non necessariamente è superiore a una situazione in cui ne siano soddisfatte un numero inferiore.</p>
+    <p>Una situazione di second best può essere stabilita non necessariamente minimizzando gli allontanamenti dalla CP (ad esempio nel caso di un solo settore non in CP in un mercato con n settori, per questioni di sostituibilità nel consumo o di interdipendenze verticali nei processi produttivi).</p>
+  </div>
 
-  <h3>3.2 Monopolio naturale</h3>
+  <h3 id="sec3-2">3.2 Monopolio naturale</h3>
 
   <p>In CP ogni impresa produce la quantità per cui il prezzo è uguale al costo dell'unità marginale prodotta: <code>P = CM</code>. Ciò è garantito dall'ipotesi di rendimenti marginali decrescenti, ossia di costi crescenti. Se q &gt; q*, allora CM &gt; CM* = P, e poiché in CP i prezzi sono dati (irrilevanza della singola impresa), si riduce q fino a che CM = P. Vale il viceversa per q &lt; q*.</p>
 
-  <p>Si ha <strong>monopolio naturale</strong> quando le caratteristiche della tecnologia, in rapporto alle dimensioni del mercato, richiedono la presenza di una unica impresa. Dati i rendimenti crescenti di scala, la dimensione efficiente (quella per cui RM = CM) si ha solo per q(m) &lt; q(CP), per cui P(m) &gt; P(CP).</p>
+  <div class="box definizione">
+    <span class="box-label">Monopolio naturale</span>
+    <p>Si ha monopolio naturale quando le caratteristiche della tecnologia, in rapporto alle dimensioni del mercato, richiedono la presenza di una unica impresa. Dati i rendimenti crescenti di scala, la dimensione efficiente (quella per cui RM = CM) si ha solo per q(m) &lt; q(CP), per cui P(m) &gt; P(CP).</p>
+  </div>
 
-  <p>In questi casi, in presenza di costi decrescenti, è impossibile avere simultaneamente il rispetto della condizione P = CM e profitti non negativi: se il prezzo venisse fissato ai CM si avrebbe CU &gt; P, con perdite assicurate. La presenza di un monopolio comporta un livello di produzione più basso e un prezzo più alto (sfruttamento della domanda).</p>
+  <p>In presenza di costi decrescenti, è impossibile avere simultaneamente il rispetto della condizione P = CM e profitti non negativi: se il prezzo venisse fissato ai CM si avrebbe CU &gt; P, con perdite assicurate. La presenza di un monopolio comporta un livello di produzione più basso e un prezzo più alto (sfruttamento della domanda).</p>
+
+  <h4>Efficienza statica e dinamica</h4>
 
   <p>Quanto visto finora si riferisce a una valutazione in ottica di <strong>efficienza statica</strong>. In ottica <strong>dinamica</strong> una situazione di monopolio potrebbe essere preferibile nel caso ad essa si associ una maggiore capacità innovativa, dovuta al reinvestimento degli extraprofitti in spese per R&amp;S, alla loro appropriabilità, a fattori di diffusione di conoscenze specifiche connessi alla scala di produzione e alla concentrazione di lavoro specializzato. In presenza di capacità innovativa, e in un'ottica dinamica, una forma monopolistica potrebbe risultare superiore, in termini di performance economica, a una forma concorrenziale, poiché le perdite di efficienza statica sono più che compensate dai benefici in efficienza dinamica.</p>
 
-  <h3>3.3 Violazione dell'ipotesi di contendibilità</h3>
+  <h3 id="sec3-3">3.3 Violazione dell'ipotesi di contendibilità</h3>
 
   <p>La violazione dell'ipotesi di contendibilità è dovuta alla presenza di costi in entrata e in uscita. Si tratta dei cosiddetti <em>sunk costs</em> o costi irrecuperabili, connessi alla specificità di una data iniziativa imprenditoriale (know-how, formazione…) o di costi creati dalle imprese già attive (<em>incumbents</em>) attraverso la pratica del prezzo di esclusione. Nell'esperienza reale l'ipotesi di contendibilità può non sussistere anche in assenza di barriere economiche all'entrata e all'uscita.</p>
 
-  <h3>3.4 Esternalità e incompletezza dei mercati</h3>
+  <h3 id="sec3-4">3.4 Esternalità e incompletezza dei mercati</h3>
 
-  <p>Si ha <strong>esternalità positiva</strong> (negativa) quando un'attività economica produce un beneficio (un danno) che viene parzialmente goduto da altri; in altri termini, quando il costo privato è maggiore (minore) del costo sociale. Le esternalità positive e negative si presentano tanto nella sfera della produzione quanto in quella del consumo. L'esternalità determina <strong>incompletezza del mercato</strong> poiché implica l'esistenza di un prodotto per il quale manca un prezzo. Per esempio, l'inquinamento di un'industria può essere visto come l'uso di una risorsa per il quale non viene pagato un costo (esternalità negativa); gli effetti diffusi della ricerca e delle scoperte scientifiche sono prodotti per i quali il settore scientifico non riceve un beneficio (esternalità positiva).</p>
+  <div class="box definizione">
+    <span class="box-label">Esternalità</span>
+    <p>Si ha esternalità positiva (negativa) quando un'attività economica produce un beneficio (un danno) che viene parzialmente goduto da altri; in altri termini, quando il costo privato è maggiore (minore) del costo sociale.</p>
+  </div>
+
+  <p>Le esternalità positive e negative si presentano tanto nella sfera della produzione quanto in quella del consumo. L'esternalità determina <strong>incompletezza del mercato</strong> poiché implica l'esistenza di un prodotto per il quale manca un prezzo.</p>
+
+  <p>Per esempio, l'inquinamento di un'industria può essere visto come l'uso di una risorsa per il quale non viene pagato un costo (esternalità negativa); gli effetti diffusi della ricerca e delle scoperte scientifiche sono prodotti per i quali il settore scientifico non riceve un beneficio (esternalità positiva).</p>
 
   <p>In presenza di esternalità positive, C<sub>priv</sub> &gt; C<sub>soc</sub>, quindi q &lt; q*; in presenza di esternalità negative, C<sub>priv</sub> &lt; C<sub>soc</sub>, quindi q &gt; q*.</p>
 
   <h4>Il teorema di Coase</h4>
 
-  <p>Secondo Coase il problema delle esternalità è in sostanza un problema di assegnazione di diritti di proprietà. In assenza di costi di transazione, e previa assegnazione di diritti di proprietà, gli individui raggiungono accordi mutuamente vantaggiosi senza intervento governativo, indipendentemente dal modo in cui i diritti sono stati assegnati (<strong>teorema di Coase</strong>). In presenza di costi di transazione, diventa rilevante il modo in cui i diritti di proprietà vengono assegnati.</p>
+  <p>Secondo Coase il problema delle esternalità è in sostanza un problema di assegnazione di diritti di proprietà.</p>
 
-  <h3>3.5 Non rivalità, beni pubblici e incompletezza dei mercati</h3>
+  <div class="box teorema">
+    <span class="box-label">Teorema di Coase</span>
+    <p class="teorema-enunciato">In assenza di costi di transazione, e previa assegnazione di diritti di proprietà, gli individui raggiungono accordi mutuamente vantaggiosi senza intervento governativo, indipendentemente dal modo in cui i diritti sono stati assegnati.</p>
+  </div>
 
-  <p>Un <strong>bene pubblico puro</strong> è definito dalle caratteristiche della <em>non rivalità</em> e della <em>non escludibilità</em>. Si ha non rivalità quando il consumo da parte di un individuo non riduce il consumo degli altri. Si ha non escludibilità quando non è possibile, o è troppo costoso, discriminarne il consumo. In presenza di entrambe le caratteristiche si hanno beni pubblici puri.</p>
+  <p>In presenza di costi di transazione, diventa rilevante il modo in cui i diritti di proprietà vengono assegnati.</p>
 
-  <p>La presenza di beni pubblici determina incompletezza del mercato poiché, data la non rivalità ed escludibilità, il produttore non può chiedere un prezzo commisurato all'uso. Il costo privato è superiore al costo sociale: sotto questo aspetto emerge un'analogia con il caso di esternalità positiva. Una caratteristica tipica dei beni pubblici è l'assenza di costi variabili di produzione, o la netta preponderanza di costi fissi: ciò assimila i beni pubblici al caso del monopolio. Esempi tipici sono i fari per la navigazione, l'illuminazione stradale, i segnali radio e TV (se la tecnologia non consente l'escludibilità), l'ambiente, la stabilizzazione economica.</p>
+  <h3 id="sec3-5">3.5 Non rivalità, beni pubblici e incompletezza</h3>
 
-  <h3>3.6 Asimmetrie informative e incompletezza dei mercati</h3>
+  <div class="box definizione">
+    <span class="box-label">Bene pubblico puro</span>
+    <p>Un bene pubblico puro è definito dalle caratteristiche della <strong>non rivalità</strong> e della <strong>non escludibilità</strong>. Si ha non rivalità quando il consumo da parte di un individuo non riduce il consumo degli altri. Si ha non escludibilità quando non è possibile, o è troppo costoso, discriminarne il consumo.</p>
+  </div>
 
-  <p>Si ha <strong>informazione asimmetrica</strong> quando una delle due parti che prende parte a una transazione economica ha meno informazioni dell'altra. Trattandosi di un caso tipico dei problemi di agenzia, la parte con minore informazione prende il nome di <em>principale</em>, quella con informazione completa di <em>agente</em>. L'informazione asimmetrica determina situazioni di <strong>selezione avversa</strong> e <strong>azzardo morale</strong> che portano al fallimento, per incompletezza, del mercato.</p>
+  <p>La presenza di beni pubblici determina incompletezza del mercato poiché, data la non rivalità ed escludibilità, il produttore non può chiedere un prezzo commisurato all'uso. Il costo privato è superiore al costo sociale: sotto questo aspetto emerge un'analogia con il caso di esternalità positiva.</p>
+
+  <p>Una caratteristica tipica dei beni pubblici è l'assenza di costi variabili di produzione, o la netta preponderanza di costi fissi: ciò assimila i beni pubblici al caso del monopolio. Esempi tipici sono i fari per la navigazione, l'illuminazione stradale, i segnali radio e TV (se la tecnologia non consente l'escludibilità), l'ambiente, la stabilizzazione economica.</p>
+
+  <h3 id="sec3-6">3.6 Asimmetrie informative</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Informazione asimmetrica</span>
+    <p>Si ha informazione asimmetrica quando una delle due parti che prende parte a una transazione economica ha meno informazioni dell'altra. Trattandosi di un caso tipico dei problemi di agenzia, la parte con minore informazione prende il nome di <em>principale</em>, quella con informazione completa di <em>agente</em>.</p>
+  </div>
+
+  <p>L'informazione asimmetrica determina situazioni di <strong>selezione avversa</strong> e <strong>azzardo morale</strong> che portano al fallimento, per incompletezza, del mercato.</p>
 
   <h4>Selezione avversa</h4>
 
   <p>La conoscenza asimmetrica delle caratteristiche di un bene oggetto di transazione ne determina un prezzo non in linea con le caratteristiche. Si contrae l'offerta dei beni migliori, eventualmente fino alla scomparsa del mercato.</p>
 
-  <p>Esempio del mercato del credito: una banca è disposta a concedere credito al tasso del 5% per i clienti affidabili (A) e al 10% per i clienti inaffidabili (B). I clienti di tipologia A sono disposti a pagare un interesse del 6%, quelli B del 12% (in assenza di asimmetrie informative si avrebbero scambi mutuamente vantaggiosi). Se la banca non ha alcuna informazione sul cliente, assegna equiprobabilità al caso A e al caso B, e quindi chiederà un interesse pari a <code>0,5·5% + 0,5·10% = 7,5%</code>. A questo tasso i clienti A non effettuano lo scambio. Il mercato aumenta di rischiosità media (<em>lemons</em>), contraendosi.</p>
+  <div class="box esempio">
+    <span class="box-label">Esempio: mercato del credito</span>
+    <p>Una banca è disposta a concedere credito al tasso del 5% per i clienti affidabili (A) e al 10% per i clienti inaffidabili (B). I clienti A sono disposti a pagare un interesse del 6%, quelli B del 12% (in assenza di asimmetrie informative si avrebbero scambi mutuamente vantaggiosi).</p>
+    <p>Se la banca non ha alcuna informazione sul cliente, assegna equiprobabilità al caso A e al caso B, e quindi chiederà un interesse pari a <code>0,5·5% + 0,5·10% = 7,5%</code>. A questo tasso i clienti A non effettuano lo scambio. Il mercato aumenta di rischiosità media (<em>lemons</em>), contraendosi.</p>
+  </div>
 
   <h4>Azzardo morale</h4>
 
   <p>La conoscenza asimmetrica delle caratteristiche delle azioni dell'agente in una fattispecie di delega induce alla contrazione dell'offerta di prestazioni migliori, eventualmente fino alla scomparsa del mercato.</p>
 
-  <p>Esempio del mercato assicurativo: un'assicurazione è disposta a concedere polizza a 200 euro per i clienti affidabili (A) e a 600 euro per i clienti inaffidabili (B). I clienti di tipologia A sono disposti a pagare 300, quelli B 600. Se l'assicuratore non può controllare le azioni dell'assicurato, chiederà una polizza pari a 400 euro. A questo prezzo i clienti A non acquistano la polizza. Il mercato aumenta di rischiosità media, contraendosi.</p>
+  <div class="box esempio">
+    <span class="box-label">Esempio: mercato assicurativo</span>
+    <p>Un'assicurazione è disposta a concedere polizza a 200 euro per i clienti affidabili (A) e a 600 euro per i clienti inaffidabili (B). I clienti A sono disposti a pagare 300, quelli B 600. Se l'assicuratore non può controllare le azioni dell'assicurato, chiederà una polizza pari a 400 euro. A questo prezzo i clienti A non acquistano la polizza. Il mercato aumenta di rischiosità media, contraendosi.</p>
+  </div>
 
-  <h3>3.7 Beni meritori e incompletezza dei mercati</h3>
+  <h3 id="sec3-7">3.7 Beni meritori</h3>
 
-  <p>I <strong>beni meritori</strong> sono beni che non verrebbero scambiati, data la presenza di comportamenti <em>miopici</em> che caratterizzano le scelte intertemporali (per assenza di informazioni essenziali) o per la presenza di decisioni irrazionali. Pur non definendo situazioni non OP, giustificano schemi di intervento pubblico di tipo paternalistico.</p>
+  <div class="box definizione">
+    <span class="box-label">Beni meritori</span>
+    <p>I beni meritori sono beni che non verrebbero scambiati, data la presenza di comportamenti <em>miopici</em> che caratterizzano le scelte intertemporali (per assenza di informazioni essenziali) o per la presenza di decisioni irrazionali. Pur non definendo situazioni non OP, giustificano schemi di intervento pubblico di tipo paternalistico.</p>
+  </div>
 
-  <p>La ricerca economica ha mostrato che il consumo di alcuni beni presenta saggi di preferenza intertemporale di tipo iperbolico: il presente è strettamente preferito al futuro (impazienza). Ciò appare rilevante anche nel consumo di beni di copertura per rischi futuri certi (vecchiaia, malattia). Esempi tipici sono il risparmio previdenziale e assistenziale, la copertura assicurativa sanitaria e per rischio disoccupazione, la spesa per istruzione, la conservazione del patrimonio artistico.</p>
+  <p>La ricerca economica ha mostrato che il consumo di alcuni beni presenta saggi di preferenza intertemporale di tipo iperbolico: il presente è strettamente preferito al futuro (impazienza). Ciò appare rilevante anche nel consumo di beni di copertura per rischi futuri certi (vecchiaia, malattia).</p>
 
-  <h3>3.8 Equità e intervento pubblico</h3>
+  <p>Esempi tipici sono il risparmio previdenziale e assistenziale, la copertura assicurativa sanitaria e per rischio disoccupazione, la spesa per istruzione, la conservazione del patrimonio artistico.</p>
 
-  <p>L'iniquità economica e sociale è un risultato del mercato che può verificarsi anche in corrispondenza di efficienza, ed è perfettamente ammissibile come risultato OP. Le valutazioni, e la rilevanza stessa del concetto di equità, richiedono giudizi di valore aventi connotazioni strettamente etiche. Si noti che anche il criterio di Pareto presuppone un giudizio etico nell'ipotesi di inviolabilità delle preferenze individuali. Nelle comunità il giudizio di equità, pur assumendo connotazioni diverse, è sempre rilevante e posto alla base del patto sociale.</p>
+  <h3 id="sec3-8">3.8 Equità e intervento pubblico</h3>
+
+  <p>L'iniquità economica e sociale è un risultato del mercato che può verificarsi anche in corrispondenza di efficienza, ed è perfettamente ammissibile come risultato OP.</p>
+
+  <p>Le valutazioni, e la rilevanza stessa del concetto di equità, richiedono giudizi di valore aventi connotazioni strettamente etiche. Si noti che anche il criterio di Pareto presuppone un giudizio etico nell'ipotesi di inviolabilità delle preferenze individuali. Nelle comunità il giudizio di equità, pur assumendo connotazioni diverse, è sempre rilevante e posto alla base del patto sociale.</p>
 
   <p>Diverse sono le accezioni di equità: equità di opportunità (<em>ex ante</em>) o di reddito (<em>ex post</em>). Sotto CP, una equa distribuzione iniziale garantisce una distribuzione finale perfettamente equa. Le critiche riguardano il <strong>trade-off equità/efficienza</strong>.</p>
 </section>
 
 <section id="sec4">
-  <h2>4. Le politiche pubbliche microeconomiche</h2>
+  <h2><span class="h2-num">§4</span>Le politiche pubbliche microeconomiche</h2>
 
-  <p>La violazione dei presupposti che definiscono un regime economico di CP implica la violazione del principio di OP e di efficienza allocativa. In tali casi, oltre alle tre funzioni tipiche dello <em>stato minimo</em> nozickiano, l'intervento pubblico si rende necessario per il ripristino delle condizioni di CP o per la compensazione degli effetti connessi alla loro violazione. L'intervento pubblico può ritenersi necessario anche in presenza di situazioni di CP, nel caso in cui il risultato del mercato non sia ritenuto eticamente preferibile: è il caso di situazioni contraddistinte dalla presenza di beni meritori e di forti iniquità, entrambe possibili anche sotto rispetto delle condizioni di efficienza paretiana, che ha valore etico e non tecnico.</p>
+  <p class="lead">La violazione dei presupposti che definiscono un regime economico di CP implica la violazione del principio di OP e di efficienza allocativa. In tali casi, oltre alle tre funzioni tipiche dello <em>stato minimo</em> nozickiano, l'intervento pubblico si rende necessario per il ripristino delle condizioni di CP o per la compensazione degli effetti connessi alla loro violazione.</p>
 
-  <h3>4.1 Stato minimo e funzioni di garanzia per il mercato</h3>
+  <p>L'intervento pubblico può ritenersi necessario anche in presenza di situazioni di CP, nel caso in cui il risultato del mercato non sia ritenuto eticamente preferibile: è il caso di situazioni contraddistinte dalla presenza di beni meritori e di forti iniquità, entrambe possibili anche sotto rispetto delle condizioni di efficienza paretiana, che ha valore etico e non tecnico.</p>
 
-  <p>Tra le funzioni dello stato minimo rientra l'<strong>allocazione dei diritti di proprietà</strong>. Sebbene storicamente tale funzione venga svolta dall'istituto dell'eredità, possono configurarsi casi in cui l'allocazione ereditaria non conduce a risultati efficienti: in presenza di forti sperequazioni nelle dotazioni iniziali, possono innescarsi effetti di <em>crowding-in</em> inefficienti (trappole di povertà ed efficienza dinamica). Rientrano in questo ambito anche la <strong>predisposizione di una regolamentazione</strong> che favorisca una condotta efficiente dei diritti di proprietà e la loro massima estensione (es. diritto a non essere inquinati), e la <strong>predisposizione di un enforcement legale</strong> per la tutela dei diritti di proprietà e per la garanzia del mercato (liberalizzazioni, frazionamenti degli ex monopoli pubblici, istituzione di autorità per la concorrenza).</p>
+  <h3 id="sec4-1">4.1 Stato minimo e funzioni di garanzia</h3>
 
-  <h3>4.2 Politiche antimonopolistiche</h3>
+  <p>Tra le funzioni dello stato minimo rientra l'<strong>allocazione dei diritti di proprietà</strong>. Sebbene storicamente tale funzione venga svolta dall'istituto dell'eredità, possono configurarsi casi in cui l'allocazione ereditaria non conduce a risultati efficienti: in presenza di forti sperequazioni nelle dotazioni iniziali, possono innescarsi effetti di <em>crowding-in</em> inefficienti (trappole di povertà ed efficienza dinamica).</p>
+
+  <p>Rientrano in questo ambito anche la <strong>predisposizione di una regolamentazione</strong> che favorisca una condotta efficiente dei diritti di proprietà e la loro massima estensione (es. diritto a non essere inquinati), e la <strong>predisposizione di un enforcement legale</strong> per la tutela dei diritti di proprietà e per la garanzia del mercato (liberalizzazioni, frazionamenti degli ex monopoli pubblici, istituzione di autorità per la concorrenza).</p>
+
+  <h3 id="sec4-2">4.2 Politiche antimonopolistiche</h3>
 
   <p>La <strong>legislazione antimonopolistica</strong> mira a modificare la struttura dei monopoli e/o i comportamenti degli operatori, al fine di tutelare la libertà economica in entrata, di limitare il potere delle concentrazioni economiche e di accrescere l'efficienza allocativa.</p>
 
-  <p>La <strong>regolamentazione dell'entrata</strong>, nei casi di barriere connesse alla presenza di costi irrecuperabili, favorisce la contendibilità dei mercati con agevolazioni fiscali e incentivi sugli investimenti fissi di tipo non recuperabile (es. detraibilità fiscale delle spese per ricerca e sviluppo industriale).</p>
+  <h4>Regolamentazione dell'entrata</h4>
 
-  <p>La <strong>regolamentazione dei prezzi</strong> consiste nella fissazione di P* = CM, garanzia di allocazione efficiente. È generalmente non possibile poiché CU &gt; P*. Vi sono due possibilità: la nazionalizzazione del monopolio naturale e il finanziamento fiscale delle perdite, oppure la sovvenzione pubblica delle perdite del monopolio privato con finanziamento fiscale, soluzione che pone il problema delle garanzie sulla conoscibilità dei costi effettivi del monopolista privato.</p>
+  <p>Nei casi di barriere connesse alla presenza di costi irrecuperabili, favorisce la contendibilità dei mercati con agevolazioni fiscali e incentivi sugli investimenti fissi di tipo non recuperabile (es. detraibilità fiscale delle spese per ricerca e sviluppo industriale).</p>
 
-  <p>L'<strong>estrazione delle rendite</strong> è una pratica nota come <em>concorrenza per il mercato</em>. Non potendo essere poste in atto situazioni di CP nell'operatività della produzione, si tende a creare una tale situazione nella fase di attribuzione del diritto a operare da monopolista, attraverso meccanismi di asta pubblica. Nell'<strong>asta per il diritto a operare</strong>, sotto condizioni di CP nella fase di partecipazione all'asta, la cessione alla massima offerta garantisce l'estrazione del valore attuale del flusso di rendite attese dall'esercizio del monopolio (caso UMTS Italia e Germania); rimane il problema dell'efficienza allocativa, in quanto il prezzo di mercato è quello di monopolio. Nell'<strong>asta per il sussidio a operare con P = CM</strong> si procede invece a estrazione della rendita senza rinunciare all'efficienza allocativa e senza necessità di controllare i costi effettivi dell'impresa.</p>
+  <h4>Regolamentazione dei prezzi</h4>
 
-  <h3>4.3 Politiche per la presenza di esternalità</h3>
+  <p>Consiste nella fissazione di P* = CM, garanzia di allocazione efficiente. È generalmente non possibile poiché CU &gt; P*. Vi sono due possibilità: la nazionalizzazione del monopolio naturale e il finanziamento fiscale delle perdite, oppure la sovvenzione pubblica delle perdite del monopolio privato con finanziamento fiscale, soluzione che pone il problema delle garanzie sulla conoscibilità dei costi effettivi del monopolista privato.</p>
 
-  <p>La <strong>tassazione/sussidiazione delle esternalità</strong> opera nel modo seguente: nel caso di esternalità negativa, CM<sub>priv</sub> &lt; CM<sub>soc</sub>, e si applica una tassazione per il ripristino della condizione CM<sub>priv</sub> = CM<sub>soc</sub>; nel caso di esternalità positiva si effettua la sussidiazione. La tassazione o il sussidio devono essere corrisposti in somma fissa (per non distorsione) e devono essere pari alla differenza tra CM<sub>priv</sub> e CM<sub>soc</sub>. Al costo marginale corretto, il mercato scambierà le quantità che sarebbero state scambiate in assenza di esternalità.</p>
+  <h4>Estrazione delle rendite</h4>
 
-  <p>L'<strong>attribuzione di diritti negoziabili</strong> consiste nel creare il mercato delle esternalità attraverso la creazione di diritti a inquinare o a non essere inquinati. Coase mostra che, sotto CP, la negoziazione di tali diritti garantisce OP. Il meccanismo è lo stesso dell'imposta pigouviana: il produttore di inquinamento internalizza i costi del prodotto collaterale, che assumerà un prezzo pari al valore CM<sub>soc</sub> − CM<sub>priv</sub> in assenza di esternalità.</p>
+  <p>Pratica nota come <em>concorrenza per il mercato</em>. Non potendo essere poste in atto situazioni di CP nell'operatività della produzione, si tende a creare una tale situazione nella fase di attribuzione del diritto a operare da monopolista, attraverso meccanismi di asta pubblica.</p>
 
-  <p>La <strong>regolamentazione</strong> consiste nella decisione per legge dei livelli di esternalità ammissibili. L'intervento è di tipo coercitivo e agisce direttamente sulle quantità. È la soluzione preferita nel caso di esternalità comportanti danni irreparabili (salute). In Italia l'intervento è principalmente di tipo regolamentativo; il protocollo di Kyoto ha un impianto più sbilanciato sui diritti negoziabili.</p>
+  <p>Nell'<strong>asta per il diritto a operare</strong>, sotto condizioni di CP nella fase di partecipazione all'asta, la cessione alla massima offerta garantisce l'estrazione del valore attuale del flusso di rendite attese dall'esercizio del monopolio (caso UMTS Italia e Germania); rimane il problema dell'efficienza allocativa, in quanto il prezzo di mercato è quello di monopolio.</p>
 
-  <h3>4.4 Politiche per la presenza di beni pubblici</h3>
+  <p>Nell'<strong>asta per il sussidio a operare con P = CM</strong> si procede invece a estrazione della rendita senza rinunciare all'efficienza allocativa e senza necessità di controllare i costi effettivi dell'impresa.</p>
+
+  <h3 id="sec4-3">4.3 Politiche per la presenza di esternalità</h3>
+
+  <h4>Tassazione/sussidiazione delle esternalità</h4>
+
+  <p>Nel caso di esternalità negativa, CM<sub>priv</sub> &lt; CM<sub>soc</sub>, e si applica una tassazione per il ripristino della condizione CM<sub>priv</sub> = CM<sub>soc</sub>; nel caso di esternalità positiva si effettua la sussidiazione. La tassazione o il sussidio devono essere corrisposti in somma fissa (per non distorsione) e devono essere pari alla differenza tra CM<sub>priv</sub> e CM<sub>soc</sub>. Al costo marginale corretto, il mercato scambierà le quantità che sarebbero state scambiate in assenza di esternalità.</p>
+
+  <h4>Attribuzione di diritti negoziabili</h4>
+
+  <p>Consiste nel creare il mercato delle esternalità attraverso la creazione di diritti a inquinare o a non essere inquinati. Coase mostra che, sotto CP, la negoziazione di tali diritti garantisce OP. Il meccanismo è lo stesso dell'imposta pigouviana: il produttore di inquinamento internalizza i costi del prodotto collaterale, che assumerà un prezzo pari al valore CM<sub>soc</sub> − CM<sub>priv</sub> in assenza di esternalità.</p>
+
+  <h4>Regolamentazione</h4>
+
+  <p>Consiste nella decisione per legge dei livelli di esternalità ammissibili. L'intervento è di tipo coercitivo e agisce direttamente sulle quantità. È la soluzione preferita nel caso di esternalità comportanti danni irreparabili (salute). In Italia l'intervento è principalmente di tipo regolamentativo; il protocollo di Kyoto ha un impianto più sbilanciato sui diritti negoziabili.</p>
+
+  <h3 id="sec4-4">4.4 Politiche per la presenza di beni pubblici</h3>
 
   <p>In presenza di beni pubblici lo stato deve decidere la quantità efficiente di beni da somministrare, le modalità del suo finanziamento, la produzione diretta o per committenza pubblica.</p>
 
   <p>Le quantità vengono decise simulando situazioni di non rivalità ed escludibilità per lo stesso bene (bisogno), ovvero attraverso la stima della disponibilità a pagare. Le modalità di finanziamento dipendono dal grado di universalità dell'usufrutto del bene pubblico. La scelta delle modalità di produzione dipende da considerazioni sulla struttura di mercato della produzione in oggetto e, in ultima analisi, sulla sua struttura dei costi.</p>
 
-  <h3>4.5 Informazione e garanzie pubbliche</h3>
+  <h3 id="sec4-5">4.5 Informazione e garanzie pubbliche</h3>
 
   <p>I rimedi privatistici dell'asimmetria informativa hanno costi di implementazione e come tali inducono al fallimento del mercato (ad esempio il salario di incentivo determina che il salario reale sia maggiore del contributo marginale del lavoro al prodotto, inducendo disoccupazione: <em>discipline device</em>).</p>
 
-  <p>In tali casi lo stato interviene attraverso la certificazione obbligatoria e volontaria (es. standard di qualità ISO), le garanzie pubbliche al credito (pubblico — depositi; commerciale — SACE), i sistemi di incentivo alla buona condotta, il sostegno diretto all'informazione. Le assicurazioni obbligatorie, la sanità pubblica e l'istruzione possono trovare origine in problemi di asimmetria informativa in ottica dinamica, anche se la collocazione tipica fornita dalla dottrina è quella dei beni di merito e del paternalismo. La definizione qualitativa e quantitativa di una legislazione per la produzione di beni meritori ha forti connotazioni etiche.</p>
+  <p>In tali casi lo stato interviene attraverso la certificazione obbligatoria e volontaria (es. standard di qualità ISO), le garanzie pubbliche al credito (pubblico — depositi; commerciale — SACE), i sistemi di incentivo alla buona condotta, il sostegno diretto all'informazione.</p>
 
-  <h3>4.6 Beni meritori, paternalismo, Welfare</h3>
+  <p>Le assicurazioni obbligatorie, la sanità pubblica e l'istruzione possono trovare origine in problemi di asimmetria informativa in ottica dinamica, anche se la collocazione tipica fornita dalla dottrina è quella dei beni di merito e del paternalismo. La definizione qualitativa e quantitativa di una legislazione per la produzione di beni meritori ha forti connotazioni etiche.</p>
 
-  <p>I beni meritori, definiti in gran parte dalle assicurazioni pubbliche obbligatorie quali la previdenza, la sanità pubblica e l'istruzione, possono trovare origine in problemi di miopia (preferenze iperboliche), asimmetria informativa in ottica dinamica, irrazionalità, anche se la collocazione tipica fornita dalla dottrina è quella dei beni di merito e del paternalismo. La definizione qualitativa e quantitativa di una legislazione per la produzione di beni meritori ha forti connotazioni etiche e culturali.</p>
+  <h3 id="sec4-6">4.6 Beni meritori, paternalismo, Welfare</h3>
+
+  <p>I beni meritori, definiti in gran parte dalle assicurazioni pubbliche obbligatorie quali la previdenza, la sanità pubblica e l'istruzione, possono trovare origine in problemi di miopia (preferenze iperboliche), asimmetria informativa in ottica dinamica, irrazionalità, anche se la collocazione tipica fornita dalla dottrina è quella dei beni di merito e del paternalismo.</p>
 
   <p>Il <strong>Welfare</strong> trae giustificazione da considerazioni diverse da quelle tipiche dell'economia del benessere. Selezione avversa e rischio morale svolgono un ruolo molto parziale; un ruolo maggiore è giocato dai concetti di probabilità non indipendenti (inflazione) e di probabilità prossime all'unità (vecchiaia, malattia).</p>
 
   <h4>Cenni storici</h4>
 
-  <p>Il Welfare si sviluppa nei paesi europei a partire dalla seconda metà del 1800, col diffondersi della rivoluzione industriale. Nasce in funzione mutualistica su iniziativa dei lavoratori dipendenti del comparto industriale e dello stato (modello bismarckiano). Un vero e proprio sistema di Welfare State si definisce nei primi anni del Novecento con l'esperienza socialdemocratica scandinava: alcuni rischi individuali e familiari vengono riconosciuti come rischi sociali (disoccupazione, malattia, vecchiaia, sostegno al reddito familiare) e si osserva il passaggio a schemi universalistici. L'estensione dei rischi assicurati si amplia in risposta alla crisi degli anni trenta, in particolare al rischio di disoccupazione. Un momento di svolta particolarmente significativo si ha nell'esperienza inglese per l'azione politica di Beveridge, il cui progetto di Welfare State si definisce sulle linee di quello scandinavo. In Italia il Welfare State si sviluppa a partire dalla seconda metà degli anni '60.</p>
+  <p>Il Welfare si sviluppa nei paesi europei a partire dalla seconda metà del 1800, col diffondersi della rivoluzione industriale. Nasce in funzione mutualistica su iniziativa dei lavoratori dipendenti del comparto industriale e dello stato (modello bismarckiano).</p>
+
+  <p>Un vero e proprio sistema di Welfare State si definisce nei primi anni del Novecento con l'esperienza socialdemocratica scandinava: alcuni rischi individuali e familiari vengono riconosciuti come rischi sociali (disoccupazione, malattia, vecchiaia, sostegno al reddito familiare) e si osserva il passaggio a schemi universalistici.</p>
+
+  <p>L'estensione dei rischi assicurati si amplia in risposta alla crisi degli anni trenta, in particolare al rischio di disoccupazione. Un momento di svolta particolarmente significativo si ha nell'esperienza inglese per l'azione politica di Beveridge, il cui progetto di Welfare State si definisce sulle linee di quello scandinavo. In Italia il Welfare State si sviluppa a partire dalla seconda metà degli anni '60.</p>
 
   <h4>Quattro modelli di Welfare a confronto</h4>
 
-  <p>Il <strong>modello socialdemocratico</strong> è caratterizzato da universalismo delle prestazioni, forti connotazioni egalitarie, ampia estensione degli interventi, rilevante quota di finanziamento fiscale: è il modello scandinavo. Il <strong>modello liberale</strong> si caratterizza per la selettività delle prestazioni (basata sulla verifica dei mezzi) ed estensione limitata, garantendo solo i rischi di estrema gravità quali povertà ed esclusione sociale: modello statunitense, neozelandese, irlandese e inglese del periodo thatcheriano. Il <strong>modello corporativo</strong> presenta un forte collegamento col mercato del lavoro, selettività corporativa (il titolare del diritto non è il cittadino ma il lavoratore), rilevanza del principio di sussidiarietà alla famiglia, programmi di spesa frastagliati, estensione degli interventi che varia da categoria a categoria, finanziamento su base contributiva, alta copertura dei dipendenti pubblici: è il modello tedesco ed europeo continentale. Il <strong>modello mediterraneo</strong> è una variante del modello corporativo, con accentuazione degli aspetti di frammentazione, uso clientelare e distorto delle tipologie di intervento, rilevanza anche legale del ruolo assegnato alla famiglia.</p>
+  <table>
+    <thead>
+      <tr><th>Modello</th><th>Caratteri</th><th>Paesi</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Socialdemocratico</strong></td>
+        <td>Universalismo delle prestazioni, forti connotazioni egalitarie, ampia estensione degli interventi, rilevante quota di finanziamento fiscale.</td>
+        <td>Scandinavi</td>
+      </tr>
+      <tr>
+        <td><strong>Liberale</strong></td>
+        <td>Selettività delle prestazioni (basata sulla verifica dei mezzi), estensione limitata, garantiti solo i rischi di estrema gravità (povertà ed esclusione sociale).</td>
+        <td>USA, NZ, IRL, UK thatcheriano</td>
+      </tr>
+      <tr>
+        <td><strong>Corporativo</strong></td>
+        <td>Forte collegamento col mercato del lavoro, selettività corporativa, sussidiarietà familiare, finanziamento contributivo, alta copertura dei dipendenti pubblici.</td>
+        <td>Germania, Europa continentale</td>
+      </tr>
+      <tr>
+        <td><strong>Mediterraneo</strong></td>
+        <td>Variante del modello corporativo, accentuazione degli aspetti di frammentazione, uso clientelare, ruolo della famiglia.</td>
+        <td>Italia, Spagna, Grecia, Portogallo</td>
+      </tr>
+    </tbody>
+  </table>
 
   <h4>Rischi coperti e prestazioni</h4>
 
@@ -443,54 +853,74 @@ footer a:hover { text-decoration: underline; }
     </thead>
     <tbody>
       <tr>
-        <td>Pensioni di vecchiaia, di anzianità, ai superstiti</td>
+        <td>Vecchiaia, anzianità, superstiti</td>
         <td>Assistenza di base, spesa farmaceutica</td>
-        <td>Cassa integrazione, indennità di disoccupazione, assicurazione infortuni sul lavoro, malattia, maternità</td>
+        <td>Cassa integrazione, indennità di disoccupazione, infortuni, malattia, maternità</td>
         <td>Assegni familiari, pensione sociale, handicap, invalidità</td>
         <td>Obbligatoria, secondaria, universitaria, materna</td>
       </tr>
     </tbody>
   </table>
 
-  <h3>4.7 Iniquità e intervento distributivo</h3>
+  <h3 id="sec4-7">4.7 Iniquità e intervento distributivo</h3>
 
-  <p>L'intervento redistributivo non è generalmente giustificabile sulla base di considerazioni di efficienza statica, e ha basi etiche. Tuttavia, in un'ottica di lungo periodo esso è giustificato anche sul piano dell'efficienza dinamica (istruzione obbligatoria). Il presupposto è il legame diretto tra <em>distribuzione funzionale</em> (fonti del reddito) e <em>distribuzione personale</em> (percettori del reddito) sotto ipotesi di rendimenti costanti, ossia esaustibilità del prodotto in redditi. L'intervento distributivo si applica nei casi in cui a determinate distribuzioni funzionali corrispondano distribuzioni personali molto sperequate; ciò accade quando, anche in condizioni di OP, esistono scarsità rilevanti di alcuni fattori, ovvero in assenza di OP, per la presenza di posizioni dominanti nel controllo dei fattori.</p>
+  <p>L'intervento redistributivo non è generalmente giustificabile sulla base di considerazioni di efficienza statica, e ha basi etiche. Tuttavia, in un'ottica di lungo periodo esso è giustificato anche sul piano dell'efficienza dinamica (istruzione obbligatoria).</p>
+
+  <p>Il presupposto è il legame diretto tra <em>distribuzione funzionale</em> (fonti del reddito) e <em>distribuzione personale</em> (percettori del reddito) sotto ipotesi di rendimenti costanti, ossia esaustibilità del prodotto in redditi. L'intervento distributivo si applica nei casi in cui a determinate distribuzioni funzionali corrispondano distribuzioni personali molto sperequate; ciò accade quando, anche in condizioni di OP, esistono scarsità rilevanti di alcuni fattori, ovvero in assenza di OP, per la presenza di posizioni dominanti nel controllo dei fattori.</p>
+
+  <h4>Caratteri dell'intervento</h4>
 
   <p>I caratteri dell'intervento sono molteplici: intervento <strong>selettivo</strong> (<em>targeted</em>) contrapposto all'<strong>approccio universalistico</strong>; <strong>trasferimenti monetari</strong> (pensioni, assegni sociali, sussidi di disoccupazione, malattia, maternità, sostegno al reddito familiare) contrapposti ai trasferimenti <strong>in natura</strong> (istruzione, sanità, assistenza sociale, abitazione); <strong>erogazione centrale</strong> contrapposta alla <strong>erogazione locale</strong>.</p>
 
+  <h4>Non distorsione</h4>
+
   <p>Perché si rispettino le condizioni di OP, l'intervento dovrebbe avvenire sulle dotazioni iniziali (II TEB) e non sulla distribuzione prodotta dal mercato. Nei casi in cui ciò non fosse possibile, la tassazione dovrebbe essere <strong>in somma fissa</strong>, al fine di scongiurare gli effetti distorsivi della tassazione proporzionale e progressiva: trattandosi di tassazione definita da valori costanti, le utilità al margine (derivate parziali) e quindi i comportamenti non vengono alterati.</p>
 
-  <p>Le considerazioni di <strong>trade-off</strong> in caso di redistribuzioni distorsive riguardano le distorsioni prodotte dall'alterazione delle utilità al margine alla base delle scelte soggettive in considerazione di schemi redistributivi basati su imposizione proporzionale e progressiva (ad esempio la tassazione del lavoro e delle rendite contrapposta alla corresponsione di una imposta in somma fissa, e la disincentivazione del lavoro e dell'investimento). La questione del trade-off tra equità ed efficienza può essere posta dal policy maker in termini formali, andando a ricercare empiricamente la relazione tra livelli di disuguaglianza ed efficienza (condizione tecnica: <strong>curva di Kuznets</strong>) e la preferibilità sociale di coppie di valori alternativi di disuguaglianza ed efficienza (FBS). La soluzione del problema di politica è data dall'approccio normativo dello schema a obiettivi flessibili: massimizzazione sotto vincolo tecnico di trasformazione.</p>
+  <h4>Trade-off equità/efficienza</h4>
+
+  <p>Le considerazioni di trade-off in caso di redistribuzioni distorsive riguardano le distorsioni prodotte dall'alterazione delle utilità al margine alla base delle scelte soggettive in considerazione di schemi redistributivi basati su imposizione proporzionale e progressiva (ad esempio la tassazione del lavoro e delle rendite contrapposta alla corresponsione di una imposta in somma fissa, e la disincentivazione del lavoro e dell'investimento).</p>
+
+  <p>La questione del trade-off tra equità ed efficienza può essere posta dal policy maker in termini formali, andando a ricercare empiricamente la relazione tra livelli di disuguaglianza ed efficienza (condizione tecnica: <strong>curva di Kuznets</strong>) e la preferibilità sociale di coppie di valori alternativi di disuguaglianza ed efficienza (FBS). La soluzione del problema di politica è data dall'approccio normativo dello schema a obiettivi flessibili: massimizzazione sotto vincolo tecnico di trasformazione.</p>
 </section>
 
 <section id="sec5">
-  <h2>5. Politiche commerciali</h2>
+  <h2><span class="h2-num">§5</span>Politiche commerciali</h2>
 
-  <p>Le politiche commerciali definiscono la posizione dei responsabili di politica economica nei confronti delle relazioni commerciali con l'estero del paese. L'atteggiamento della politica economica può essere visto come una graduazione di posizioni tra due atteggiamenti estremi: <strong>liberismo</strong> e <strong>protezionismo</strong>. Le politiche liberiste consistono nell'eliminazione di ogni ostacolo, economico o legislativo, al commercio con l'estero. Le politiche protezionistiche consistono nell'imposizione di barriere economiche e legislative al commercio con l'estero.</p>
+  <p class="lead">Le politiche commerciali definiscono la posizione dei responsabili di politica economica nei confronti delle relazioni commerciali con l'estero del paese. L'atteggiamento della politica economica può essere visto come una graduazione di posizioni tra due atteggiamenti estremi: <strong>liberismo</strong> e <strong>protezionismo</strong>.</p>
 
-  <h3>5.1 Giustificazioni del liberismo</h3>
+  <p>Le politiche liberiste consistono nell'eliminazione di ogni ostacolo, economico o legislativo, al commercio con l'estero. Le politiche protezionistiche consistono nell'imposizione di barriere economiche e legislative al commercio con l'estero.</p>
 
-  <p>Il fondamento teorico del liberismo risiede nel concetto di <strong>vantaggio comparato</strong>, ossia nei vantaggi connessi alla specializzazione internazionale della produzione, originariamente teorizzato da David Ricardo con il principio dei costi comparati. Il principio dei costi comparati stabilisce che, se due paesi hanno una diversa abilità relativa nella produzione di due beni, il che si riflette nel costo di produzione, è conveniente per entrambi specializzarsi nella produzione del bene di cui godono di un vantaggio comparato e procedere all'importazione del bene non prodotto, la cui produzione è relativamente meno costosa nell'altro paese. Saranno oggetto di scambio internazionale le eccedenze di produzione rispetto alla domanda interna.</p>
+  <h3 id="sec5-1">5.1 Giustificazioni del liberismo</h3>
+
+  <p>Il fondamento teorico del liberismo risiede nel concetto di <strong>vantaggio comparato</strong>, ossia nei vantaggi connessi alla specializzazione internazionale della produzione, originariamente teorizzato da David Ricardo con il principio dei costi comparati.</p>
+
+  <p>Il principio dei costi comparati stabilisce che, se due paesi hanno una diversa abilità relativa nella produzione di due beni, il che si riflette nel costo di produzione, è conveniente per entrambi specializzarsi nella produzione del bene di cui godono di un vantaggio comparato e procedere all'importazione del bene non prodotto, la cui produzione è relativamente meno costosa nell'altro paese. Saranno oggetto di scambio internazionale le eccedenze di produzione rispetto alla domanda interna.</p>
 
   <p>La diversa abilità relativa nella produzione dei due beni nelle due economie in considerazione può essere dovuta a fattori molteplici (scarsità relativa di fattori, tecnologie, competenze, istituzioni). La scarsità relativa dei fattori è il fattore più richiamato nell'impostazione originaria della teoria dei vantaggi comparati. Il fattore tecnologico, delle competenze e (in analisi recenti) istituzionale caratterizza le riedizioni contemporanee della teoria.</p>
 
-  <h3>5.2 Limitazioni del liberismo e protezionismo</h3>
+  <h3 id="sec5-2">5.2 Limitazioni del liberismo e protezionismo</h3>
 
-  <p>La teoria del vantaggio comparato ha natura sostanzialmente statica: non viene considerato che un paese possa risultare relativamente svantaggiato nella produzione di un determinato bene perché il settore è relativamente nuovo nell'economia considerata e possa guadagnare un vantaggio comparato nel tempo. Inoltre, può essere molto rischioso per un paese rinunciare alla produzione di alcuni beni fondamentali (agricoltura) o alla produzione di settori strategici (energia, tecnologie avanzate, tecnologie militari, trasformazione di prodotti energetici, determinate tipologie di servizi).</p>
+  <p>La teoria del vantaggio comparato ha natura sostanzialmente statica: non viene considerato che un paese possa risultare relativamente svantaggiato nella produzione di un determinato bene perché il settore è relativamente nuovo nell'economia considerata e possa guadagnare un vantaggio comparato nel tempo.</p>
+
+  <p>Inoltre, può essere molto rischioso per un paese rinunciare alla produzione di alcuni beni fondamentali (agricoltura) o alla produzione di settori strategici (energia, tecnologie avanzate, tecnologie militari, trasformazione di prodotti energetici, determinate tipologie di servizi).</p>
 
   <p>Queste considerazioni sono alla base della giustificazione delle politiche protezionistiche. Si consideri tuttavia che la generalizzazione a tutti i paesi e a tutti i settori del protezionismo induce certamente a un aumento generalizzato dei costi di produzione, quindi a una riduzione del potere d'acquisto e del tenore di vita.</p>
 
-  <h3>5.3 Strumenti della protezione commerciale</h3>
+  <h3 id="sec5-3">5.3 Strumenti della protezione commerciale</h3>
 
-  <p>La <strong>protezione tariffaria</strong> consiste in sostanza nei dazi all'importazione, cioè in imposte indirette che influenzano il prezzo del bene importato. Rispetto alla finalità (ma non alla sostanza e agli effetti) si distingue tra dazi fiscali e dazi protettivi.</p>
+  <h4>Protezione tariffaria</h4>
 
-  <p>La <strong>protezione non tariffaria</strong> viene attuata attraverso diversi strumenti: contingenti o quote di importazione, definiti da limiti di quantità fisiche o da limiti valutari, attuati attraverso concessione di licenze per l'importazione che stabiliscono limiti massimi di importazione; imposizione di limiti inferiori di contenuto nazionale della produzione, che prevede che un determinato prodotto possa essere venduto solo se ha un contenuto minimo, in termini fisici o in valore, di produzione nazionale; depositi previ all'importazione, ossia obbligo di depositare per un certo periodo in un conto infruttifero presso la banca centrale una somma pari a una quota del valore della merce importata; regolamentazioni sanitarie, di sicurezza, di tutela ambientale, che di fatto hanno finalità di protezione (molto praticate per la protezione dei prodotti dell'agricoltura e dell'allevamento); limitazioni in materia di appalti, forniture pubbliche e concessioni; sussidi alla produzione di beni oggetto di esportazione, che di fatto si risolvono in riduzione di prezzi all'esportazione.</p>
+  <p>Consiste in sostanza nei dazi all'importazione, cioè in imposte indirette che influenzano il prezzo del bene importato. Rispetto alla finalità (ma non alla sostanza e agli effetti) si distingue tra dazi fiscali e dazi protettivi.</p>
 
-  <h3>5.4 Effetti della protezione tariffaria</h3>
+  <h4>Protezione non tariffaria</h4>
+
+  <p>Viene attuata attraverso diversi strumenti: contingenti o quote di importazione, definiti da limiti di quantità fisiche o da limiti valutari, attuati attraverso concessione di licenze per l'importazione che stabiliscono limiti massimi di importazione; imposizione di limiti inferiori di contenuto nazionale della produzione, che prevede che un determinato prodotto possa essere venduto solo se ha un contenuto minimo, in termini fisici o in valore, di produzione nazionale; depositi previ all'importazione, ossia obbligo di depositare per un certo periodo in un conto infruttifero presso la banca centrale una somma pari a una quota del valore della merce importata; regolamentazioni sanitarie, di sicurezza, di tutela ambientale, che di fatto hanno finalità di protezione (molto praticate per la protezione dei prodotti dell'agricoltura e dell'allevamento); limitazioni in materia di appalti, forniture pubbliche e concessioni; sussidi alla produzione di beni oggetto di esportazione, che di fatto si risolvono in riduzione di prezzi all'esportazione.</p>
+
+  <h4>Effetti della protezione tariffaria</h4>
 
   <p>Si assuma che il prezzo della produzione internazionale rimanga invariato a seguito dell'introduzione del dazio da parte del paese importatore, e si definiscano le curve di domanda ed offerta interna del paese. Se il prezzo interno fosse pari al prezzo internazionale, essendo la domanda superiore all'offerta, si avrebbero importazioni pari alla differenza tra domanda ed offerta. L'introduzione di un dazio definisce un aumento del prezzo interno, il che stimola maggiore produzione interna (<strong>effetto produzione</strong>) e riduce la domanda totale (<strong>effetto consumo</strong>). Le importazioni si riducono in misura pari alla somma dei due effetti. I consumatori pagano un maggior prezzo ai produttori nazionali e un dazio allo stato.</p>
 
-  <h3>5.5 Effetti della protezione non tariffaria</h3>
+  <h4>Effetti della protezione non tariffaria</h4>
 
   <p>I contingentamenti hanno effetti simili a quelli dei dazi. Un contingentamento definisce infatti un aumento del prezzo interno del bene importato, il che stimola maggiore produzione interna e riduce la domanda del bene. La differenza rispetto al caso precedente è che il governo non riceve un introito fiscale: il contingentamento implica una redistribuzione a favore dei produttori e a sfavore dei consumatori.</p>
 </section>
@@ -500,9 +930,11 @@ footer a:hover { text-decoration: underline; }
   <a href="index.html">↑ Indice del corso</a> · <a href="lezione1_quiz.html">→ Quiz di ripasso</a></p>
 </footer>
 
+</main>
 </div>
 
 <script>
+// Modalità presentazione
 (function() {
   const btn = document.getElementById('presToggle');
   const body = document.body;
@@ -533,6 +965,29 @@ footer a:hover { text-decoration: underline; }
       setPresentation(!body.classList.contains('presentation'));
     }
   });
+})();
+
+// Sidebar attiva: evidenzia la sezione corrente durante lo scroll
+(function() {
+  const sidebarLinks = document.querySelectorAll('aside.sidebar nav a');
+  const sections = Array.from(sidebarLinks).map(link => {
+    const id = link.getAttribute('href').slice(1);
+    return { id, element: document.getElementById(id), link };
+  }).filter(s => s.element);
+
+  function updateActive() {
+    const scrollPos = window.scrollY + 100;
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.element.offsetTop <= scrollPos) current = s;
+      else break;
+    }
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
 })();
 </script>
 </body>
