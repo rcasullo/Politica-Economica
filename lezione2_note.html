@@ -364,6 +364,23 @@ code {
   border-left-color: var(--rule-strong);
 }
 
+.grafico-interattivo {
+  margin: 28px 0;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  background: white;
+  overflow: hidden;
+}
+.grafico-interattivo iframe {
+  display: block;
+  width: 100%;
+  height: 760px;
+  border: none;
+}
+@media (max-width: 700px) {
+  .grafico-interattivo iframe { height: 1100px; }
+}
+
 .figure-placeholder {
   margin: 28px 0;
   padding: 32px 24px;
@@ -731,9 +748,10 @@ footer a:hover { text-decoration: underline; }
 
   <p>Il significato economico è il seguente: all'aumentare del reddito aumenta anche il risparmio. Perché il mercato dei beni rimanga in equilibrio, occorre un pari aumento dell'investimento, possibile attraverso riduzioni del tasso di interesse.</p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Curva IS: retta inclinata negativamente nel piano r-Y. Intercetta sull'asse r pari a I₀/(1−c), pendenza pari a −a/(1−c).</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM.html" 
+            title="Grafico interattivo: modello IS-LM"
+            loading="lazy"></iframe>
   </div>
 
   <h3 id="sec3-2">3.2 IS con intervento pubblico e teorema di Haavelmo</h3>
@@ -793,9 +811,10 @@ footer a:hover { text-decoration: underline; }
 
   <p>La curva LM è inclinata positivamente, con pendenza pari a k/v. Il significato economico è il seguente: all'aumentare del reddito, aumenta la domanda per fini transattivi, in relazione k. Dal momento che l'offerta di moneta è data esogenamente, essendo controllata dalle autorità monetarie, perché il mercato monetario rimanga in equilibrio occorre che si riduca la domanda di moneta per scopi speculativi, il che è possibile solo attraverso aumenti del tasso di interesse.</p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Curva LM: retta inclinata positivamente nel piano r-Y. Intercetta sull'asse r pari a (L₀ − L<sup>S</sup>/P)/v, pendenza pari a k/v.</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM.html" 
+            title="Grafico interattivo: modello IS-LM"
+            loading="lazy"></iframe>
   </div>
 
   <h3 id="sec3-6">3.6 La curva LM in trappola della liquidità</h3>
@@ -811,9 +830,10 @@ footer a:hover { text-decoration: underline; }
 
   <p>Nella zona di trappola della liquidità, la LM diviene quindi orizzontale in corrispondenza di r ≈ 0.</p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Curva LM con tratto orizzontale (zona trappola della liquidità) in corrispondenza di r prossimo a zero, e tratto positivamente inclinato per livelli più alti del tasso di interesse.</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM.html" 
+            title="Grafico interattivo: trappola della liquidità"
+            loading="lazy"></iframe>
   </div>
 
   <h3 id="sec3-7">3.7 Equilibrio simultaneo beni-moneta</h3>
@@ -832,9 +852,10 @@ footer a:hover { text-decoration: underline; }
 
   <p>La dimensione della retroazione monetaria (o spiazzamento finanziario) è definita da ak/v, ossia dal diverso valore che assume il moltiplicatore in situazioni normali e di trappola, dove ak/v = 0. <strong>L'efficacia della politica fiscale, al contrario della monetaria, è al suo massimo.</strong></p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Equilibrio IS-LM in trappola della liquidità: la LM è orizzontale nella zona rilevante; uno spostamento della IS (politica fiscale) trasla orizzontalmente l'equilibrio senza variazioni del tasso di interesse, mentre uno spostamento della LM (politica monetaria) è inefficace.</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM.html" 
+            title="Grafico interattivo: equilibrio IS-LM in trappola della liquidità"
+            loading="lazy"></iframe>
   </div>
 </section>
 
@@ -916,18 +937,20 @@ footer a:hover { text-decoration: underline; }
 
   <p>Il significato economico della pendenza positiva della BP è il seguente: all'aumentare del reddito, aumentano le importazioni, mentre le esportazioni sono date costanti, il che induce un saldo negativo della PC. Perché la BP sia in equilibrio (ossia valga zero), deve prodursi un avanzo della bilancia dei capitali MK, che può avvenire attraverso incrementi del tasso di interesse.</p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Curva BP nel piano r-Y. Intercetta sull'asse r pari a r<sub>w</sub> − X/g, pendenza m/g. Punti sopra la BP: zona di avanzo. Punti sotto: zona di disavanzo. Le traslazioni parallele BP', BP'' rappresentano apprezzamenti e deprezzamenti del cambio.</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM-BP.html" 
+            title="Grafico interattivo: modello IS-LM-BP"
+            loading="lazy"></iframe>
   </div>
 
   <h4>Equilibrio simultaneo IS-LM-BP</h4>
 
   <p>L'equilibrio nel mercato dei beni, della moneta e nelle relazioni con l'estero è rappresentabile graficamente da una situazione in cui le curve IS, LM e BP si intersecano in un unico punto. A partire da questa situazione, lo spostamento di una qualsiasi delle tre curve determinerà uno squilibrio su almeno uno dei tre mercati. Il sistema tenderà quindi a tornare alla situazione iniziale o a trovare un nuovo equilibrio. L'esito dipende dal tipo di squilibrio (monetario, reale, dei conti con l'estero) e dal regime di cambi ipotizzato.</p>
 
-  <div class="figure-placeholder">
-    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
-    <div class="placeholder-desc">Equilibrio simultaneo IS-LM-BP: le tre curve si intersecano in un unico punto sul piano r-Y. IS inclinata negativamente, LM inclinata positivamente, BP inclinata positivamente con pendenza m/g.</div>
+  <div class="grafico-interattivo">
+    <iframe src="grafici/IS-LM-BP.html" 
+            title="Grafico interattivo: equilibrio simultaneo IS-LM-BP"
+            loading="lazy"></iframe>
   </div>
 </section>
 
