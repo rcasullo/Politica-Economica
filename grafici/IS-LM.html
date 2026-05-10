@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafico interattivo — Modello IS-LM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --is-color: #1a1a1a;
+  --lm-color: #1a4480;
+  --base-gray: #b5ada0;
+  --accent: #9b3a1f;
+}
+ 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px;
+}
+ 
+.wrap { max-width: 1000px; margin: 0 auto; }
+ 
+.grafico-card {
+  background: white;
+  border: 1px solid var(--rule);
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0;
+}
+ 
+.grafico-svg-wrap {
+  padding: 24px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fdfcf7;
+}
+ 
+.grafico-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  max-width: 520px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+ 
+.legenda {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+ 
+.legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+ 
+.legenda-line { width: 22px; height: 2px; }
+ 
+.grafico-controls {
+  padding: 22px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88em;
+}
+ 
+.controls-section { margin-bottom: 20px; }
+.controls-section:last-child { margin-bottom: 0; }
+ 
+.controls-label {
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+ 
+.slider-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+ 
+.slider-label {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+ 
+.slider-row input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  outline: none;
+}
+ 
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px; height: 14px;
+  background: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+ 
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+ 
+.slider-value {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.88em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+ 
+.scenari { display: flex; flex-direction: column; gap: 6px; }
+ 
+.scenari button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.8em;
+  font-weight: 500;
+  padding: 7px 12px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+ 
+.scenari button:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+ 
+.scenari button.reset {
+  border-style: dashed;
+  color: var(--muted);
+  font-style: italic;
+}
+ 
+.scenari button.reset:hover {
+  background: var(--paper-warm);
+  color: var(--ink);
+  border-style: solid;
+}
+ 
+.commento {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  margin-top: 0;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92em;
+  line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  grid-column: 1 / -1;
+}
+ 
+.commento-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+ 
+.commento p { margin-bottom: 8px; }
+.commento p:last-child { margin-bottom: 0; }
+.commento ul { margin-left: 20px; font-family: 'Source Serif 4', serif; }
+.commento li { margin-bottom: 4px; }
+ 
+.formula-inline {
+  font-family: 'Source Sans 3', monospace;
+  background: white;
+  padding: 1px 6px;
+  font-size: 0.95em;
+}
+ 
+@media (max-width: 800px) {
+  .grafico-card { grid-template-columns: 1fr; }
+  .grafico-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+ 
+<div class="wrap">
+ 
+<div class="grafico-card">
+ 
+  <div class="grafico-svg-wrap">
+    <svg id="svg-islm" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="30" x2="60" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <line x1="60" y1="330" x2="490" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <text x="40" y="40" font-size="13" font-style="italic" fill="#1a1a1a">r</text>
+      <text x="485" y="348" font-size="13" font-style="italic" fill="#1a1a1a">Y</text>
+      <text x="48" y="345" font-size="11" fill="#5a5550">O</text>
+      
+      <g id="ticks-x" stroke="#5a5550" stroke-width="0.8"></g>
+      <g id="ticks-y" stroke="#5a5550" stroke-width="0.8"></g>
+      
+      <!-- Curve di base (grigie tratteggiate) -->
+      <line id="is-base" x1="0" y1="0" x2="0" y2="0" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="5,4"/>
+      <line id="lm-base" x1="0" y1="0" x2="0" y2="0" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="5,4"/>
+      
+      <!-- Curve attuali -->
+      <line id="is-curve" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="2.5"/>
+      <line id="lm-curve" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2.5"/>
+      
+      <!-- LM trappola di liquidità (orizzontale, mostrata solo nello scenario) -->
+      <line id="lm-trap" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2.5" opacity="0"/>
+      
+      <!-- Etichette -->
+      <text id="is-label" x="0" y="0" font-size="13" fill="#1a1a1a" font-weight="700">IS</text>
+      <text id="lm-label" x="0" y="0" font-size="13" fill="#1a4480" font-weight="700">LM</text>
+      
+      <!-- Equilibrio iniziale (grigio) -->
+      <circle id="eq-base" cx="0" cy="0" r="3.5" fill="#b5ada0" opacity="0.7"/>
+      
+      <!-- Equilibrio attuale -->
+      <circle id="eq-point" cx="0" cy="0" r="4.5" fill="#9b3a1f"/>
+      <line id="eq-line-y" x1="0" y1="0" x2="0" y2="0" stroke="#9b3a1f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+      <line id="eq-line-r" x1="0" y1="0" x2="0" y2="0" stroke="#9b3a1f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+    </svg>
+    
+    <div class="legenda">
+      <div class="legenda-item"><span class="legenda-line" style="background: #1a1a1a;"></span>IS (mercato beni)</div>
+      <div class="legenda-item"><span class="legenda-line" style="background: #1a4480;"></span>LM (mercato moneta)</div>
+      <div class="legenda-item"><span class="legenda-line" style="background: #b5ada0;"></span>Posizione iniziale</div>
+    </div>
+  </div>
+ 
+  <div class="grafico-controls">
+    <div class="controls-section">
+      <div class="controls-label">Politica fiscale (IS)</div>
+      <div class="slider-row">
+        <span class="slider-label">G</span>
+        <input type="range" id="param-G" min="50" max="300" step="5" value="184">
+        <span class="slider-value" id="val-G">184</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">T</span>
+        <input type="range" id="param-T" min="0" max="200" step="5" value="80">
+        <span class="slider-value" id="val-T">80</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">t</span>
+        <input type="range" id="param-t" min="0" max="0.5" step="0.01" value="0.20">
+        <span class="slider-value" id="val-t">0.20</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">I₀</span>
+        <input type="range" id="param-I0" min="50" max="350" step="10" value="200">
+        <span class="slider-value" id="val-I0">200</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Politica monetaria (LM)</div>
+      <div class="slider-row">
+        <span class="slider-label">L<sup>S</sup></span>
+        <input type="range" id="param-LS" min="100" max="400" step="10" value="220">
+        <span class="slider-value" id="val-LS">220</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Scenari</div>
+      <div class="scenari">
+        <button onclick="applicaScenario('fiscaleEspansiva')">Politica fiscale espansiva (↑G)</button>
+        <button onclick="applicaScenario('monetariaEspansiva')">Politica monetaria espansiva (↑L<sup>S</sup>)</button>
+        <button onclick="applicaScenario('haavelmo')">Bilancio in pareggio (Haavelmo)</button>
+        <button onclick="applicaScenario('aumentoAliquota')">Aumento aliquota (↑t)</button>
+        <button onclick="applicaScenario('crisi')">Crisi: caduta investimenti (↓I₀)</button>
+        <button onclick="applicaScenario('trappola')">Trappola della liquidità</button>
+        <button class="reset" onclick="applicaScenario('reset')">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="commento">
+    <div class="commento-label">📖 Lettura economica</div>
+    <div id="commento-text">
+      <p>Stai osservando la <strong>situazione iniziale</strong>. L'equilibrio si trova all'intersezione delle due curve in (Y* = 600, r* = 8%): mercato dei beni (IS) e mercato monetario (LM) sono in equilibrio simultaneo.</p>
+      <p>Modifica un parametro o applica uno scenario per vedere come si sposta l'equilibrio.</p>
+    </div>
+  </div>
+ 
+</div>
+ 
+</div>
+ 
+<script>
+// === MODELLO IS-LM (economia chiusa) ===
+// IS: Y = (1/(1−c(1−t)))·(I₀ + G − cT − ar)
+//     equivalente: r = (I₀+G−cT − Y·k_is)/a, con k_is = 1−c(1−t)
+// LM: r = (L₀ − L^S/P)/v + (k/v)·Y
+ 
+const baseParams = {
+  G: 184, T: 80, I0: 200, c: 0.70, t: 0.20, a: 800,
+  LS: 220, L0: 80, k: 0.50, v: 2000
+};
+ 
+let params = { ...baseParams };
+let trappolaAttiva = false;
+ 
+const PLOT = {
+  xMin: 60, xMax: 490,
+  yMin: 30, yMax: 330,
+  YMin: 0, YMax: 1500,
+  rMin: 0, rMax: 0.20
+};
+ 
+function YtoX(Y) {
+  return PLOT.xMin + (Y - PLOT.YMin) / (PLOT.YMax - PLOT.YMin) * (PLOT.xMax - PLOT.xMin);
+}
+function rtoY(r) {
+  return PLOT.yMax - (r - PLOT.rMin) / (PLOT.rMax - PLOT.rMin) * (PLOT.yMax - PLOT.yMin);
+}
+ 
+function drawTicks() {
+  const ticksX = document.getElementById('ticks-x');
+  const ticksY = document.getElementById('ticks-y');
+  ticksX.innerHTML = '';
+  ticksY.innerHTML = '';
+  for (let Y = 0; Y <= PLOT.YMax; Y += 300) {
+    const x = YtoX(Y);
+    ticksX.innerHTML += `<line x1="${x}" y1="330" x2="${x}" y2="333"/>`;
+    if (Y > 0) ticksX.innerHTML += `<text x="${x}" y="344" font-size="9.5" fill="#8a857d" text-anchor="middle">${Y}</text>`;
+  }
+  for (let r = 0; r <= PLOT.rMax; r += 0.05) {
+    const y = rtoY(r);
+    ticksY.innerHTML += `<line x1="57" y1="${y}" x2="60" y2="${y}"/>`;
+    if (r > 0) ticksY.innerHTML += `<text x="54" y="${y+3}" font-size="9.5" fill="#8a857d" text-anchor="end">${(r*100).toFixed(0)}%</text>`;
+  }
+}
+ 
+function clipRetta(intercetta_r, pendenza) {
+  const candidati = [];
+  let r_Ymin = intercetta_r + pendenza * PLOT.YMin;
+  if (r_Ymin >= PLOT.rMin && r_Ymin <= PLOT.rMax) candidati.push({ Y: PLOT.YMin, r: r_Ymin });
+  let r_Ymax = intercetta_r + pendenza * PLOT.YMax;
+  if (r_Ymax >= PLOT.rMin && r_Ymax <= PLOT.rMax) candidati.push({ Y: PLOT.YMax, r: r_Ymax });
+  if (Math.abs(pendenza) > 1e-10) {
+    let Y_rmin = (PLOT.rMin - intercetta_r) / pendenza;
+    if (Y_rmin >= PLOT.YMin && Y_rmin <= PLOT.YMax) candidati.push({ Y: Y_rmin, r: PLOT.rMin });
+    let Y_rmax = (PLOT.rMax - intercetta_r) / pendenza;
+    if (Y_rmax >= PLOT.YMin && Y_rmax <= PLOT.YMax) candidati.push({ Y: Y_rmax, r: PLOT.rMax });
+  }
+  return candidati.length >= 2 ? { p1: candidati[0], p2: candidati[1], visibile: true } : { visibile: false };
+}
+ 
+// IS: r = (I0+G-cT - Y*k_is)/a
+function paramsIS(p) {
+  const k_is = 1 - p.c * (1 - p.t);
+  const intercetta = p.I0 + p.G - p.c * p.T;
+  return { intercetta_r: intercetta / p.a, pendenza: -k_is / p.a };
+}
+ 
+// LM: r = (L0-LS)/v + (k/v)*Y
+function paramsLM(p) {
+  return { intercetta_r: (p.L0 - p.LS) / p.v, pendenza: p.k / p.v };
+}
+ 
+function disegnaCurva(eq_par, lineId, labelId, labelText) {
+  const { intercetta_r, pendenza } = eq_par;
+  const result = clipRetta(intercetta_r, pendenza);
+  const line = document.getElementById(lineId);
+  const label = document.getElementById(labelId);
+  
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0);
+    label.setAttribute('opacity', 0);
+    return;
+  }
+  line.setAttribute('opacity', 1);
+  label.setAttribute('opacity', 1);
+  
+  const x1 = YtoX(result.p1.Y);
+  const y1 = rtoY(result.p1.r);
+  const x2 = YtoX(result.p2.Y);
+  const y2 = rtoY(result.p2.r);
+  line.setAttribute('x1', x1);
+  line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2);
+  line.setAttribute('y2', y2);
+  
+  const xRight = Math.max(x1, x2);
+  const yRight = (xRight === x1) ? y1 : y2;
+  label.setAttribute('x', xRight - 28);
+  label.setAttribute('y', yRight - 6);
+  label.textContent = labelText;
+}
+ 
+function disegnaCurvaBase(eq_par, lineId) {
+  const { intercetta_r, pendenza } = eq_par;
+  const result = clipRetta(intercetta_r, pendenza);
+  const line = document.getElementById(lineId);
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0);
+    return;
+  }
+  line.setAttribute('opacity', 0.6);
+  line.setAttribute('x1', YtoX(result.p1.Y));
+  line.setAttribute('y1', rtoY(result.p1.r));
+  line.setAttribute('x2', YtoX(result.p2.Y));
+  line.setAttribute('y2', rtoY(result.p2.r));
+}
+ 
+function calcoloEquilibrio(p) {
+  const is = paramsIS(p);
+  const lm = paramsLM(p);
+  const Y_star = (is.intercetta_r - lm.intercetta_r) / (lm.pendenza - is.pendenza);
+  const r_star = lm.intercetta_r + lm.pendenza * Y_star;
+  return { Y: Y_star, r: r_star };
+}
+ 
+function disegnaEquilibrio(p, pBase) {
+  const eqBase = calcoloEquilibrio(pBase);
+  const eqNew = calcoloEquilibrio(p);
+  
+  const baseDot = document.getElementById('eq-base');
+  if (eqBase.Y >= PLOT.YMin && eqBase.Y <= PLOT.YMax && eqBase.r >= PLOT.rMin && eqBase.r <= PLOT.rMax) {
+    baseDot.setAttribute('cx', YtoX(eqBase.Y));
+    baseDot.setAttribute('cy', rtoY(eqBase.r));
+    baseDot.setAttribute('opacity', 0.6);
+  } else {
+    baseDot.setAttribute('opacity', 0);
+  }
+  
+  const newDot = document.getElementById('eq-point');
+  const lineY = document.getElementById('eq-line-y');
+  const lineR = document.getElementById('eq-line-r');
+  
+  if (eqNew.Y >= PLOT.YMin && eqNew.Y <= PLOT.YMax && eqNew.r >= PLOT.rMin && eqNew.r <= PLOT.rMax) {
+    const cx = YtoX(eqNew.Y);
+    const cy = rtoY(eqNew.r);
+    newDot.setAttribute('cx', cx);
+    newDot.setAttribute('cy', cy);
+    newDot.setAttribute('opacity', 1);
+    lineY.setAttribute('x1', cx); lineY.setAttribute('y1', cy);
+    lineY.setAttribute('x2', cx); lineY.setAttribute('y2', PLOT.yMax);
+    lineY.setAttribute('opacity', 0.5);
+    lineR.setAttribute('x1', PLOT.xMin); lineR.setAttribute('y1', cy);
+    lineR.setAttribute('x2', cx); lineR.setAttribute('y2', cy);
+    lineR.setAttribute('opacity', 0.5);
+  } else {
+    newDot.setAttribute('opacity', 0);
+    lineY.setAttribute('opacity', 0);
+    lineR.setAttribute('opacity', 0);
+  }
+  
+  return { eqBase, eqNew };
+}
+ 
+// LM in trappola: orizzontale a r ≈ 0
+function disegnaLMTrappola() {
+  const r_trap = 0.005;
+  const lm = document.getElementById('lm-curve');
+  const lmLabel = document.getElementById('lm-label');
+  const lmTrap = document.getElementById('lm-trap');
+  
+  // Nascondo la LM normale
+  lm.setAttribute('opacity', 0);
+  
+  // Disegno la LM trappola orizzontale
+  lmTrap.setAttribute('opacity', 1);
+  lmTrap.setAttribute('x1', YtoX(PLOT.YMin));
+  lmTrap.setAttribute('y1', rtoY(r_trap));
+  lmTrap.setAttribute('x2', YtoX(PLOT.YMax));
+  lmTrap.setAttribute('y2', rtoY(r_trap));
+  
+  // Sposto l'etichetta
+  lmLabel.setAttribute('opacity', 1);
+  lmLabel.setAttribute('x', YtoX(PLOT.YMax) - 50);
+  lmLabel.setAttribute('y', rtoY(r_trap) - 6);
+  lmLabel.textContent = 'LM (trappola)';
+  
+  // Equilibrio: dove IS interseca LM orizzontale
+  // r_IS(Y) = r_trap → Y = (intercetta − a*r_trap)/k_is
+  const isP = paramsIS(params);
+  // Risolvo: r_trap = isP.intercetta_r + isP.pendenza*Y → Y = (r_trap - isP.intercetta_r)/isP.pendenza
+  const Y_eq = (r_trap - isP.intercetta_r) / isP.pendenza;
+  
+  const newDot = document.getElementById('eq-point');
+  const lineY = document.getElementById('eq-line-y');
+  const lineR = document.getElementById('eq-line-r');
+  
+  if (Y_eq >= PLOT.YMin && Y_eq <= PLOT.YMax) {
+    const cx = YtoX(Y_eq);
+    const cy = rtoY(r_trap);
+    newDot.setAttribute('cx', cx);
+    newDot.setAttribute('cy', cy);
+    newDot.setAttribute('opacity', 1);
+    lineY.setAttribute('x1', cx); lineY.setAttribute('y1', cy);
+    lineY.setAttribute('x2', cx); lineY.setAttribute('y2', PLOT.yMax);
+    lineY.setAttribute('opacity', 0.5);
+    lineR.setAttribute('x1', PLOT.xMin); lineR.setAttribute('y1', cy);
+    lineR.setAttribute('x2', cx); lineR.setAttribute('y2', cy);
+    lineR.setAttribute('opacity', 0.5);
+  }
+  
+  return { Y_eq, r_eq: r_trap };
+}
+ 
+function aggiorna() {
+  document.getElementById('val-G').textContent = params.G;
+  document.getElementById('val-T').textContent = params.T;
+  document.getElementById('val-t').textContent = params.t.toFixed(2);
+  document.getElementById('val-I0').textContent = params.I0;
+  document.getElementById('val-LS').textContent = params.LS;
+  
+  // Curve di base sempre
+  disegnaCurvaBase(paramsIS(baseParams), 'is-base');
+  disegnaCurvaBase(paramsLM(baseParams), 'lm-base');
+  
+  // IS sempre disegnata
+  disegnaCurva(paramsIS(params), 'is-curve', 'is-label', 'IS');
+  
+  // Nascondo trappola di default
+  document.getElementById('lm-trap').setAttribute('opacity', 0);
+  
+  if (trappolaAttiva) {
+    const trapEq = disegnaLMTrappola();
+    aggiornaCommentoTrappola(trapEq);
+  } else {
+    disegnaCurva(paramsLM(params), 'lm-curve', 'lm-label', 'LM');
+    const eq = disegnaEquilibrio(params, baseParams);
+    aggiornaCommento(eq);
+  }
+}
+ 
+function aggiornaCommento(eq) {
+  const c = document.getElementById('commento-text');
+  
+  const cambiamenti = [];
+  if (Math.abs(params.G - baseParams.G) > 0.5) cambiamenti.push(`G: ${baseParams.G} → ${params.G}`);
+  if (Math.abs(params.T - baseParams.T) > 0.5) cambiamenti.push(`T: ${baseParams.T} → ${params.T}`);
+  if (Math.abs(params.t - baseParams.t) > 0.005) cambiamenti.push(`t: ${baseParams.t.toFixed(2)} → ${params.t.toFixed(2)}`);
+  if (Math.abs(params.I0 - baseParams.I0) > 0.5) cambiamenti.push(`I₀: ${baseParams.I0} → ${params.I0}`);
+  if (Math.abs(params.LS - baseParams.LS) > 0.5) cambiamenti.push(`L<sup>S</sup>: ${baseParams.LS} → ${params.LS}`);
+  
+  if (cambiamenti.length === 0) {
+    c.innerHTML = `
+      <p>Stai osservando la <strong>situazione iniziale</strong>.</p>
+      <p>L'equilibrio è in (Y* = ${eq.eqBase.Y.toFixed(0)}, r* = ${(eq.eqBase.r*100).toFixed(2)}%): mercato dei beni (IS) e mercato monetario (LM) sono in equilibrio simultaneo.</p>
+      <p>Modifica un parametro o applica uno scenario per vedere come si sposta l'equilibrio.</p>
+    `;
+    return;
+  }
+  
+  const dY = eq.eqNew.Y - eq.eqBase.Y;
+  const dr = eq.eqNew.r - eq.eqBase.r;
+  
+  let html = `<p><strong>Cosa è cambiato:</strong> ${cambiamenti.join(', ')}.</p>`;
+  html += `<p><strong>Nuovo equilibrio:</strong> Y* passa da ${eq.eqBase.Y.toFixed(0)} a ${eq.eqNew.Y.toFixed(0)} (${dY > 0 ? '+' : ''}${dY.toFixed(0)}); r* passa da ${(eq.eqBase.r*100).toFixed(2)}% a ${(eq.eqNew.r*100).toFixed(2)}% (${dr > 0 ? '+' : ''}${(dr*100).toFixed(2)} p.p.).</p>`;
+  
+  // Letture specifiche
+  if (params.G > baseParams.G + 30 && params.LS === baseParams.LS && params.T === baseParams.T) {
+    html += `<p><strong>Lettura — politica fiscale espansiva:</strong> la IS trasla verso destra. Y aumenta, ma anche r: l'aumento di reddito alimenta la domanda transattiva di moneta, e dato che l'offerta è fissa, il tasso di interesse deve crescere. L'aumento di r riduce gli investimenti privati: è il fenomeno dello <strong>spiazzamento finanziario</strong> (crowding-out), che attenua l'effetto espansivo della spesa pubblica.</p>`;
+  }
+  if (params.LS > baseParams.LS + 50 && params.G === baseParams.G && params.T === baseParams.T) {
+    html += `<p><strong>Lettura — politica monetaria espansiva:</strong> la LM trasla verso destra (verso il basso). r si riduce, stimolando gli investimenti, e Y aumenta. La caduta di r genera un'espansione del reddito attraverso il canale degli investimenti.</p>`;
+  }
+  if (params.G > baseParams.G + 20 && params.T > baseParams.T + 20 && Math.abs((params.G-baseParams.G)-(params.T-baseParams.T)) < 5) {
+    html += `<p><strong>Lettura — Haavelmo:</strong> spesa pubblica e imposta in somma fissa aumentano della stessa quantità (ΔG = ΔT). La IS si trasla parallelamente verso destra, secondo il <strong>teorema del bilancio in pareggio</strong>: l'effetto sul reddito (al netto dell'aggiustamento monetario) è positivo e pari all'entità della manovra.</p>`;
+  }
+  if (params.t > baseParams.t + 0.05 && params.G === baseParams.G) {
+    html += `<p><strong>Lettura — aumento dell'aliquota:</strong> il moltiplicatore <span class="formula-inline">1/(1−c(1−t))</span> si riduce. La IS ruota appiattendosi: a parità di variazione di r, il reddito reagisce di meno. Il nuovo equilibrio si caratterizza per Y inferiore e r inferiore.</p>`;
+  }
+  if (params.I0 < baseParams.I0 - 30 && params.G === baseParams.G) {
+    html += `<p><strong>Lettura — caduta degli investimenti:</strong> aspettative pessimistiche delle imprese sull'efficienza marginale del capitale deprimono I₀. La IS trasla verso sinistra: Y si riduce, r si riduce. È il caso che giustifica l'intervento pubblico secondo Keynes: lo stato può intervenire con politica fiscale espansiva (↑G) per ricostituire la domanda aggregata.</p>`;
+  }
+  
+  c.innerHTML = html;
+}
+ 
+function aggiornaCommentoTrappola(trapEq) {
+  const c = document.getElementById('commento-text');
+  c.innerHTML = `
+    <p><strong>Trappola della liquidità.</strong> L'elasticità della domanda di moneta al tasso (<em>v</em>) tende all'infinito: nella zona rilevante la <strong>LM è orizzontale</strong> in corrispondenza di r ≈ 0. Lo scambio moneta-titoli si interrompe perché gli operatori, di fronte all'incertezza, hanno una preferenza pressoché infinita per la liquidità.</p>
+    <p><strong>Equilibrio in trappola:</strong> Y* ≈ ${trapEq.Y_eq.toFixed(0)}, r* ≈ 0. L'equilibrio è determinato esclusivamente dalla IS, perché la LM è orizzontale: <span class="formula-inline">Y = (I₀ + G − cT) / (1 − c(1−t))</span>.</p>
+    <p><strong>Conseguenze per la politica:</strong></p>
+    <ul>
+      <li><strong>Politica monetaria inefficace:</strong> la liquidità immessa dalla BC viene tesaurizzata e non entra nel circuito della spesa. Lo spiazzamento finanziario <span class="formula-inline">ak/v</span> tende a zero.</li>
+      <li><strong>Politica fiscale al massimo dell'efficacia:</strong> non c'è retroazione monetaria; uno spostamento della IS si traduce direttamente e per intero in variazione del reddito.</li>
+    </ul>
+    <p>Per uscire dalla trappola, applica un altro scenario o ripristina i parametri.</p>
+  `;
+}
+ 
+function applicaScenario(s) {
+  trappolaAttiva = false;
+  switch (s) {
+    case 'fiscaleEspansiva':
+      params = { ...baseParams, G: 240 };
+      break;
+    case 'monetariaEspansiva':
+      params = { ...baseParams, LS: 320 };
+      break;
+    case 'haavelmo':
+      params = { ...baseParams, G: 234, T: 130 };
+      break;
+    case 'aumentoAliquota':
+      params = { ...baseParams, t: 0.35 };
+      break;
+    case 'crisi':
+      params = { ...baseParams, I0: 100 };
+      break;
+    case 'trappola':
+      trappolaAttiva = true;
+      params = { ...baseParams };
+      break;
+    case 'reset':
+    default:
+      params = { ...baseParams };
+  }
+  document.getElementById('param-G').value = params.G;
+  document.getElementById('param-T').value = params.T;
+  document.getElementById('param-t').value = params.t;
+  document.getElementById('param-I0').value = params.I0;
+  document.getElementById('param-LS').value = params.LS;
+  aggiorna();
+}
+ 
+['G', 'T', 't', 'I0', 'LS'].forEach(p => {
+  document.getElementById('param-' + p).addEventListener('input', (e) => {
+    trappolaAttiva = false;
+    params[p] = parseFloat(e.target.value);
+    aggiorna();
+  });
+});
+ 
+drawTicks();
+aggiorna();
+</script>
+</body>
+</html>
