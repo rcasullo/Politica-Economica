@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafico interattivo — Teorema di Haavelmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --paper: #fafaf5; --paper-warm: #f2efe5; --paper-cool: #f5f4ee;
+  --muted: #5a5550; --muted-light: #8a857d;
+  --rule: #d8d4c8; --rule-strong: #b8b3a5;
+  --link: #1a4480; --accent: #6b4423;
+  --d-color: #1a1a1a; --line45-color: #8a857d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px;
+}
+
+.wrap { max-width: 920px; margin: 0 auto; }
+
+.grafico-card {
+  background: white; border: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1.3fr 1fr;
+}
+
+.grafico-svg-wrap {
+  padding: 24px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #fdfcf7;
+}
+
+.grafico-svg-wrap svg {
+  width: 100%; height: auto; max-width: 460px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.grafico-controls {
+  padding: 22px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9em;
+}
+
+.controls-section { margin-bottom: 22px; }
+.controls-section:last-child { margin-bottom: 0; }
+
+.controls-label {
+  font-size: 0.72em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 12px;
+}
+
+.slider-row {
+  display: grid; grid-template-columns: 28px 1fr 60px;
+  align-items: center; gap: 12px; margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic; font-weight: 600; font-size: 1em;
+}
+
+.slider-row input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--rule); border-radius: 2px; outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer;
+}
+
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer; border: none;
+}
+
+.slider-value {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenari { display: flex; flex-direction: column; gap: 8px; }
+
+.scenari button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em; font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper); color: var(--ink);
+  cursor: pointer; text-align: left;
+  transition: all 0.15s;
+}
+
+.scenari button:hover {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+
+.scenari button.reset {
+  border-style: dashed; color: var(--muted); font-style: italic;
+}
+
+.scenari button.reset:hover {
+  background: var(--paper-warm); color: var(--ink); border-style: solid;
+}
+
+.commento {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92em; line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  grid-column: 1 / -1;
+}
+
+.commento-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent); margin-bottom: 8px;
+}
+
+.commento p { margin-bottom: 8px; }
+.commento p:last-child { margin-bottom: 0; }
+
+.formula-inline {
+  font-family: 'Source Sans 3', monospace;
+  background: white; padding: 1px 6px; font-size: 0.95em;
+}
+
+.highlight-box {
+  background: white;
+  border: 1px solid var(--rule-strong);
+  border-left: 3px solid var(--ink);
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.88em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .grafico-card { grid-template-columns: 1fr; }
+  .grafico-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="grafico-card">
+
+  <div class="grafico-svg-wrap">
+    <svg viewBox="0 0 460 380" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="20" x2="60" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <line x1="60" y1="330" x2="430" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <text x="35" y="30" font-size="13" font-style="italic" fill="#1a1a1a">D, Y</text>
+      <text x="425" y="348" font-size="13" font-style="italic" fill="#1a1a1a">Y</text>
+      <text x="48" y="345" font-size="11" fill="#5a5550">O</text>
+      
+      <g id="ticks-x" stroke="#5a5550" stroke-width="0.8"></g>
+      <g id="ticks-y" stroke="#5a5550" stroke-width="0.8"></g>
+      
+      <!-- Bisettrice 45°: D=Y -->
+      <line id="line45" x1="0" y1="0" x2="0" y2="0" stroke="#8a857d" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <text id="label45" x="0" y="0" font-size="11" fill="#8a857d" font-style="italic">D = Y (45°)</text>
+      
+      <!-- Curva di domanda iniziale (grigia tratteggiata) -->
+      <line id="d-base-line" x1="0" y1="0" x2="0" y2="0" stroke="#999285" stroke-width="2" stroke-dasharray="5,4"/>
+      <text id="d-base-label" x="0" y="0" font-size="12" fill="#999285" font-weight="600">D₀</text>
+      
+      <!-- Curva di domanda attuale -->
+      <line id="d-new-line" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="2.5"/>
+      <text id="d-new-label" x="0" y="0" font-size="13" fill="#1a1a1a" font-weight="700">D</text>
+      
+      <!-- Punto di equilibrio iniziale -->
+      <circle id="eq-base" cx="0" cy="0" r="3.5" fill="#b5ada0" opacity="0.7"/>
+      
+      <!-- Punto di equilibrio attuale -->
+      <circle id="eq-new" cx="0" cy="0" r="4.5" fill="#9b3a1f"/>
+      <line id="eq-line-y" x1="0" y1="0" x2="0" y2="0" stroke="#9b3a1f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+      
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b4423"/>
+        </marker>
+      </defs>
+      <line id="shift-arrow" x1="0" y1="0" x2="0" y2="0" stroke="#6b4423" stroke-width="1.5" marker-end="url(#arrowhead)" opacity="0"/>
+    </svg>
+  </div>
+
+  <div class="grafico-controls">
+    <div class="controls-section">
+      <div class="controls-label">Parametri</div>
+      
+      <div class="slider-row">
+        <span class="slider-label">G</span>
+        <input type="range" id="param-G" min="0" max="200" step="5" value="100">
+        <span class="slider-value" id="val-G">100</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">T</span>
+        <input type="range" id="param-T" min="0" max="200" step="5" value="100">
+        <span class="slider-value" id="val-T">100</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">I</span>
+        <input type="range" id="param-I" min="0" max="200" step="5" value="80">
+        <span class="slider-value" id="val-I">80</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">c</span>
+        <input type="range" id="param-c" min="0.3" max="0.95" step="0.01" value="0.7">
+        <span class="slider-value" id="val-c">0.70</span>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="controls-label">Scenari</div>
+      <div class="scenari">
+        <button onclick="applicaScenario('haavelmo')">Bilancio in pareggio (ΔG = ΔT)</button>
+        <button onclick="applicaScenario('soloG')">Solo aumento di G</button>
+        <button onclick="applicaScenario('soloT')">Solo aumento di T</button>
+        <button class="reset" onclick="applicaScenario('reset')">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="commento">
+    <div class="commento-label">📖 Lettura economica</div>
+    <div id="commento-text">
+      <p>Stai osservando il <strong>modello reddito-spesa</strong> in equilibrio iniziale.</p>
+      <p>La curva di domanda aggregata è <span class="formula-inline">D = c(Y − T) + I + G</span>: ha intercetta <span class="formula-inline">−cT + I + G</span> e pendenza pari alla propensione al consumo <em>c</em>. L'equilibrio del mercato dei beni si realizza dove <em>D = Y</em>, ossia all'intersezione tra la curva di domanda e la bisettrice a 45°.</p>
+      <p>Applica lo scenario <strong>"Bilancio in pareggio"</strong> per verificare il teorema di Haavelmo: ΔY = ΔG = ΔT.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// === MODELLO REDDITO-SPESA ===
+// D = c(Y - T) + I + G
+// Equilibrio: D = Y → Y = (I + G - cT) / (1 - c)
+
+const baseParams = { G: 100, T: 100, I: 80, c: 0.70 };
+let params = { ...baseParams };
+
+const PLOT = {
+  xMin: 60, xMax: 430,
+  yMin: 20, yMax: 330,
+  YMin: 0, YMax: 1500,
+  DMin: 0, DMax: 1500
+};
+
+function YtoX(Y) { return PLOT.xMin + (Y - PLOT.YMin) / (PLOT.YMax - PLOT.YMin) * (PLOT.xMax - PLOT.xMin); }
+function DtoYsvg(D) { return PLOT.yMax - (D - PLOT.DMin) / (PLOT.DMax - PLOT.DMin) * (PLOT.yMax - PLOT.yMin); }
+
+function drawTicks() {
+  const ticksX = document.getElementById('ticks-x');
+  const ticksY = document.getElementById('ticks-y');
+  ticksX.innerHTML = ''; ticksY.innerHTML = '';
+  for (let Y = 0; Y <= PLOT.YMax; Y += 300) {
+    const x = YtoX(Y);
+    ticksX.innerHTML += `<line x1="${x}" y1="330" x2="${x}" y2="333"/>`;
+    if (Y > 0) ticksX.innerHTML += `<text x="${x}" y="344" font-size="9.5" fill="#8a857d" text-anchor="middle">${Y}</text>`;
+  }
+  for (let D = 0; D <= PLOT.DMax; D += 300) {
+    const y = DtoYsvg(D);
+    ticksY.innerHTML += `<line x1="57" y1="${y}" x2="60" y2="${y}"/>`;
+    if (D > 0) ticksY.innerHTML += `<text x="54" y="${y+3}" font-size="9.5" fill="#8a857d" text-anchor="end">${D}</text>`;
+  }
+}
+
+function disegnaBisettrice() {
+  // D = Y → linea che passa per (0,0) e (Ymax, Ymax) se DMax >= YMax
+  const Ymax_plot = Math.min(PLOT.YMax, PLOT.DMax);
+  const line = document.getElementById('line45');
+  line.setAttribute('x1', YtoX(0));
+  line.setAttribute('y1', DtoYsvg(0));
+  line.setAttribute('x2', YtoX(Ymax_plot));
+  line.setAttribute('y2', DtoYsvg(Ymax_plot));
+  
+  const lab = document.getElementById('label45');
+  lab.setAttribute('x', YtoX(Ymax_plot) - 80);
+  lab.setAttribute('y', DtoYsvg(Ymax_plot) - 8);
+}
+
+function calcolaCurvaDomanda(p) {
+  // D = c(Y-T) + I + G = cY + (I + G - cT)
+  // Trovo intersezioni con il bordo del grafico
+  const intercetta = p.I + p.G - p.c * p.T;
+  
+  const candidati = [];
+  // a Y=YMin
+  let D_Ymin = p.c * PLOT.YMin + intercetta;
+  if (D_Ymin >= PLOT.DMin && D_Ymin <= PLOT.DMax) candidati.push({ Y: PLOT.YMin, D: D_Ymin });
+  // a Y=YMax
+  let D_Ymax = p.c * PLOT.YMax + intercetta;
+  if (D_Ymax >= PLOT.DMin && D_Ymax <= PLOT.DMax) candidati.push({ Y: PLOT.YMax, D: D_Ymax });
+  // a D=DMin
+  if (p.c > 0) {
+    let Y_Dmin = (PLOT.DMin - intercetta) / p.c;
+    if (Y_Dmin >= PLOT.YMin && Y_Dmin <= PLOT.YMax) candidati.push({ Y: Y_Dmin, D: PLOT.DMin });
+    let Y_Dmax = (PLOT.DMax - intercetta) / p.c;
+    if (Y_Dmax >= PLOT.YMin && Y_Dmax <= PLOT.YMax) candidati.push({ Y: Y_Dmax, D: PLOT.DMax });
+  }
+  
+  return candidati.length >= 2 ? { p1: candidati[0], p2: candidati[1], intercetta, visibile: true } : { visibile: false };
+}
+
+function disegnaDomanda(p, lineId, labelId, labelText, posOffset) {
+  const result = calcolaCurvaDomanda(p);
+  const line = document.getElementById(lineId);
+  const label = document.getElementById(labelId);
+  
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0); label.setAttribute('opacity', 0); return;
+  }
+  line.setAttribute('opacity', 1); label.setAttribute('opacity', 1);
+  
+  const x1 = YtoX(result.p1.Y), y1 = DtoYsvg(result.p1.D);
+  const x2 = YtoX(result.p2.Y), y2 = DtoYsvg(result.p2.D);
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  
+  const xRight = Math.max(x1, x2);
+  const yRight = (xRight === x1) ? y1 : y2;
+  label.setAttribute('x', xRight - 30 + (posOffset?.x || 0));
+  label.setAttribute('y', yRight - 8 + (posOffset?.y || 0));
+  label.textContent = labelText;
+}
+
+function calcoloEquilibrio(p) {
+  // Y* = (I + G - cT) / (1 - c)
+  return (p.I + p.G - p.c * p.T) / (1 - p.c);
+}
+
+function disegnaEquilibrio() {
+  const Y_base = calcoloEquilibrio(baseParams);
+  const Y_new = calcoloEquilibrio(params);
+  
+  const eqBase = document.getElementById('eq-base');
+  if (Y_base >= PLOT.YMin && Y_base <= PLOT.YMax) {
+    eqBase.setAttribute('cx', YtoX(Y_base));
+    eqBase.setAttribute('cy', DtoYsvg(Y_base));
+    eqBase.setAttribute('opacity', 0.6);
+  } else {
+    eqBase.setAttribute('opacity', 0);
+  }
+  
+  const eqNew = document.getElementById('eq-new');
+  const lineY = document.getElementById('eq-line-y');
+  if (Y_new >= PLOT.YMin && Y_new <= PLOT.YMax) {
+    const cx = YtoX(Y_new);
+    const cy = DtoYsvg(Y_new);
+    eqNew.setAttribute('cx', cx);
+    eqNew.setAttribute('cy', cy);
+    eqNew.setAttribute('opacity', 1);
+    lineY.setAttribute('x1', cx); lineY.setAttribute('y1', cy);
+    lineY.setAttribute('x2', cx); lineY.setAttribute('y2', PLOT.yMax);
+    lineY.setAttribute('opacity', 0.5);
+  } else {
+    eqNew.setAttribute('opacity', 0);
+    lineY.setAttribute('opacity', 0);
+  }
+  
+  return { Y_base, Y_new };
+}
+
+function disegnaFreccia(Y_base, Y_new) {
+  const arrow = document.getElementById('shift-arrow');
+  if (Math.abs(Y_base - Y_new) < 30) { arrow.setAttribute('opacity', 0); return; }
+  
+  const Dmid = calcoloEquilibrio(baseParams) * 0.4;  // posizione verticale arbitraria, parte bassa
+  arrow.setAttribute('x1', YtoX(Y_base));
+  arrow.setAttribute('y1', DtoYsvg(Dmid));
+  arrow.setAttribute('x2', YtoX(Y_new));
+  arrow.setAttribute('y2', DtoYsvg(Dmid));
+  arrow.setAttribute('opacity', 1);
+}
+
+function aggiorna() {
+  document.getElementById('val-G').textContent = params.G;
+  document.getElementById('val-T').textContent = params.T;
+  document.getElementById('val-I').textContent = params.I;
+  document.getElementById('val-c').textContent = params.c.toFixed(2);
+  
+  disegnaBisettrice();
+  disegnaDomanda(baseParams, 'd-base-line', 'd-base-label', 'D₀', { x: -8, y: -2 });
+  disegnaDomanda(params, 'd-new-line', 'd-new-label', 'D', { x: 4, y: 4 });
+  
+  const eq = disegnaEquilibrio();
+  disegnaFreccia(eq.Y_base, eq.Y_new);
+  aggiornaCommento(eq);
+}
+
+function aggiornaCommento(eq) {
+  const c = document.getElementById('commento-text');
+  const moltBase = 1 / (1 - baseParams.c);
+  const dY = eq.Y_new - eq.Y_base;
+  const dG = params.G - baseParams.G;
+  const dT = params.T - baseParams.T;
+  const dI = params.I - baseParams.I;
+  
+  const cambiamenti = [];
+  if (Math.abs(dG) > 0.5) cambiamenti.push(`G: ${baseParams.G} → ${params.G}`);
+  if (Math.abs(dT) > 0.5) cambiamenti.push(`T: ${baseParams.T} → ${params.T}`);
+  if (Math.abs(dI) > 0.5) cambiamenti.push(`I: ${baseParams.I} → ${params.I}`);
+  if (Math.abs(params.c - baseParams.c) > 0.005) cambiamenti.push(`c: ${baseParams.c.toFixed(2)} → ${params.c.toFixed(2)}`);
+  
+  if (cambiamenti.length === 0) {
+    c.innerHTML = `
+      <p>Stai osservando il <strong>modello reddito-spesa</strong> in equilibrio iniziale.</p>
+      <p>La curva di domanda aggregata è <span class="formula-inline">D = c(Y − T) + I + G</span>: ha intercetta <span class="formula-inline">−cT + I + G = ${(baseParams.I + baseParams.G - baseParams.c*baseParams.T).toFixed(0)}</span> e pendenza <span class="formula-inline">c = ${baseParams.c.toFixed(2)}</span>. L'equilibrio si realizza dove <em>D = Y</em>, all'intersezione con la bisettrice a 45°.</p>
+      <p>Reddito di equilibrio: <span class="formula-inline">Y* = (I + G − cT)/(1−c) = ${eq.Y_base.toFixed(0)}</span>. Moltiplicatore: <span class="formula-inline">1/(1−c) = ${moltBase.toFixed(2)}</span>.</p>
+      <p>Applica lo scenario <strong>"Bilancio in pareggio"</strong> per verificare il teorema di Haavelmo.</p>
+    `;
+    return;
+  }
+  
+  let html = `<p><strong>Cosa è cambiato:</strong> ${cambiamenti.join(', ')}.</p>`;
+  
+  // Caso Haavelmo: ΔG = ΔT con altri parametri invariati
+  if (Math.abs(dG - dT) < 0.5 && Math.abs(dG) > 5 && Math.abs(dI) < 0.5 && Math.abs(params.c - baseParams.c) < 0.005) {
+    html += `
+      <p><strong>Lettura — Teorema di Haavelmo (verifica numerica):</strong></p>
+      <div class="highlight-box">
+        ΔG = ${dG > 0 ? '+' : ''}${dG.toFixed(0)}<br>
+        ΔT = ${dT > 0 ? '+' : ''}${dT.toFixed(0)}<br>
+        ΔY = ${dY > 0 ? '+' : ''}${dY.toFixed(0)}
+      </div>
+      <p>I tre valori coincidono: <strong>ΔY = ΔG = ΔT</strong>. La curva di domanda <em>D</em> trasla verso l'alto di una quantità pari a <span class="formula-inline">ΔG − cΔT = (1−c)ΔG</span>; l'effetto sul reddito di equilibrio, amplificato dal moltiplicatore <span class="formula-inline">1/(1−c)</span>, vale esattamente <span class="formula-inline">ΔG</span>.</p>
+      <p>Il bilancio pubblico resta in pareggio (ΔG = ΔT), eppure la manovra produce effetti reali sul reddito: questo è il risultato non banale del teorema. Il meccanismo: G entra direttamente nella domanda, mentre T entra solo indirettamente (riducendo il consumo di una frazione <em>c</em>). La differenza non si compensa.</p>
+    `;
+  } else if (dG > 5 && Math.abs(dT) < 0.5 && Math.abs(dI) < 0.5 && Math.abs(params.c - baseParams.c) < 0.005) {
+    html += `
+      <p><strong>Lettura — politica fiscale espansiva senza copertura:</strong> aumento di G, T invariata. La curva D trasla verso l'alto di ΔG; il reddito di equilibrio aumenta di <span class="formula-inline">ΔG·1/(1−c) = ${dG}·${moltBase.toFixed(2)} = ${(dG*moltBase).toFixed(0)}</span>.</p>
+      <div class="highlight-box">
+        ΔG = +${dG}, &nbsp; ΔT = 0, &nbsp; ΔY = ${dY > 0 ? '+' : ''}${dY.toFixed(0)} (amplificato dal moltiplicatore)
+      </div>
+      <p>Confronta con lo scenario "Bilancio in pareggio": un aumento equivalente di G accompagnato da pari aumento di T produce un effetto sul reddito <em>inferiore</em> (pari a ΔG anziché ΔG/(1−c)), ma con bilancio pubblico in pareggio.</p>
+    `;
+  } else if (dT > 5 && Math.abs(dG) < 0.5 && Math.abs(dI) < 0.5 && Math.abs(params.c - baseParams.c) < 0.005) {
+    html += `
+      <p><strong>Lettura — aumento delle imposte (senza variazione di G):</strong> il prelievo riduce il reddito disponibile delle famiglie e quindi il consumo. La curva D trasla verso il basso di <span class="formula-inline">cΔT</span>.</p>
+      <div class="highlight-box">
+        ΔG = 0, &nbsp; ΔT = +${dT}, &nbsp; ΔY = ${dY.toFixed(0)} (= −cΔT/(1−c) = −${(dT*baseParams.c*moltBase).toFixed(0)})
+      </div>
+      <p>L'effetto è inferiore in valore assoluto a quello di una pari riduzione di G, perché solo una quota <em>c</em> di ΔT sarebbe altrimenti finita in consumo.</p>
+    `;
+  } else {
+    html += `<p>Il reddito di equilibrio passa da ${eq.Y_base.toFixed(0)} a ${eq.Y_new.toFixed(0)} (variazione: ${dY > 0 ? '+' : ''}${dY.toFixed(0)}).</p>`;
+  }
+  
+  c.innerHTML = html;
+}
+
+function applicaScenario(s) {
+  switch (s) {
+    case 'haavelmo': params = { ...baseParams, G: 150, T: 150 }; break;
+    case 'soloG': params = { ...baseParams, G: 150 }; break;
+    case 'soloT': params = { ...baseParams, T: 150 }; break;
+    default: params = { ...baseParams };
+  }
+  document.getElementById('param-G').value = params.G;
+  document.getElementById('param-T').value = params.T;
+  document.getElementById('param-I').value = params.I;
+  document.getElementById('param-c').value = params.c;
+  aggiorna();
+}
+
+['G', 'T', 'I', 'c'].forEach(p => {
+  document.getElementById('param-' + p).addEventListener('input', (e) => {
+    params[p] = parseFloat(e.target.value);
+    aggiorna();
+  });
+});
+
+drawTicks();
+aggiorna();
+</script>
+</body>
+</html>
