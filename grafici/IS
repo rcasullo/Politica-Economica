@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafico interattivo — Curva IS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --paper: #fafaf5; --paper-warm: #f2efe5; --paper-cool: #f5f4ee;
+  --muted: #5a5550; --muted-light: #8a857d;
+  --rule: #d8d4c8; --rule-strong: #b8b3a5;
+  --link: #1a4480; --accent: #6b4423;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px;
+}
+
+.wrap { max-width: 920px; margin: 0 auto; }
+
+.grafico-card {
+  background: white; border: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1.3fr 1fr;
+}
+
+.grafico-svg-wrap {
+  padding: 24px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #fdfcf7;
+}
+
+.grafico-svg-wrap svg {
+  width: 100%; height: auto; max-width: 460px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.grafico-controls {
+  padding: 22px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9em;
+}
+
+.controls-section { margin-bottom: 22px; }
+.controls-section:last-child { margin-bottom: 0; }
+
+.controls-label {
+  font-size: 0.72em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 12px;
+}
+
+.slider-row {
+  display: grid; grid-template-columns: 28px 1fr 60px;
+  align-items: center; gap: 12px; margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic; font-weight: 600; font-size: 1em;
+}
+
+.slider-row input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--rule); border-radius: 2px; outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer;
+}
+
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer; border: none;
+}
+
+.slider-value {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenari { display: flex; flex-direction: column; gap: 8px; }
+
+.scenari button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em; font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper); color: var(--ink);
+  cursor: pointer; text-align: left;
+  transition: all 0.15s;
+}
+
+.scenari button:hover {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+
+.scenari button.reset {
+  border-style: dashed; color: var(--muted); font-style: italic;
+}
+
+.scenari button.reset:hover {
+  background: var(--paper-warm); color: var(--ink); border-style: solid;
+}
+
+.commento {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92em; line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  grid-column: 1 / -1;
+}
+
+.commento-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent); margin-bottom: 8px;
+}
+
+.commento p { margin-bottom: 8px; }
+.commento p:last-child { margin-bottom: 0; }
+
+.formula-inline {
+  font-family: 'Source Sans 3', monospace;
+  background: white; padding: 1px 6px; font-size: 0.95em;
+}
+
+@media (max-width: 720px) {
+  .grafico-card { grid-template-columns: 1fr; }
+  .grafico-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="grafico-card">
+
+  <div class="grafico-svg-wrap">
+    <svg viewBox="0 0 460 360" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="30" x2="60" y2="310" stroke="#1a1a1a" stroke-width="1.2"/>
+      <line x1="60" y1="310" x2="430" y2="310" stroke="#1a1a1a" stroke-width="1.2"/>
+      <text x="40" y="40" font-size="13" font-style="italic" fill="#1a1a1a">r</text>
+      <text x="425" y="328" font-size="13" font-style="italic" fill="#1a1a1a">Y</text>
+      <text x="48" y="325" font-size="11" fill="#5a5550">O</text>
+      
+      <g id="ticks-x" stroke="#5a5550" stroke-width="0.8"></g>
+      <g id="ticks-y" stroke="#5a5550" stroke-width="0.8"></g>
+      
+      <line id="is-base-line" x1="0" y1="0" x2="0" y2="0" stroke="#999285" stroke-width="2" stroke-dasharray="5,4"/>
+      <text id="is-base-label" x="0" y="0" font-size="12" fill="#999285" font-weight="600">IS₀</text>
+      
+      <line id="is-new-line" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="2.5"/>
+      <text id="is-new-label" x="0" y="0" font-size="13" fill="#1a1a1a" font-weight="700">IS</text>
+      
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b4423"/>
+        </marker>
+      </defs>
+      <line id="shift-arrow" x1="0" y1="0" x2="0" y2="0" stroke="#6b4423" stroke-width="1.5" marker-end="url(#arrowhead)" opacity="0"/>
+    </svg>
+  </div>
+
+  <div class="grafico-controls">
+    <div class="controls-section">
+      <div class="controls-label">Parametri</div>
+      
+      <div class="slider-row">
+        <span class="slider-label">G</span>
+        <input type="range" id="param-G" min="0" max="200" step="5" value="100">
+        <span class="slider-value" id="val-G">100</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">T</span>
+        <input type="range" id="param-T" min="0" max="200" step="5" value="80">
+        <span class="slider-value" id="val-T">80</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">I₀</span>
+        <input type="range" id="param-I0" min="0" max="200" step="5" value="100">
+        <span class="slider-value" id="val-I0">100</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">c</span>
+        <input type="range" id="param-c" min="0.3" max="0.95" step="0.01" value="0.7">
+        <span class="slider-value" id="val-c">0.70</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">t</span>
+        <input type="range" id="param-t" min="0" max="0.5" step="0.01" value="0.20">
+        <span class="slider-value" id="val-t">0.20</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">a</span>
+        <input type="range" id="param-a" min="100" max="2000" step="50" value="800">
+        <span class="slider-value" id="val-a">800</span>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="controls-label">Scenari</div>
+      <div class="scenari">
+        <button onclick="applicaScenario('aumentoG')">Politica fiscale espansiva (↑G)</button>
+        <button onclick="applicaScenario('aumentoT')">Aumento imposte (↑T)</button>
+        <button onclick="applicaScenario('aumentoAliquota')">Aumento aliquota (↑t)</button>
+        <button onclick="applicaScenario('crisi')">Crisi: caduta investimenti (↓I₀)</button>
+        <button class="reset" onclick="applicaScenario('reset')">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="commento">
+    <div class="commento-label">📖 Lettura economica</div>
+    <div id="commento-text">
+      <p>Stai osservando la situazione iniziale. La curva IS rappresenta le coppie <em>(Y, r)</em> per cui il mercato dei beni è in equilibrio: <span class="formula-inline">Y = (I₀ + G − cT − ar) / (1 − c(1−t))</span>.</p>
+      <p>Modifica un parametro o applica uno scenario per vedere come si sposta la curva.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const baseParams = { G: 100, T: 80, I0: 100, c: 0.70, t: 0.20, a: 800 };
+let params = { ...baseParams };
+
+const PLOT = { xMin: 60, xMax: 430, yMin: 30, yMax: 310, YMin: 0, YMax: 1500, rMin: 0, rMax: 0.20 };
+
+function YtoX(Y) { return PLOT.xMin + (Y - PLOT.YMin) / (PLOT.YMax - PLOT.YMin) * (PLOT.xMax - PLOT.xMin); }
+function rtoY(r) { return PLOT.yMax - (r - PLOT.rMin) / (PLOT.rMax - PLOT.rMin) * (PLOT.yMax - PLOT.yMin); }
+
+function drawTicks() {
+  const ticksX = document.getElementById('ticks-x');
+  const ticksY = document.getElementById('ticks-y');
+  ticksX.innerHTML = ''; ticksY.innerHTML = '';
+  for (let Y = 0; Y <= PLOT.YMax; Y += 300) {
+    const x = YtoX(Y);
+    ticksX.innerHTML += `<line x1="${x}" y1="310" x2="${x}" y2="313"/>`;
+    if (Y > 0) ticksX.innerHTML += `<text x="${x}" y="324" font-size="9.5" fill="#8a857d" text-anchor="middle">${Y}</text>`;
+  }
+  for (let r = 0; r <= PLOT.rMax; r += 0.05) {
+    const y = rtoY(r);
+    ticksY.innerHTML += `<line x1="57" y1="${y}" x2="60" y2="${y}"/>`;
+    if (r > 0) ticksY.innerHTML += `<text x="54" y="${y+3}" font-size="9.5" fill="#8a857d" text-anchor="end">${(r*100).toFixed(0)}%</text>`;
+  }
+}
+
+function calcolaIS(p) {
+  const k = 1 - p.c * (1 - p.t);
+  const intercetta = p.I0 + p.G - p.c * p.T;
+  
+  const candidati = [];
+  let r1 = (intercetta - k * PLOT.YMin) / p.a;
+  if (r1 >= PLOT.rMin && r1 <= PLOT.rMax) candidati.push({ Y: PLOT.YMin, r: r1 });
+  let r2 = (intercetta - k * PLOT.YMax) / p.a;
+  if (r2 >= PLOT.rMin && r2 <= PLOT.rMax) candidati.push({ Y: PLOT.YMax, r: r2 });
+  let Y1 = (intercetta - p.a * PLOT.rMin) / k;
+  if (Y1 >= PLOT.YMin && Y1 <= PLOT.YMax) candidati.push({ Y: Y1, r: PLOT.rMin });
+  let Y2 = (intercetta - p.a * PLOT.rMax) / k;
+  if (Y2 >= PLOT.YMin && Y2 <= PLOT.YMax) candidati.push({ Y: Y2, r: PLOT.rMax });
+  
+  return candidati.length >= 2 ? { p1: candidati[0], p2: candidati[1], visibile: true } : { visibile: false };
+}
+
+function disegnaIS(p, lineId, labelId, labelText, posOffset) {
+  const result = calcolaIS(p);
+  const line = document.getElementById(lineId);
+  const label = document.getElementById(labelId);
+  
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0); label.setAttribute('opacity', 0); return;
+  }
+  line.setAttribute('opacity', 1); label.setAttribute('opacity', 1);
+  
+  const x1 = YtoX(result.p1.Y), y1 = rtoY(result.p1.r);
+  const x2 = YtoX(result.p2.Y), y2 = rtoY(result.p2.r);
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  
+  const xRight = Math.max(x1, x2);
+  const yRight = (xRight === x1) ? y1 : y2;
+  label.setAttribute('x', xRight - 28 + (posOffset?.x || 0));
+  label.setAttribute('y', yRight - 6 + (posOffset?.y || 0));
+  label.textContent = labelText;
+}
+
+function disegnaFreccia(pBase, pNew) {
+  const arrow = document.getElementById('shift-arrow');
+  const rMid = 0.08;
+  const kBase = 1 - pBase.c * (1 - pBase.t);
+  const kNew = 1 - pNew.c * (1 - pNew.t);
+  const Ybase = (pBase.I0 + pBase.G - pBase.c * pBase.T - pBase.a * rMid) / kBase;
+  const Ynew = (pNew.I0 + pNew.G - pNew.c * pNew.T - pNew.a * rMid) / kNew;
+  
+  if (Math.abs(Ybase - Ynew) < 30) { arrow.setAttribute('opacity', 0); return; }
+  
+  arrow.setAttribute('x1', YtoX(Ybase)); arrow.setAttribute('y1', rtoY(rMid));
+  arrow.setAttribute('x2', YtoX(Ynew)); arrow.setAttribute('y2', rtoY(rMid));
+  arrow.setAttribute('opacity', 1);
+}
+
+function aggiorna() {
+  document.getElementById('val-G').textContent = params.G;
+  document.getElementById('val-T').textContent = params.T;
+  document.getElementById('val-I0').textContent = params.I0;
+  document.getElementById('val-c').textContent = params.c.toFixed(2);
+  document.getElementById('val-t').textContent = params.t.toFixed(2);
+  document.getElementById('val-a').textContent = params.a;
+  
+  disegnaIS(baseParams, 'is-base-line', 'is-base-label', 'IS₀', { x: -8, y: -2 });
+  disegnaIS(params, 'is-new-line', 'is-new-label', 'IS', { x: 4, y: 4 });
+  disegnaFreccia(baseParams, params);
+  aggiornaCommento();
+}
+
+function aggiornaCommento() {
+  const c = document.getElementById('commento-text');
+  const moltBase = 1 / (1 - baseParams.c * (1 - baseParams.t));
+  const moltNew = 1 / (1 - params.c * (1 - params.t));
+  
+  const rFix = 0.08;
+  const Ybase = (baseParams.I0 + baseParams.G - baseParams.c * baseParams.T - baseParams.a * rFix) * moltBase;
+  const Ynew = (params.I0 + params.G - params.c * params.T - params.a * rFix) * moltNew;
+  const dY = Ynew - Ybase;
+  
+  const cambiamenti = [];
+  const dG = params.G - baseParams.G, dT = params.T - baseParams.T;
+  
+  if (Math.abs(dG) > 0.5) cambiamenti.push(`G: ${baseParams.G} → ${params.G}`);
+  if (Math.abs(dT) > 0.5) cambiamenti.push(`T: ${baseParams.T} → ${params.T}`);
+  if (Math.abs(params.I0 - baseParams.I0) > 0.5) cambiamenti.push(`I₀: ${baseParams.I0} → ${params.I0}`);
+  if (Math.abs(params.c - baseParams.c) > 0.005) cambiamenti.push(`c: ${baseParams.c.toFixed(2)} → ${params.c.toFixed(2)}`);
+  if (Math.abs(params.t - baseParams.t) > 0.005) cambiamenti.push(`t: ${baseParams.t.toFixed(2)} → ${params.t.toFixed(2)}`);
+  if (Math.abs(params.a - baseParams.a) > 0.5) cambiamenti.push(`a: ${baseParams.a} → ${params.a}`);
+  
+  if (cambiamenti.length === 0) {
+    c.innerHTML = `
+      <p>Stai osservando la <strong>situazione iniziale</strong>. La curva IS rappresenta le coppie <em>(Y, r)</em> per cui il mercato dei beni è in equilibrio.</p>
+      <p>Il moltiplicatore vale <span class="formula-inline">1/(1 − c(1−t)) = ${moltBase.toFixed(2)}</span>.</p>
+      <p><strong>Pendenza:</strong> la IS è inclinata negativamente. Pendenza = <span class="formula-inline">−a/(1−c(1−t)) = ${(-params.a/(1-params.c*(1-params.t))).toFixed(0)}</span>. Maggiore <em>a</em> (sensibilità degli investimenti al tasso) o maggiore moltiplicatore → IS più piatta.</p>
+      <p>Modifica un parametro o applica uno scenario per esplorare il comportamento della curva.</p>
+    `;
+    return;
+  }
+  
+  let html = `<p><strong>Cosa è cambiato:</strong> ${cambiamenti.join(', ')}.</p>`;
+  
+  if (Math.abs(dY) > 5) {
+    const direzione = dY > 0 ? 'destra' : 'sinistra';
+    html += `<p><strong>Effetto sulla curva:</strong> traslazione verso ${direzione}. A parità di r (es. r = 8%), Y di equilibrio passa da ${Ybase.toFixed(0)} a ${Ynew.toFixed(0)} (variazione: ${dY > 0 ? '+' : ''}${dY.toFixed(0)}).</p>`;
+  }
+  
+  if (Math.abs(moltBase - moltNew) > 0.05) {
+    const cambioPend = moltNew > moltBase ? 'aumenta' : 'si riduce';
+    const direzPendenza = moltNew > moltBase ? 'più piatta' : 'più ripida';
+    html += `<p><strong>Effetto sulla pendenza:</strong> il moltiplicatore <span class="formula-inline">1/(1−c(1−t))</span> ${cambioPend} (da ${moltBase.toFixed(2)} a ${moltNew.toFixed(2)}). La IS è quindi ${direzPendenza}.</p>`;
+  }
+  
+  // Letture specifiche
+  if (dG > 30 && Math.abs(dT) < 0.5 && params.I0 === baseParams.I0 && Math.abs(params.t - baseParams.t) < 0.005) {
+    html += `<p><strong>Lettura — politica fiscale espansiva:</strong> la spesa pubblica aggiuntiva alimenta la domanda aggregata. La IS trasla verso destra di una quantità pari a <span class="formula-inline">ΔG / (1−c(1−t))</span>. <em>Attenzione</em>: nel modello IS-LM completo, l'aumento di G fa anche salire r (spiazzamento finanziario), e l'effetto effettivo su Y è inferiore a quello mostrato qui sulla sola IS.</p>`;
+  } else if (dT > 5 && Math.abs(dG) < 0.5 && params.I0 === baseParams.I0) {
+    html += `<p><strong>Lettura — aumento delle imposte:</strong> il prelievo in somma fissa riduce il reddito disponibile delle famiglie e quindi i consumi. La IS trasla verso sinistra di <span class="formula-inline">c·ΔT/(1−c(1−t))</span>. L'effetto è inferiore (in modulo) a quello di una pari riduzione di G, perché solo una quota <em>c</em> di T avrebbe altrimenti alimentato il consumo.</p>`;
+  } else if (params.t > baseParams.t + 0.05 && params.G === baseParams.G) {
+    html += `<p><strong>Lettura — aumento dell'aliquota:</strong> il moltiplicatore si riduce perché ogni euro di reddito generato è in parte sottratto al circuito attraverso la tassazione. La IS ruota appiattendosi: a parità di variazione di r, il reddito reagisce di meno.</p>`;
+  } else if (params.I0 < baseParams.I0 - 30 && params.G === baseParams.G) {
+    html += `<p><strong>Lettura — caduta degli investimenti autonomi:</strong> aspettative pessimistiche delle imprese sull'efficienza marginale del capitale (EMK) deprimono I₀, traslando la IS verso sinistra. La produzione di equilibrio si riduce: è il caso che giustifica l'intervento pubblico secondo Keynes.</p>`;
+  }
+  
+  c.innerHTML = html;
+}
+
+function applicaScenario(s) {
+  switch (s) {
+    case 'aumentoG': params = { ...baseParams, G: 160 }; break;
+    case 'aumentoT': params = { ...baseParams, T: 140 }; break;
+    case 'aumentoAliquota': params = { ...baseParams, t: 0.35 }; break;
+    case 'crisi': params = { ...baseParams, I0: 50 }; break;
+    default: params = { ...baseParams };
+  }
+  document.getElementById('param-G').value = params.G;
+  document.getElementById('param-T').value = params.T;
+  document.getElementById('param-I0').value = params.I0;
+  document.getElementById('param-c').value = params.c;
+  document.getElementById('param-t').value = params.t;
+  document.getElementById('param-a').value = params.a;
+  aggiorna();
+}
+
+['G', 'T', 'I0', 'c', 't', 'a'].forEach(p => {
+  document.getElementById('param-' + p).addEventListener('input', (e) => {
+    params[p] = parseFloat(e.target.value);
+    aggiorna();
+  });
+});
+
+drawTicks();
+aggiorna();
+</script>
+</body>
+</html>
