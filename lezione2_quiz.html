@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Lezione 2 — Politica Economica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --green: #2d6a3a;
+  --red: #9b2920;
+  --base-size: 18px;
+  --max-width: 760px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --max-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.1em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.08em;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.progress-info {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  margin: 28px 0 8px;
+  font-weight: 500;
+}
+
+.progress-bar {
+  background: var(--paper-warm);
+  height: 4px;
+  margin-bottom: 40px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.question { display: none; }
+.question.active { display: block; }
+
+.q-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.q-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.22em;
+  line-height: 1.45;
+  margin-bottom: 28px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  max-width: 62ch;
+}
+
+.options { list-style: none; margin: 0; }
+
+.option {
+  border: 1px solid var(--rule);
+  background: #fdfcf7;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 0.96em;
+  line-height: 1.55;
+  transition: border-color 0.15s, background 0.15s;
+  max-width: 62ch;
+}
+
+.option:hover:not(.disabled) {
+  border-color: var(--ink);
+  background: #fff;
+}
+
+.option-letter {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--muted);
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+.option.correct {
+  border-color: var(--green);
+  border-left: 3px solid var(--green);
+  background: #f4f8f5;
+}
+.option.correct .option-letter { color: var(--green); }
+
+.option.wrong {
+  border-color: var(--red);
+  border-left: 3px solid var(--red);
+  background: #fbf3f2;
+}
+.option.wrong .option-letter { color: var(--red); }
+
+.option.disabled { cursor: default; }
+.option.disabled:not(.correct):not(.wrong) { opacity: 0.55; }
+
+.feedback {
+  display: none;
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  font-size: 0.92em;
+  line-height: 1.6;
+  max-width: 62ch;
+}
+.feedback.show { display: block; }
+.feedback.correct { border-left-color: var(--green); background: #f4f8f5; }
+.feedback.wrong { border-left-color: var(--red); background: #fbf3f2; }
+
+.feedback-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.feedback.correct .feedback-label { color: var(--green); }
+.feedback.wrong .feedback-label { color: var(--red); }
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 11px 22px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+  transition: opacity 0.15s;
+  letter-spacing: 0.02em;
+}
+
+button:hover:not(:disabled) { opacity: 0.85; }
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+button.secondary { background: transparent; color: var(--ink); }
+
+.results {
+  display: none;
+  text-align: center;
+  padding: 48px 0;
+}
+.results.show { display: block; }
+
+.score-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.score-display {
+  font-family: 'Source Serif 4', serif;
+  font-size: 4em;
+  font-weight: 700;
+  margin: 8px 0 24px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.score-display .total {
+  color: var(--muted-light);
+  font-weight: 400;
+  font-size: 0.6em;
+}
+
+.score-message {
+  font-size: 1.05em;
+  color: var(--muted);
+  margin-bottom: 36px;
+  font-style: italic;
+}
+
+.review {
+  margin-top: 56px;
+  text-align: left;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.review h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.18em;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--rule);
+  display: flex;
+  gap: 14px;
+  font-size: 0.92em;
+  line-height: 1.5;
+}
+
+.review-mark {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+
+.review-mark.ok { color: var(--green); }
+.review-mark.no { color: var(--red); }
+
+footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 40px 20px 80px; }
+  h1 { font-size: 1.65em; }
+  .actions { flex-direction: column-reverse; }
+  .actions button { width: 100%; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="wrap">
+
+<header>
+  <div class="meta">Quiz · Lezione 2 · Politica Economica</div>
+  <h1>Verifica di ripasso</h1>
+  <p class="subtitle">Quindici domande a scelta multipla. Risposta unica.</p>
+</header>
+
+<div class="progress-info">
+  <span id="progressText">Domanda 1 di 15</span>
+  <span id="scoreText">Risposte corrette: 0</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="quiz-area" id="quizArea"></div>
+
+<div class="results" id="results">
+  <div class="score-label">Punteggio finale</div>
+  <div class="score-display"><span id="finalScore">0</span><span class="total">/15</span></div>
+  <div class="score-message" id="scoreMessage"></div>
+  <button onclick="restartQuiz()">Rifai il quiz</button>
+  <div class="review">
+    <h3>Riepilogo</h3>
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Quiz Lezione 2 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione2_note.html">← Note della lezione</a></p>
+</footer>
+
+</div>
+
+<script>
+const questionsRaw = [
+  {
+    q: "La disoccupazione involontaria, secondo le slide, configura una perdita di efficienza:",
+    options: [
+      "Sia in senso statico (squilibrio allocativo, prodotto al margine superiore al salario di riserva) sia in senso dinamico (deperimento di capitale umano)",
+      "Solo in senso statico, perché definisce uno squilibrio allocativo nel mercato del lavoro",
+      "Solo in senso dinamico, per il deperimento del capitale umano nel medio periodo",
+      "Né in senso statico né in senso dinamico, trattandosi di un fenomeno di breve periodo neutrale"
+    ],
+    explanation: "La disoccupazione involontaria configura una perdita di efficienza in entrambi i sensi: dal p.v. statico definisce uno squilibrio allocativo (prodotto al margine superiore al salario di riserva, con possibilità di miglioramenti paretiani); dal p.v. dinamico induce deperimento del capitale umano. La sfumatura sbagliata coglie solo metà del fenomeno."
+  },
+  {
+    q: "L'inflazione da costi è definita come:",
+    options: [
+      "Trasferimento sui prezzi dell'aumento dei costi produttivi",
+      "Aumento dei prezzi dovuto a strozzature settoriali nell'offerta di fattori produttivi",
+      "Aumento del livello generale dei prezzi causato da shock che riducono la capacità produttiva (guerre, calamità)",
+      "Aumento generalizzato dei salari nominali contrattati a livello nazionale"
+    ],
+    explanation: "L'inflazione da costi è il trasferimento sui prezzi dell'aumento dei costi produttivi. La sfumatura: l'inflazione da strozzature settoriali è classificata come inflazione da domanda. La terza opzione descrive l'inflazione da offerta (shock alla capacità produttiva)."
+  },
+  {
+    q: "Nel modello IS-LM della sintesi neokeynesiana, l'ipotesi cruciale che rende il modello strumento di analisi di breve periodo è:",
+    options: [
+      "L'assunzione di prezzi dati",
+      "L'assunzione di salari rigidi solo verso il basso",
+      "L'assunzione di un'economia chiusa agli scambi con l'estero",
+      "L'assunzione di pieno impiego dei fattori produttivi"
+    ],
+    explanation: "Lo schema IS-LM assume prezzi dati, il che lo rende strumento valido per analisi di breve periodo, rispetto al quale l'ipotesi di prezzi rigidi non risulta particolarmente forte. La sfumatura sbagliata: la rigidità verso il basso è un'ipotesi keynesiana più generale, ma nello schema IS-LM i prezzi sono assunti completamente dati."
+  },
+  {
+    q: "La curva IS, in economia chiusa e senza intervento pubblico, è inclinata negativamente perché:",
+    options: [
+      "All'aumentare del reddito aumenta il risparmio; perché il mercato dei beni resti in equilibrio occorre un pari aumento dell'investimento, possibile attraverso riduzioni del tasso di interesse",
+      "All'aumentare del tasso di interesse aumenta il risparmio, contraendo il consumo e quindi la domanda aggregata e il reddito",
+      "All'aumentare del tasso di interesse aumenta la domanda di moneta per scopi speculativi, riducendo il reddito",
+      "All'aumentare del reddito aumenta proporzionalmente il livello dei prezzi, deprimendo il potere d'acquisto"
+    ],
+    explanation: "La curva IS è inclinata negativamente perché definisce coppie (Y, r) di equilibrio del mercato dei beni: all'aumentare del reddito aumenta il risparmio, e perché il mercato resti in equilibrio (S = I) occorre un pari aumento dell'investimento, che si ottiene solo riducendo il tasso di interesse. La sfumatura sbagliata inverte la causalità."
+  },
+  {
+    q: "Il teorema di Haavelmo (bilancio in pareggio) stabilisce che:",
+    options: [
+      "La politica fiscale ha effetti espansivi anche senza ricorso alla spesa in deficit, mantenendo il bilancio in pareggio: ΔY = ΔG = ΔT",
+      "La politica fiscale ha effetti espansivi solo se finanziata in deficit, mentre il bilancio in pareggio neutralizza l'effetto sul reddito",
+      "Una manovra fiscale è efficace solo se accompagnata da una politica monetaria espansiva di pari entità",
+      "Il bilancio pubblico in pareggio è una condizione necessaria per il pieno impiego delle risorse produttive"
+    ],
+    explanation: "Il teorema di Haavelmo stabilisce che la politica fiscale ha effetti espansivi anche senza ricorso alla spesa in deficit: una spesa pubblica pienamente finanziata da imposizione in somma fissa produce un effetto sul reddito pari all'entità dell'intervento (ΔY = ΔG = ΔT). La sfumatura coglie esattamente l'opposto del risultato del teorema."
+  },
+  {
+    q: "Nello schema IS-LM, la curva LM è inclinata positivamente perché:",
+    options: [
+      "All'aumentare del reddito aumenta la domanda di moneta per scopi transattivi; data l'offerta, l'equilibrio richiede una riduzione della domanda speculativa, che si ottiene con aumenti del tasso di interesse",
+      "All'aumentare del tasso di interesse aumenta l'offerta di moneta da parte del sistema bancario, espandendo il reddito disponibile",
+      "All'aumentare del reddito la banca centrale aumenta proporzionalmente l'offerta di moneta, generando inflazione",
+      "All'aumentare del tasso di interesse aumenta la propensione al risparmio e quindi la domanda di titoli"
+    ],
+    explanation: "La curva LM è inclinata positivamente perché definisce l'equilibrio del mercato monetario: all'aumentare di Y aumenta la domanda di moneta per fini transattivi (in relazione k); poiché l'offerta è data esogenamente, perché il mercato resti in equilibrio occorre che si riduca la domanda speculativa, possibile solo con aumenti di r. La sfumatura sbagliata: la banca centrale non aumenta automaticamente l'offerta col reddito (è esogena)."
+  },
+  {
+    q: "Nella domanda di moneta keynesiana ricostruita dalla sintesi, i tre moventi sono:",
+    options: [
+      "Transattivo (kY), precauzionale (L₀), speculativo (−vr)",
+      "Transattivo (kY), precauzionale (−vr), speculativo (L₀)",
+      "Transattivo (vY), precauzionale (kr), speculativo (L₀)",
+      "Domanda per consumo, domanda per investimento, domanda per risparmio"
+    ],
+    explanation: "I tre moventi della domanda di moneta sono: transattivo, in relazione k con il reddito (kY); precauzionale, in somma fissa (L₀); speculativo, decrescente nel tasso di interesse (−vr). La sfumatura sbagliata scambia i ruoli del movente precauzionale e speculativo. La quarta opzione confonde la domanda di moneta con la composizione della domanda aggregata."
+  },
+  {
+    q: "Una situazione di trappola della liquidità si caratterizza per il fatto che:",
+    options: [
+      "L'elasticità della domanda di moneta al tasso di interesse è infinita; il tasso è al minimo (≈0) e la banca centrale perde il controllo dell'economia",
+      "L'elasticità della domanda di moneta al tasso di interesse è nulla; il tasso è al minimo e la banca centrale ha pieno controllo della liquidità",
+      "L'offerta di moneta è infinita e la domanda di moneta è completamente rigida rispetto al tasso di interesse",
+      "I prezzi diventano completamente flessibili anche nel breve periodo, neutralizzando ogni politica monetaria"
+    ],
+    explanation: "Nella trappola della liquidità l'elasticità della domanda di moneta al tasso di interesse (v) è infinita: si interrompe il meccanismo moneta-titoli, il tasso di interesse è prossimo a zero e la banca centrale perde il controllo dell'economia. La sfumatura sbagliata inverte il valore dell'elasticità (la rende nulla anziché infinita) e capovolge la conclusione."
+  },
+  {
+    q: "Sempre in trappola della liquidità, secondo la sintesi neokeynesiana:",
+    options: [
+      "L'efficacia della politica fiscale è al suo massimo, perché la retroazione monetaria (ak/v) si annulla; la politica monetaria è del tutto inefficace",
+      "L'efficacia della politica monetaria è al suo massimo, mentre la politica fiscale è bloccata dallo spiazzamento finanziario",
+      "Sia la politica fiscale sia la politica monetaria sono inefficaci, e l'unico strumento utile è la politica dei redditi",
+      "Le aspettative razionali degli operatori neutralizzano qualsiasi intervento di politica economica"
+    ],
+    explanation: "In trappola della liquidità la retroazione monetaria (ak/v) si annulla, per cui il moltiplicatore della politica fiscale è massimo. La politica monetaria, al contrario, è del tutto inefficace: la liquidità immessa viene tesaurizzata e non entra nel circuito della spesa. La sfumatura sbagliata inverte i ruoli."
+  },
+  {
+    q: "Secondo Friedman, il sistema economico è concepito come:",
+    options: [
+      "Intrinsecamente stabile e autonomamente tendente alla posizione di equilibrio naturale; la politica economica ha solo effetti temporanei sulle grandezze reali",
+      "Intrinsecamente instabile, ma stabilizzabile attraverso un uso accorto della politica monetaria discrezionale",
+      "Intrinsecamente stabile, e la politica economica può modificare permanentemente i livelli naturali se ben calibrata",
+      "Soggetto a cicli endogeni dovuti alla lotta distributiva tra capitale e lavoro"
+    ],
+    explanation: "Friedman concepisce il sistema economico come intrinsecamente stabile e autonomamente tendente alla posizione di equilibrio naturale. La politica economica ha solo effetti temporanei sulle grandezze reali: nel lungo periodo gli effetti sono solo nominali (sui prezzi). Solo politiche strutturali possono cambiare i livelli naturali. La sfumatura sbagliata: il sistema è stabile, ma la politica NON può modificare permanentemente i livelli naturali."
+  },
+  {
+    q: "Le aspettative adattive (Friedman) sono formulate secondo il principio:",
+    options: [
+      "Gli individui formano aspettative sui prezzi sulla base delle aspettative passate corrette per lo scostamento osservato (meccanismo a correzione dell'errore): Pᵉ_t = Pᵉ_{t-1} + γ(P_{t-1} − Pᵉ_{t-1})",
+      "Gli individui formano aspettative usando tutte le informazioni disponibili e un modello dell'economia, con errori non sistematici e a media nulla",
+      "Gli individui prevedono perfettamente l'inflazione futura, eliminando ogni effetto reale della politica monetaria",
+      "Gli individui ignorano le informazioni passate e basano le aspettative solo sul valore corrente dei prezzi"
+    ],
+    explanation: "Le aspettative adattive si formano sulla base delle aspettative passate aggiornate per lo scostamento osservato tra previsione e valore effettivo (meccanismo a correzione dell'errore), con coefficiente di sensibilità γ. La sfumatura sbagliata descrive invece le aspettative razionali (Muth), che sono ipotesi della NMC."
+  },
+  {
+    q: "Nella curva di Phillips aumentata con le aspettative (Friedman):",
+    options: [
+      "Esiste un fascio di curve di Phillips, ognuna associata a una diversa aspettativa di inflazione; nel lungo periodo la curva è verticale al tasso di disoccupazione naturale",
+      "Esiste una unica curva di Phillips stabile, su cui i policy makers possono scegliere il punto di equilibrio tra inflazione e disoccupazione",
+      "La curva di Phillips è verticale anche nel breve periodo, escludendo qualsiasi efficacia della politica monetaria",
+      "La curva di Phillips è inclinata positivamente, mostrando che inflazione e disoccupazione sono fenomeni concomitanti"
+    ],
+    explanation: "Nella rielaborazione di Friedman esiste un fascio di curve di Phillips di breve periodo, ognuna associata a una diversa aspettativa di inflazione. Nel lungo periodo la curva è verticale al tasso di disoccupazione naturale: politiche espansive possono ridurre la disoccupazione solo nel breve periodo, mentre nel lungo periodo producono solo inflazione. La sfumatura: la verticalità nel breve periodo è invece la posizione della NMC."
+  },
+  {
+    q: "L'ipotesi cruciale della Nuova Macroeconomia Classica (NMC), secondo le slide, è:",
+    options: [
+      "Il modello che descrive il funzionamento dell'economia, che è pienamente neoclassico (con prezzi flessibili e mercati concorrenziali)",
+      "L'ipotesi di aspettative razionali, che da sola garantisce l'inefficacia della politica economica",
+      "L'ipotesi di mercati decentrati e isole informative alla Lucas",
+      "L'ipotesi che la banca centrale segua sempre una regola monetaria automatica e trasparente"
+    ],
+    explanation: "L'ipotesi di aspettative razionali, da sola, semplicemente aumenta la velocità di convergenza ai risultati impliciti nei modelli teorici: non è cruciale. L'ipotesi cruciale riguarda il modello che descrive il funzionamento dell'economia, che è pienamente neoclassico. La sfumatura sbagliata sopravvaluta il ruolo delle aspettative razionali in sé."
+  },
+  {
+    q: "Secondo la NMC, una politica monetaria espansiva PREVISTA dagli operatori:",
+    options: [
+      "Non può avere alcun effetto reale: gli operatori anticipano gli effetti sui prezzi e li adeguano immediatamente, senza aumentare la produzione",
+      "Ha effetti reali transitori, perché gli operatori, pur prevedendola, impiegano tempo ad aggiustare i prezzi",
+      "Produce effetti reali permanenti, poiché la previsione perfetta elimina l'incertezza e stimola gli investimenti",
+      "Ha gli stessi effetti di una politica fiscale espansiva di pari entità, secondo l'equivalenza Modigliani-Miller"
+    ],
+    explanation: "Secondo la NMC, se la politica monetaria è prevista non può avere alcun effetto reale: gli operatori anticipano gli effetti sul livello generale dei prezzi e adeguano immediatamente i prezzi dei loro prodotti, senza aumentare la produzione. La curva di Phillips aumentata con le aspettative diventa verticale anche nel breve periodo. La sfumatura sbagliata mantiene un effetto reale transitorio, che invece è escluso dalla NMC sotto perfetta prevedibilità."
+  },
+  {
+    q: "Il modello AD-AS (nuova sintesi) supera due limiti dello schema IS-LM. Quali?",
+    options: [
+      "L'ipotesi di prezzi dati e la mancata considerazione delle condizioni di offerta",
+      "L'ipotesi di economia chiusa e l'assenza di intervento pubblico",
+      "L'ipotesi di aspettative adattive e la trappola della liquidità",
+      "La rigidità dei salari e l'omogeneità dei beni"
+    ],
+    explanation: "Due sono i limiti principali dell'approccio IS-LM: l'ipotesi di prezzi dati e la mancata considerazione delle condizioni di offerta. Il modello AD-AS rimuove entrambi i limiti, integrando le acquisizioni della sintesi neokeynesiana con quelle monetariste e della NMC. La sfumatura sbagliata cita limiti che esistono ma non sono quelli centrali."
+  }
+];
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let questions = [];
+function buildQuestions() {
+  questions = questionsRaw.map(qRaw => {
+    const indexed = qRaw.options.map((opt, i) => ({ text: opt, originalIdx: i }));
+    const shuffled = shuffleArray(indexed);
+    const correctIdx = shuffled.findIndex(o => o.originalIdx === 0);
+    return {
+      q: qRaw.q,
+      options: shuffled.map(o => o.text),
+      correct: correctIdx,
+      explanation: qRaw.explanation
+    };
+  });
+}
+
+let currentQuestion = 0;
+let userAnswers = [];
+let score = 0;
+
+const quizArea = document.getElementById('quizArea');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const results = document.getElementById('results');
+
+function renderQuestion(idx) {
+  const q = questions[idx];
+  const html = `
+    <div class="question active" id="q${idx}">
+      <div class="q-num">Domanda ${idx + 1} di ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options" id="options-${idx}">
+        ${q.options.map((opt, i) => `
+          <li class="option" data-idx="${i}" onclick="selectOption(${idx}, ${i})">
+            <span class="option-letter">${String.fromCharCode(65 + i)}.</span>
+            <span>${opt}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="feedback" id="feedback-${idx}">
+        <div class="feedback-label" id="feedback-label-${idx}"></div>
+        <div id="feedback-text-${idx}"></div>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="prevQuestion()" ${idx === 0 ? 'disabled' : ''}>← Precedente</button>
+        <button id="next-btn-${idx}" onclick="nextQuestion()" disabled>${idx === questions.length - 1 ? 'Vedi risultati →' : 'Prossima →'}</button>
+      </div>
+    </div>
+  `;
+  quizArea.innerHTML = html;
+  updateProgress();
+  if (userAnswers[idx] !== undefined) showAnswerState(idx);
+}
+
+function selectOption(qIdx, optIdx) {
+  if (userAnswers[qIdx] !== undefined) return;
+  userAnswers[qIdx] = optIdx;
+  if (optIdx === questions[qIdx].correct) score++;
+  showAnswerState(qIdx);
+  updateProgress();
+}
+
+function showAnswerState(qIdx) {
+  const q = questions[qIdx];
+  const userAnswer = userAnswers[qIdx];
+  const options = document.querySelectorAll(`#options-${qIdx} .option`);
+  options.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === q.correct) opt.classList.add('correct');
+    else if (i === userAnswer) opt.classList.add('wrong');
+  });
+  const feedback = document.getElementById(`feedback-${qIdx}`);
+  const label = document.getElementById(`feedback-label-${qIdx}`);
+  const text = document.getElementById(`feedback-text-${qIdx}`);
+  const isCorrect = userAnswer === q.correct;
+  feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  label.textContent = isCorrect ? 'Risposta corretta' : 'Risposta errata';
+  text.innerHTML = q.explanation;
+  document.getElementById(`next-btn-${qIdx}`).disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    renderQuestion(currentQuestion);
+  } else showResults();
+}
+
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion(currentQuestion);
+  }
+}
+
+function updateProgress() {
+  const answered = userAnswers.filter(a => a !== undefined).length;
+  progressFill.style.width = (answered / questions.length) * 100 + '%';
+  progressText.textContent = `Domanda ${currentQuestion + 1} di ${questions.length}`;
+  scoreText.textContent = `Risposte corrette: ${score}`;
+}
+
+function showResults() {
+  quizArea.style.display = 'none';
+  document.querySelector('.progress-info').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  results.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score / questions.length;
+  const msg = pct === 1 ? "Risultato eccellente." :
+              pct >= 0.8 ? "Buon risultato." :
+              pct >= 0.6 ? "Risultato sufficiente." :
+              pct >= 0.4 ? "Risultato da consolidare." :
+                          "Si consiglia di rivedere le note della lezione.";
+  document.getElementById('scoreMessage').textContent = msg;
+  document.getElementById('reviewList').innerHTML = questions.map((q, i) => {
+    const correct = userAnswers[i] === q.correct;
+    return `<div class="review-item"><span class="review-mark ${correct ? 'ok' : 'no'}">${correct ? '✓' : '✗'}</span><span><strong>D${i + 1}.</strong> ${q.q}</span></div>`;
+  }).join('');
+}
+
+function restartQuiz() {
+  buildQuestions();
+  currentQuestion = 0;
+  userAnswers = [];
+  score = 0;
+  results.classList.remove('show');
+  quizArea.style.display = 'block';
+  document.querySelector('.progress-info').style.display = 'flex';
+  document.querySelector('.progress-bar').style.display = 'block';
+  renderQuestion(0);
+}
+
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  try { if (sessionStorage.getItem('presMode') === '1') setPresentation(true); } catch(e) {}
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+buildQuestions();
+renderQuestion(0);
+</script>
+</body>
+</html>

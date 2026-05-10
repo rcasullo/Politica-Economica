@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lezione 2 — Politica Economica: fallimenti macroeconomici e modelli teorici</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --base-size: 18px;
+  --max-width: 1200px;
+  --content-width: 720px;
+  --sidebar-width: 240px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --content-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.layout {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 60px;
+  transition: padding 0.2s ease;
+}
+
+body.presentation .layout {
+  grid-template-columns: 1fr;
+  max-width: var(--content-width);
+}
+
+aside.sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-family: 'Source Sans 3', sans-serif;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+body.presentation aside.sidebar { display: none; }
+
+.sidebar-title {
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar nav ol {
+  list-style: none;
+  counter-reset: sec;
+}
+
+.sidebar nav > ol > li {
+  counter-increment: sec;
+  margin-bottom: 6px;
+}
+
+.sidebar nav a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.78em;
+  padding: 6px 0 6px 26px;
+  position: relative;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar nav > ol > li > a {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sidebar nav > ol > li > a::before {
+  content: counter(sec);
+  position: absolute;
+  left: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-light);
+  font-weight: 500;
+}
+
+.sidebar nav a:hover {
+  color: var(--ink);
+  border-left-color: var(--rule-strong);
+}
+
+.sidebar nav a.active {
+  color: var(--ink);
+  border-left-color: var(--ink);
+  font-weight: 600;
+}
+
+.sidebar nav ol ol {
+  list-style: none;
+  margin-left: 0;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.sidebar nav ol ol a {
+  font-size: 0.74em;
+  padding: 3px 0 3px 26px;
+  font-weight: 400;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+main.content {
+  max-width: var(--content-width);
+  min-width: 0;
+}
+
+header.lezione-header {
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.lezione-meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.4em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.18em;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+section {
+  margin: 72px 0 0;
+  scroll-margin-top: 24px;
+}
+
+h2 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.65em;
+  line-height: 1.25;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
+}
+
+h2 .h2-num {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--muted-light);
+  vertical-align: middle;
+  margin-right: 16px;
+  letter-spacing: 0.05em;
+}
+
+h3 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+  font-size: 1.22em;
+  margin: 44px 0 16px;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
+}
+
+h4 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.82em;
+  margin: 28px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+p {
+  margin-bottom: 18px;
+  text-align: left;
+  hyphens: auto;
+  max-width: 65ch;
+}
+
+body.presentation p { max-width: 75ch; }
+
+.lead {
+  font-size: 1.08em;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+ul, ol {
+  margin: 16px 0 22px 28px;
+  max-width: 62ch;
+}
+
+li {
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+code {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em;
+  background: var(--paper-warm);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.formula {
+  font-family: 'Source Sans 3', monospace;
+  background: var(--paper-warm);
+  padding: 12px 18px;
+  margin: 16px 0;
+  font-size: 0.95em;
+  border-left: 2px solid var(--rule-strong);
+  max-width: 62ch;
+  overflow-x: auto;
+}
+
+.box {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  padding: 20px 24px;
+  margin: 24px 0;
+  max-width: 65ch;
+  position: relative;
+}
+
+.box-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.box p { margin-bottom: 12px; }
+.box p:last-child { margin-bottom: 0; }
+
+.box.teorema {
+  background: #f0eee3;
+  border-left-color: var(--ink);
+  padding: 24px 28px;
+}
+
+.box.teorema .box-label { color: var(--ink); }
+
+.box.teorema .teorema-enunciato {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 1.05em;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.box.definizione {
+  background: var(--paper-cool);
+  border-left-color: var(--rule-strong);
+}
+
+.box.esempio {
+  background: var(--paper-warm);
+  border-left-color: var(--rule-strong);
+}
+
+.figure-placeholder {
+  margin: 28px 0;
+  padding: 32px 24px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--paper-warm),
+    var(--paper-warm) 10px,
+    var(--paper-cool) 10px,
+    var(--paper-cool) 20px
+  );
+  border: 1px dashed var(--rule-strong);
+  text-align: center;
+  font-family: 'Source Sans 3', sans-serif;
+  max-width: 62ch;
+}
+
+.figure-placeholder .placeholder-label {
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.figure-placeholder .placeholder-desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.95em;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.86em;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+th {
+  background: var(--paper-warm);
+  font-weight: 600;
+  font-size: 0.94em;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+}
+
+footer {
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 32px; }
+  aside.sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
+  }
+  .sidebar nav { display: none; }
+  .sidebar.expanded nav { display: block; }
+  .sidebar-title { cursor: pointer; }
+  .sidebar-title::after { content: " ▾"; color: var(--muted-light); }
+  .sidebar.expanded .sidebar-title::after { content: " ▴"; }
+}
+
+@media (max-width: 640px) {
+  .layout { padding: 40px 20px 80px; }
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.35em; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+  body { font-size: 17px; }
+}
+
+@media print {
+  body { font-size: 11pt; background: white; }
+  .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+  aside.sidebar { display: none; }
+  h2 { page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  .box, .figure-placeholder { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title" onclick="this.parentElement.classList.toggle('expanded')">Indice</div>
+  <nav>
+    <ol>
+      <li>
+        <a href="#sec1">Aspetti macroeconomici dei fallimenti del mercato</a>
+        <ol>
+          <li><a href="#sec1-1">Instabilità e ciclo</a></li>
+          <li><a href="#sec1-2">Disoccupazione</a></li>
+          <li><a href="#sec1-3">Inflazione</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec2">La teoria keynesiana</a>
+        <ol>
+          <li><a href="#sec2-1">Ipotesi di base</a></li>
+          <li><a href="#sec2-2">Inflazione e costo pieno</a></li>
+          <li><a href="#sec2-3">Rigidità nei prezzi</a></li>
+          <li><a href="#sec2-4">Separazione I-S</a></li>
+          <li><a href="#sec2-5">Tasso di interesse</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec3">La sintesi neokeynesiana e il modello IS-LM</a>
+        <ol>
+          <li><a href="#sec3-1">Curva IS</a></li>
+          <li><a href="#sec3-2">Politica fiscale e Haavelmo</a></li>
+          <li><a href="#sec3-3">Imposte proporzionali</a></li>
+          <li><a href="#sec3-4">Economia aperta</a></li>
+          <li><a href="#sec3-5">Curva LM</a></li>
+          <li><a href="#sec3-6">Trappola della liquidità</a></li>
+          <li><a href="#sec3-7">Equilibrio beni-moneta</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec4">Tasso di cambio, BP e modello IS-LM-BP</a>
+        <ol>
+          <li><a href="#sec4-1">Tasso di cambio</a></li>
+          <li><a href="#sec4-2">Bilancia dei pagamenti</a></li>
+          <li><a href="#sec4-3">Modello IS-LM-BP</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec5">Il monetarismo</a>
+        <ol>
+          <li><a href="#sec5-1">Equilibrio naturale</a></li>
+          <li><a href="#sec5-2">Aspettative adattive</a></li>
+          <li><a href="#sec5-3">Curva di Phillips</a></li>
+          <li><a href="#sec5-4">Ruolo della politica economica</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec6">La Nuova Macroeconomia Classica</a>
+        <ol>
+          <li><a href="#sec6-1">Aspettative razionali</a></li>
+          <li><a href="#sec6-2">Prezzi flessibili</a></li>
+          <li><a href="#sec6-3">Inefficacia della politica</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+</aside>
+
+<main class="content">
+
+<header class="lezione-header">
+  <div class="lezione-meta">Lezione 2 / 4 — Politica Economica</div>
+  <h1>Fallimenti macroeconomici e modelli teorici</h1>
+  <p class="subtitle">Ciclo, disoccupazione, inflazione. Teoria keynesiana, sintesi neokeynesiana (IS-LM, IS-LM-BP), monetarismo e Nuova Macroeconomia Classica</p>
+</header>
+
+<section id="sec1">
+  <h2><span class="h2-num">§1</span>Aspetti macroeconomici dei fallimenti del mercato</h2>
+
+  <p class="lead">Accanto ai fallimenti microeconomici visti nella lezione precedente, esistono casi di fallimento del mercato che si manifestano a livello aggregato. Si tratta di fluttuazioni non Pareto-efficienti nel livello del prodotto, dell'occupazione e dei prezzi, di fenomeni di disoccupazione involontaria e di episodi inflazionistici. Costituiscono il fondamento della giustificazione dell'intervento pubblico in chiave macroeconomica.</p>
+
+  <h3 id="sec1-1">1.1 Instabilità economica e ciclo</h3>
+
+  <p>L'instabilità delle economie capitalistiche di mercato si manifesta attraverso variazioni nel tempo del livello di produzione e occupazione, attraverso squilibri nella bilancia dei pagamenti con l'estero, e attraverso fluttuazioni nel livello generale dei prezzi.</p>
+
+  <p>Sebbene il ciclo sia stato collocato dalla teoria economica recente tra i fenomeni "naturali" e incorreggibili dell'evoluzione delle economie di mercato soggette a shock tecnologici, i fenomeni di instabilità a cui qui si fa riferimento sono quelli che traggono origine da fallimenti del mercato. Si tratta di fluttuazioni non Pareto-efficienti nel livello del prodotto e dell'occupazione e nel livello dei prezzi (inflazione e deflazione).</p>
+
+  <h4>Cause dell'instabilità</h4>
+
+  <p>Le cause dell'instabilità ciclica vengono ricondotte dalla letteratura a quattro grandi famiglie di ipotesi:</p>
+
+  <ul>
+    <li><strong>Viscosità o rigidità nei prezzi</strong>. Le rigidità dei prezzi dei beni determinano inefficienza nello scambio e squilibri nel mercato dei beni. Le rigidità nei salari determinano inefficienza nel mercato del lavoro e disoccupazione (ipotesi della sintesi neo e nuovo-keynesiana).</li>
+    <li><strong>Aspetti strutturali dei mercati</strong>. Le caratteristiche tecnologiche e merceologiche delle economie sviluppate richiedono forme di mercato che deviano fortemente dalle condizioni in cui si realizza l'equilibrio di CP (ipotesi post-keynesiana).</li>
+    <li><strong>Lotta distributiva tra capitale e lavoro</strong>, logica dell'esercito industriale di riserva e crisi capitalistica (ipotesi marxiana).</li>
+    <li><strong>Progresso tecnico</strong> e logica della distruzione-creazione (ipotesi schumpeteriana).</li>
+  </ul>
+
+  <h3 id="sec1-2">1.2 Non pieno impiego e disoccupazione</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Disoccupazione involontaria</span>
+    <p>Esistono lavoratori disposti a offrire servizi lavorativi al salario di mercato che non trovano lavoro. L'offerta è razionata, nel senso che incontra una domanda insufficiente.</p>
+  </div>
+
+  <p>Sebbene le statistiche ufficiali non permettano una distinzione certa tra disoccupazione volontaria e involontaria, i livelli di disoccupazione sperimentati storicamente inducono a caratterizzare la sottoccupazione come un fenomeno di non pieno impiego delle risorse e di disoccupazione involontaria.</p>
+
+  <p>La disoccupazione involontaria configura una perdita di efficienza, sia in senso statico che dinamico. Dal punto di vista <strong>statico</strong>, perché definisce uno squilibrio allocativo (prodotto al margine superiore al salario di riserva), esistendo possibilità di miglioramenti paretiani. Dal punto di vista <strong>dinamico</strong>, perché il protrarsi di fenomeni di disoccupazione induce a deperimento di capitale umano (capacità lavorative).</p>
+
+  <h4>Interventi pubblici contro la disoccupazione</h4>
+
+  <p>Le conseguenze economiche e sociali della disoccupazione possono essere temperate da interventi pubblici di tipo redistributivo: indennità di disoccupazione, cassa integrazione guadagni (CIG), reddito minimo garantito o di cittadinanza. Tali strumenti differiscono per condizionalità (ricerca attiva del lavoro, partecipazione a corsi di formazione), durata, e modalità di finanziamento.</p>
+
+  <h4>Pro e contro degli interventi</h4>
+
+  <p>A favore: riducono, dal lato del lavoratore, i costi economici e psicologici della disoccupazione; dal lato dell'impresa, ne facilitano la flessibilità produttiva, rendendo meno aspre le relazioni industriali. Dal punto di vista collettivo, riducono l'impatto sociale complessivo del fenomeno.</p>
+
+  <p>Contro: costituiscono un disincentivo all'offerta di lavoro, poiché aumentano il <strong>salario di riserva</strong> del lavoratore (salario minimo di partecipazione al mercato del lavoro), determinando disoccupazione volontaria e inflazione da costi. Costituiscono inoltre un costo economico per la società nel suo complesso, dato che sono strumenti finanziati attraverso fiscalità generale e contribuzione del datore di lavoro, che scarica i costi sui prezzi.</p>
+
+  <p>È stato messo in evidenza inoltre che l'obiettivo della piena occupazione può entrare in conflitto, in un sistema capitalistico, con il meccanismo della "disciplina" della disoccupazione sulle richieste salariali (logica marxiana dell'esercito industriale di riserva).</p>
+
+  <h3 id="sec1-3">1.3 Inflazione</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Inflazione</span>
+    <p>Definisce variazioni positive nel livello generale dei prezzi in una data unità di tempo (mese, trimestre, anno), ovvero nell'indice composto dei prezzi dei beni del paniere di riferimento (media pesata dei livelli di prezzo dei singoli beni).</p>
+  </div>
+
+  <p>$$P_t = \sum_{i=1}^{N} w_{i,t} \cdot P_{i,t}$$</p>
+
+  <p>L'inflazione rappresenta un problema di politica economica poiché determina svalutazione delle scorte monetarie e dei redditi non indicizzati, caratterizzandosi per essere "la più iniqua tra le imposte": sfavorisce gli individui in posizione di risparmio positivo e credito e favorisce gli individui in posizione debitoria.</p>
+
+  <h4>Classificazione per cause</h4>
+
+  <ul>
+    <li><strong>Inflazione da domanda</strong>: dovuta a situazioni di eccesso di domanda sull'offerta, spesso connessa a "strozzature settoriali".</li>
+    <li><strong>Inflazione finanziaria o creditizia</strong>: dovuta a eccesso di spesa in deficit da parte dello stato (politiche economiche eccessivamente espansive) o a eccesso di concessioni di credito da parte del sistema bancario.</li>
+    <li><strong>Inflazione da offerta</strong>: dovuta a shock che influenzano negativamente le capacità produttive dell'economia (guerre, calamità naturali).</li>
+    <li><strong>Inflazione da costi</strong>: trasferimento sui prezzi dell'aumento dei costi produttivi.</li>
+    <li><strong>Inflazione da profitti</strong>: in situazioni non CP, si ha per aumento del mark-up.</li>
+    <li><strong>Inflazione importata</strong>: dovuta a variazioni dei prezzi delle merci importate o ad aumenti della domanda estera.</li>
+  </ul>
+
+  <h4>Classificazione per caratteristiche</h4>
+
+  <ul>
+    <li><strong>Inflazione strisciante</strong>: variazioni dell'indice generale dei prezzi dell'ordine del 2-3% su base annua, valore prossimo a quello sperimentato nel primo decennio della costruzione dell'Euro-Zona.</li>
+    <li><strong>Inflazione moderata</strong>: variazioni dei prezzi comprese tra il 3% e il 10%. Valori che hanno caratterizzato l'esperienza delle economie sviluppate nei periodi di "ricollocamento" industriale a seguito degli shock petroliferi.</li>
+    <li><strong>Inflazione galoppante</strong>: situazioni critiche con tassi tra il 10% e il 300% su base annua. Le economie avanzate hanno sperimentato fasi di inflazione superiore al 10% nei periodi immediatamente successivi agli shock petroliferi.</li>
+    <li><strong>Iperinflazione</strong>: situazioni di inflazione superiore al 300%, osservate a seguito di eventi bellici (Germania) e crisi valutarie (Argentina).</li>
+  </ul>
+</section>
+
+<section id="sec2">
+  <h2><span class="h2-num">§2</span>La teoria keynesiana</h2>
+
+  <p class="lead">L'analisi schematica delle diverse interpretazioni dei fenomeni di instabilità economica fornite dai vari approcci teorici parte dalla teoria keynesiana, e procede con: la sintesi neokeynesiana di Hicks (modello IS-LM), la posizione monetarista di Friedman, la Nuova Macroeconomia Classica e la nuova sintesi (modello AD-AS).</p>
+
+  <h3 id="sec2-1">2.1 Ipotesi di base</h3>
+
+  <p>L'analisi keynesiana poggia su due ipotesi fondamentali.</p>
+
+  <p><strong>Prima ipotesi: rigidità (o viscosità) dei prezzi, specialmente verso il basso.</strong> La rigidità scaturisce dal conflitto distributivo tra percettori di reddito: ogni operatore economico (a grandi linee, produttori e lavoratori) tende a non far diminuire il prezzo del bene che offre (prodotto, lavoro), nel timore che i prezzi dei beni che acquista (lavoro, prodotto) rimangano invariati o aumentino.</p>
+
+  <p><strong>Seconda ipotesi: separazione delle decisioni di risparmio e di investimento.</strong> In una economia monetaria (non di baratto), le decisioni di risparmio e di investimento sono atti separati, sia nel tempo, sia con riferimento ai soggetti che le compiono. Il risparmio dipende sostanzialmente dalla propensione media al consumo, mentre l'investimento dipende dalle aspettative sull'efficienza marginale del capitale (attese sulla profittabilità dell'unità aggiuntiva di capitale installato).</p>
+
+  <h3 id="sec2-2">2.2 Inflazione e teoria del costo pieno</h3>
+
+  <p>L'inflazione, come la rigidità, scaturisce dal conflitto distributivo tra percettori di reddito. In forme di mercato non perfettamente concorrenziali — che sono la regola nelle economie sviluppate — le imprese non subiscono i prezzi come dati dal mercato, ma li <em>fissano</em> attivamente sulla base della logica del <strong>costo pieno</strong>: applicano un mark-up al costo unitario di produzione.</p>
+
+  <p>Si consideri il costo del lavoro per unità di prodotto, definito dal rapporto tra il salario unitario \(w\) e la produttività media del lavoro \(PMeL\), e il margine lordo di profitto \(g\). Il prezzo praticato dalle imprese assume la forma:</p>
+
+  <p>$$P = \frac{w}{PMeL} \cdot (1 + g)$$</p>
+
+  <p>La formula del costo pieno fornisce una utile <strong>formalizzazione dell'inflazione come risultato del conflitto distributivo</strong>. Differenziando l'espressione, in variazioni si ottiene:</p>
+
+  <p>$$dP = dw - dPMeL + d(1 + g)$$</p>
+
+  <h4>Lettura economica della formula</h4>
+
+  <p>Ciascun termine della formula corrisponde alla pretesa distributiva di un attore del sistema:</p>
+
+  <ul>
+    <li>\(dw\) rappresenta la <strong>pretesa salariale dei lavoratori</strong>: a parità di altre condizioni, ad un aumento dei salari nominali corrisponde un aumento dei prezzi.</li>
+    <li>\(dPMeL\) rappresenta la dinamica della <strong>produttività</strong>: aumenti di produttività compensano gli aumenti salariali e attenuano la pressione inflazionistica.</li>
+    <li>\(d(1+g)\) rappresenta la <strong>pretesa di profitto delle imprese</strong>: aumenti del mark-up si traducono in aumenti di prezzo.</li>
+  </ul>
+
+  <p>La condizione di stabilità dei prezzi è quindi che \(dw - dPMeL + d(1+g) = 0\): in altri termini, che gli aumenti salariali siano compatibili con i guadagni di produttività e con un mark-up stabile. Quando le pretese distributive di lavoratori (\(dw\)) e imprese (\(d(1+g)\)) eccedono nel loro complesso quanto la produttività rende disponibile, l'eccedenza si scarica sui prezzi: si genera inflazione.</p>
+
+  <h4>Inflazione da costi e spirale prezzi-salari</h4>
+
+  <p>Il meccanismo descritto chiarisce due fenomeni che ricorrono nelle classificazioni dell'inflazione:</p>
+
+  <p>L'<strong>inflazione da costi</strong> è il trasferimento sui prezzi dell'aumento dei costi produttivi, in particolare salariali. La formula del costo pieno mostra che, dato il mark-up, l'aumento di \(w\) (al netto della produttività) si scarica meccanicamente su \(P\).</p>
+
+  <p>L'<strong>inflazione da profitti</strong> si ha invece per aumenti del mark-up \(g\): in situazioni non concorrenziali le imprese possono allargare il margine, traducendolo in aumenti di prezzo a parità di costi.</p>
+
+  <p>Il punto cruciale è che, una volta innescato un aumento dei prezzi, i lavoratori chiederanno aumenti salariali per recuperare il potere d'acquisto perduto, alimentando la <strong>spirale prezzi-salari</strong>. La rigidità dei prezzi verso il basso, ricordata fra le ipotesi di base, fa sì che il processo sia asimmetrico: facile in salita, molto più lento in discesa.</p>
+
+  <p>Questo schema è il fondamento della relazione tra inflazione e disoccupazione che verrà formalizzata, con riferimento alle aspettative, nella curva di Phillips aumentata. Da qui deriva anche l'importanza, per la politica economica, della concertazione tra le parti sociali (politica dei redditi) come strumento per spegnere il conflitto distributivo a monte, prima che si manifesti sui prezzi — tema cui torneremo nella Lezione 4.</p>
+
+  <h3 id="sec2-3">2.3 Rigidità nei prezzi e fallimento del coordinamento</h3>
+
+  <p>La rigidità nominale nei prezzi dei beni e del lavoro (salario) implicano fallimenti nel coordinamento delle decisioni economiche e disequilibrio nel mercato dei beni e del lavoro. In assenza di variazioni sufficientemente ampie dei prezzi relativi, gli aggiustamenti avvengono dal lato delle quantità (di prodotto e di lavoro): si determina pertanto instabilità economica nel livello di prodotto e di occupazione.</p>
+
+  <p>Anche assicurando una maggiore flessibilità dei prezzi relativi, il sistema non tenderebbe necessariamente all'equilibrio. Con riferimento al salario, l'analisi di Keynes mostra che, a livello aggregato, il prezzo del lavoro non può essere considerato esclusivamente nella sua qualità di costo produttivo (come nell'analisi microeconomica standard). Il salario, a livello aggregato, è anche reddito, quindi consumo e domanda. Una contrazione salariale, da un lato, riduce i costi di produzione e i prezzi stimolando una maggiore domanda; dall'altro, riduce la domanda aggregata dei lavoratori, che si suppone abbiano una maggiore propensione al consumo (ipotesi necessaria) rispetto alle altre classi.</p>
+
+  <h3 id="sec2-4">2.4 Separazione tra risparmio e investimento</h3>
+
+  <p>Nell'analisi di Keynes, riferita ad una economia monetaria, non esiste un prezzo capace di porre in equilibrio le decisioni di risparmio con le decisioni di investimento, poiché essi sono atti separati, fisicamente e temporalmente.</p>
+
+  <p>Per meglio comprendere il punto, è utile assumere che esistano due operatori, i risparmiatori (famiglie e imprese) e gli investitori (imprese). I primi accumulano scorte liquide su base comportamentale, ossia specularmente alle decisioni di consumo. I secondi utilizzano tali scorte sulla base di aspettative sul rendimento futuro del capitale installato.</p>
+
+  <p>Se le aspettative non sono ottimistiche, le imprese tenderanno a non utilizzare il risparmio in attività di investimento, deprimendo la domanda aggregata e il livello di produzione.</p>
+
+  <div class="box esempio">
+    <span class="box-label">Esempio: schematizzazione di Kalecki</span>
+    <p>Si ipotizzi che le famiglie consumino tutto il loro reddito e le imprese investano tutti i profitti. La curva DD' rappresenta la produttività marginale del lavoro; L è il numero di lavoratori di pieno impiego; OW il salario reale di pieno impiego; ODEL il valore del prodotto di PI; OWEL la quota di prodotto destinata al lavoro; WDE la quota di profitto.</p>
+    <p>Se gli investimenti fossero pari a WDE, allora la domanda corrisponderebbe al valore del prodotto di pieno impiego. Ma nulla lo garantisce: se fossero inferiori, per effetto di aspettative negative, si avrebbe non pieno impiego e disoccupazione.</p>
+  </div>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Schematizzazione di Kalecki: produttività marginale del lavoro DD', salario reale di PI, ripartizione del prodotto tra quota lavoro (OWEL) e quota profitto (WDE).</div>
+  </div>
+
+  <h3 id="sec2-5">2.5 Tasso di interesse</h3>
+
+  <p>Nell'analisi di Keynes, il tasso di interesse è un fenomeno esclusivamente monetario, ha natura convenzionale e non può pertanto riequilibrare il mercato dei capitali.</p>
+
+  <p>Definisce il prezzo per l'astensione dalla liquidità nell'unità di tempo considerata, e mette in equilibrio esclusivamente domanda e offerta di moneta. Non definisce univocamente le decisioni di risparmio.</p>
+
+  <p>Non c'è quindi nessuna forza capace di portare in equilibrio di pieno impiego il sistema. Gli equilibri di non pieno impiego rappresentano il caso generale delle economie reali. Ciò apre un ruolo per l'intervento pubblico per la stabilizzazione ciclica, da operarsi attraverso la politica monetaria e – soprattutto – fiscale.</p>
+</section>
+
+<section id="sec3">
+  <h2><span class="h2-num">§3</span>La sintesi neokeynesiana e il modello IS-LM</h2>
+
+  <p class="lead">L'impostazione keynesiana di base ottiene una sistematizzazione nello schema IS-LM della sintesi neokeynesiana, sostanzialmente dovuto ad Hicks (1937). Lo schema ricerca le condizioni di equilibrio simultaneo sul mercato dei beni e della moneta, ottenute attraverso la soluzione di un sistema di equazioni di comportamento direttamente derivate dall'impostazione keynesiana.</p>
+
+  <p>Lo schema IS-LM assume <strong>prezzi dati</strong>, il che lo rende strumento valido per analisi di breve periodo, rispetto al quale l'ipotesi di prezzi rigidi non risulta particolarmente forte. Sono possibili equilibri di sottoccupazione e l'azione pubblica, nelle vesti della politica fiscale e della politica monetaria, può portare il sistema ad equilibri di pieno impiego.</p>
+
+  <h3 id="sec3-1">3.1 Curva IS in economia chiusa, senza intervento pubblico</h3>
+
+  <p>Si parte dalla rappresentazione in forma strutturale del modello keynesiano di base, assumendo una economia chiusa agli scambi con l'estero e in assenza di intervento pubblico:</p>
+
+  <p>$$\begin{aligned} D &= C + I \\ D &= Y \quad \Rightarrow \quad Y - C = S \quad \Rightarrow \quad S = I \\ Y &= C + I \\ C &= cY \\ I &= f(EMK - r) \quad \Rightarrow \quad I = I_0 - ar \end{aligned}$$</p>
+
+  <p>Sostituendo le equazioni per \(C\) e \(I\) nell'equazione reddito-spesa e risolvendo per \(Y\) si ottiene la forma ridotta:</p>
+
+  <p>$$Y = \frac{1}{1 - c}(I_0 - ar)$$</p>
+
+  <p>L'equazione definisce la curva (in effetti una retta) <strong>IS</strong>, dove la quota è data dalla grandezza \(I_0/(1-c)\) e la pendenza da \(-a/(1-c)\). L'equazione della IS definisce coppie di valori di reddito e tasso di interesse per cui il mercato dei beni è in equilibrio.</p>
+
+  <p>Il significato economico è il seguente: all'aumentare del reddito aumenta anche il risparmio. Perché il mercato dei beni rimanga in equilibrio, occorre un pari aumento dell'investimento, possibile attraverso riduzioni del tasso di interesse.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Curva IS: retta inclinata negativamente nel piano r-Y. Intercetta sull'asse r pari a I₀/(1−c), pendenza pari a −a/(1−c).</div>
+  </div>
+
+  <h3 id="sec3-2">3.2 IS con intervento pubblico e teorema di Haavelmo</h3>
+
+  <p>Introducendo l'intervento pubblico nella forma della politica fiscale, definita dalla differenza tra entrate fiscali T e spesa pubblica G, il modello in forma strutturale e ridotta nel caso di imposte in somma fissa (cioè indipendenti dal livello del reddito) assume la forma:</p>
+
+  <p>$$\begin{aligned} Y &= C + I + G \\ C &= cY^D \\ Y^D &= Y - T \\ I &= I_0 - ar \\ G &= \bar{G}, \quad T = \bar{T} \\[6pt] Y &= \frac{1}{1-c}(G - cT + I_0 - ar) \end{aligned}$$</p>
+
+  <div class="box teorema">
+    <span class="box-label">Teorema di Haavelmo (teorema del bilancio in pareggio)</span>
+    <p class="teorema-enunciato">La politica fiscale ha effetti espansivi anche senza il ricorso alla spesa in deficit, cioè mantenendo il bilancio pubblico in pareggio. Gli effetti sul reddito di una spesa pubblica pienamente finanziata attraverso imposizione in somma fissa sono pari all'entità dell'intervento (manovra fiscale).</p>
+  </div>
+
+  <p>Imponendo G = T nella forma ridotta:</p>
+
+  <p>$$\begin{aligned} Y &= \frac{1}{1-c}\left[G(1-c) + I_0 - ar\right] \\[6pt] \Delta Y &= \frac{1-c}{1-c} \Delta G \\[6pt] \Delta Y &= \Delta G = \Delta T \end{aligned}$$</p>
+
+  <h3 id="sec3-3">3.3 IS con imposte proporzionali</h3>
+
+  <p>Nel caso di imposizione proporzionale, cioè pari ad una quota del reddito (T = tY), la curva IS cambia quota e anche pendenza, appiattendosi:</p>
+
+  <p>$$\begin{aligned} T &= tY \\ Y^D &= Y - tY = Y(1-t) \\ C &= c(1-t)Y \\ Y &= c(1-t)Y + I_0 - ar + G \\[6pt] Y &= \frac{I_0 + G}{1 - c(1-t)} - \frac{a}{1 - c(1-t)} \cdot r \end{aligned}$$</p>
+
+  <h3 id="sec3-4">3.4 IS in economia aperta</h3>
+
+  <p>Il modello IS-LM può essere esteso al caso di economia aperta agli scambi con l'estero. In questo caso l'equazione reddito-spesa deve considerare la sottrazione di reddito connessa al fatto che parte della domanda si rivolge verso l'estero, attraverso le importazioni M, e la componente addizionale della domanda connessa al fatto che parte della domanda estera si rivolge verso la produzione nazionale, attraverso le esportazioni X.</p>
+
+  <p>In presenza di cambi nominali fissi e prezzi interni ed esteri dati (queste tre variabili definiscono il tasso di cambio reale), le importazioni dipendono dal reddito interno, mentre le esportazioni da quello estero, che, nel caso di una piccola economia come l'Italia, possiamo assumere dato. Assumere dato il reddito estero equivale ad assumere dato il livello delle esportazioni.</p>
+
+  <p>La curva IS, nel caso di economia aperta agli scambi con l'estero e con intervento pubblico fiscale finanziato con imposte proporzionali, viene derivata nel modo seguente:</p>
+
+  <p>$$\begin{aligned} Y &= C + I + G + X - M \\ C &= c(1-t)Y, \quad I = I_0 - ar \\ G &= \bar{G}, \quad X = \bar{X}, \quad M = mY \\[6pt] Y &= \frac{1}{1 - c(1-t) + m}(I_0 - ar + G + X) \end{aligned}$$</p>
+
+  <h3 id="sec3-5">3.5 Derivazione della curva LM</h3>
+
+  <p>La curva LM rappresenta coppie di valori per cui il mercato monetario è in equilibrio. Nella rielaborazione della sintesi del pensiero di Keynes, il mercato monetario è definito da moneta circolante e titoli.</p>
+
+  <p>I titoli entrano in competizione con la moneta nella scelta della destinazione della ricchezza. Si assume che i risparmiatori scelgano l'allocazione della ricchezza tra moneta e titoli sulla base del livello del tasso di interesse sui titoli, che, come visto, nell'impostazione keynesiana assume il ruolo di premio per l'astensione dalla liquidità (e non dal consumo presente, come nell'ottica neoclassica).</p>
+
+  <h4>Tre moventi della domanda di moneta</h4>
+
+  <p>I risparmiatori, nella logica della sintesi, domandano moneta in relazione a tre obiettivi:</p>
+
+  <ol>
+    <li>Per scopi <strong>transattivi</strong> (per fare transazioni), in relazione costante k con il reddito.</li>
+    <li>Per scopi <strong>precauzionali</strong>, cioè per far fronte ad eventi di spesa incerti, in somma fissa L₀.</li>
+    <li>Per scopi <strong>speculativi</strong>, ossia per l'investimento in titoli: in tal caso i risparmiatori si terranno più liquidi (cioè domanderanno tanta meno moneta) quanto più alto è il tasso di interesse, secondo una relazione lineare v.</li>
+  </ol>
+
+  <p>Si assume inoltre che l'offerta di moneta in termini reali sia sotto il pieno controllo delle autorità monetarie (Banca Centrale). L'equilibrio del mercato monetario è definito dalle relazioni:</p>
+
+  <p>$$\begin{aligned} \frac{L^S}{P} &= L^D \\ L^D &= L^D_1 + L^D_2 + L^D_3 \\ L^D_1 &= kY, \quad L^D_2 = L_0, \quad L^D_3 = -vr \\[6pt] \frac{L^S}{P} &= kY + L_0 - vr \end{aligned}$$</p>
+
+  <p>Risolvendo rispetto a \(r\) si ottiene l'equazione della curva (retta) LM:</p>
+
+  <p>$$r = \frac{L_0 - L^S/P}{v} + \frac{k}{v} \cdot Y$$</p>
+
+  <p>La curva LM è inclinata positivamente, con pendenza pari a k/v. Il significato economico è il seguente: all'aumentare del reddito, aumenta la domanda per fini transattivi, in relazione k. Dal momento che l'offerta di moneta è data esogenamente, essendo controllata dalle autorità monetarie, perché il mercato monetario rimanga in equilibrio occorre che si riduca la domanda di moneta per scopi speculativi, il che è possibile solo attraverso aumenti del tasso di interesse.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Curva LM: retta inclinata positivamente nel piano r-Y. Intercetta sull'asse r pari a (L₀ − L<sup>S</sup>/P)/v, pendenza pari a k/v.</div>
+  </div>
+
+  <h3 id="sec3-6">3.6 La curva LM in trappola della liquidità</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Trappola della liquidità</span>
+    <p>Una situazione di trappola della liquidità si realizza in corrispondenza di gravi crisi economiche, durante le quali l'incertezza sulle prospettive economiche induce ad una preferenza pressoché infinita per la liquidità, ossia a trattenere moneta liquida. Si interrompe il meccanismo di scambio moneta-titoli. Il tasso di interesse è al suo minimo (pressoché zero), la banca centrale perde il controllo dell'economia.</p>
+  </div>
+
+  <p>L'elasticità della domanda di moneta al tasso di interesse (v), nel tratto rilevante della LM, è infinita. Formalmente:</p>
+
+  <p>$$r = \frac{L_0 - L^S/P}{\infty} + \frac{k}{\infty} \cdot Y = 0$$</p>
+
+  <p>Nella zona di trappola della liquidità, la LM diviene quindi orizzontale in corrispondenza di r ≈ 0.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Curva LM con tratto orizzontale (zona trappola della liquidità) in corrispondenza di r prossimo a zero, e tratto positivamente inclinato per livelli più alti del tasso di interesse.</div>
+  </div>
+
+  <h3 id="sec3-7">3.7 Equilibrio simultaneo beni-moneta</h3>
+
+  <p>L'equilibrio sul mercato dei beni e della moneta si realizza quando esiste una coppia di valori per r e Y per cui si ha che I = S e L<sup>S</sup> = L<sup>D</sup>. Dal punto di vista matematico, la relazione di equilibrio generale (che, si ricordi, in questo schema a prezzi dati, può essere di non pieno impiego), viene ottenuta sostituendo la relazione LM nella relazione IS:</p>
+
+  <p>$$Y = \frac{1}{1 - c(1-t) + m + ak/v} \cdot \left[\frac{a}{v}\left(\frac{L^S}{P} - L_0\right) + I_0 + G + X\right]$$</p>
+
+  <h4>Equilibrio in trappola della liquidità</h4>
+
+  <p>Essendo infinita la preferenza per la liquidità, la banca centrale perde il controllo della moneta. In altri termini, la liquidità messa a disposizione dalla banca centrale (L<sup>S</sup>), venendo del tutto tesaurizzata, non entra nel circuito della spesa, il che la rende del tutto inefficace, in positivo ed in negativo, ai fini della determinazione del reddito. La forma ridotta in trappola di liquidità si semplifica in:</p>
+
+  <p>$$Y = \frac{1}{1 - c(1-t) + m}(I_0 + G + X)$$</p>
+
+  <p>Una conseguenza ulteriore della situazione di trappola della liquidità è l'<strong>irrilevanza della retroazione monetaria</strong>, ossia dell'effetto freno all'espansione (contrazione) del reddito innescato da variazioni positive (negative) delle componenti autonome reali (G, X, I₀), connesso a variazioni del tasso di interesse.</p>
+
+  <p>La dimensione della retroazione monetaria (o spiazzamento finanziario) è definita da ak/v, ossia dal diverso valore che assume il moltiplicatore in situazioni normali e di trappola, dove ak/v = 0. <strong>L'efficacia della politica fiscale, al contrario della monetaria, è al suo massimo.</strong></p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Equilibrio IS-LM in trappola della liquidità: la LM è orizzontale nella zona rilevante; uno spostamento della IS (politica fiscale) trasla orizzontalmente l'equilibrio senza variazioni del tasso di interesse, mentre uno spostamento della LM (politica monetaria) è inefficace.</div>
+  </div>
+</section>
+
+<section id="sec4">
+  <h2><span class="h2-num">§4</span>Tasso di cambio, bilancia dei pagamenti, modello IS-LM-BP</h2>
+
+  <p class="lead">L'obiettivo è definire le condizioni dell'equilibrio macroeconomico in economia aperta. Si ricercano le condizioni per cui all'equilibrio sul mercato dei beni e della moneta corrisponda anche l'equilibrio dei conti con l'estero. Ciò richiede di introdurre i concetti di tasso di cambio e di bilancia dei pagamenti, e infine il modello IS-LM-BP, o modello Mundell-Fleming.</p>
+
+  <h3 id="sec4-1">4.1 Tasso di cambio</h3>
+
+  <p>Le transazioni con l'estero di beni, servizi e capitali avvengono in valute nazionali, il che implica l'esistenza di un mercato delle valute. Ad ogni atto di acquisto all'estero corrisponde una domanda di valuta estera. Ad ogni atto di vendita all'estero corrisponde una offerta di valuta estera. Se la domanda verso l'estero supera la domanda dall'estero ci sarà un eccesso di domanda di valuta estera; nel caso contrario, un eccesso di offerta (o un eccesso di domanda di valuta nazionale).</p>
+
+  <p>La logica della domanda e dell'offerta di valuta definisce il prezzo della valute, detto <strong>cambio</strong>, o tasso di cambio nominale bilaterale. Il cambio nominale bilaterale è il prezzo di una moneta in termini di un'altra moneta.</p>
+
+  <p>Esistono due modi per esprimere tale prezzo:</p>
+
+  <ul>
+    <li><strong>Incerto per certo</strong>: l'unità di riferimento è la moneta estera (dal punto di vista di uno statunitense: quanti dollari servono per comprare una sterlina?).</li>
+    <li><strong>Certo per incerto</strong>: l'unità di riferimento è quella nazionale (dal punto di vista di un europeo: quanti dollari servono per acquistare un euro?). Per l'euro si adotta oggi il cambio certo per incerto.</li>
+  </ul>
+
+  <p>Data la definizione certo per incerto, ad un aumento del cambio corrisponde un <strong>apprezzamento</strong> della moneta nazionale (es. se il dollaro passa da 1.15 a 1.30 euro). Viceversa nel caso di definizione incerto per certo.</p>
+
+  <h4>Cambio nominale effettivo e cambio reale</h4>
+
+  <p>Dal momento che non esistono solo due paesi, diventa rilevante il <strong>tasso di cambio nominale effettivo</strong>: media pesata dei tassi di cambio nominale bilaterali, con pesi definiti dal peso relativo del volume di transazioni effettuate con i singoli paesi:</p>
+
+  <p>$$e_e = \sum_{i=1}^{N-1} w_i \, e_i$$</p>
+
+  <p>Definendo il prezzo della moneta nazionale all'estero e quello delle monete estere all'interno, il cambio definisce in sostanza anche il prezzo delle merci e la loro competitività negli scambi internazionali. Il prezzo delle merci negli scambi internazionali dipende anche dal rapporto tra prezzi nei paesi considerati. Da qui il concetto di <strong>tasso di cambio reale</strong>, bilaterale ed effettivo:</p>
+
+  <p>$$e_r = \frac{p_e}{p_i} \qquad ee_r = \frac{p_{ee}}{p_w}$$</p>
+
+  <p>Ciò che interessa del cambio reale, in termini di effetti sulla bilancia dei pagamenti, non è il suo livello ma le sue variazioni:</p>
+
+  <p>$$\Delta e_r = \Delta e + (\Delta p - \Delta p_i) \qquad \Delta ee_r = \Delta ee + (\Delta p - \Delta p_w)$$</p>
+
+  <p>A variazioni positive del cambio reale, dovute ad aumenti del cambio nominale e/o dell'inflazione relativa (cioè la differenza tra tasso di inflazione interno e tasso di inflazione estero), corrispondono apprezzamenti del cambio e riduzioni della competitività di prezzo delle merci nazionali. Viceversa nel caso di variazioni negative.</p>
+
+  <p>Ad apprezzamenti del cambio corrispondono, a parità di altre condizioni, riduzioni di esportazioni (le merci nazionali diventano relativamente più costose) e aumento di importazioni (le merci estere diventano relativamente meno costose).</p>
+
+  <p>In regimi di cambio fisso, il cambio reale varia solo per effetto di variazioni nell'inflazione relativa, essendo il cambio nominale fissato sulla base di accordi internazionali. Nell'euro-zona, in cui i cambi sono irrevocabilmente fissi, i tassi di cambio reali — quindi la competitività relativa — rimangono variabili per effetto dei diversi tassi di inflazione.</p>
+
+  <h3 id="sec4-2">4.2 Bilancia dei pagamenti</h3>
+
+  <p>La bilancia dei pagamenti (BP) si compone in tre conti: conto delle <strong>partite correnti (PC)</strong>, conto capitale e <strong>conto finanziario (MK)</strong>. Dal momento che il conto capitale registra trasferimenti unilaterali, che non seguono logiche strettamente economiche, si considerano esclusivamente PC e MK.</p>
+
+  <h4>Partite correnti</h4>
+
+  <p>Le PC sono definite dalla differenza tra esportazioni ed importazioni: PC = X − M. Le importazioni M dipendono prima di tutto dal livello del reddito nazionale (oltre che da fattori di competitività non di prezzo). Rimuovendo l'ipotesi di prezzi e cambi dati, le importazioni dipendono anche, e con relazione diretta, dal cambio reale. Le esportazioni X dipendono dal reddito estero e, con relazione inversa, dal cambio reale. Possiamo scrivere:</p>
+
+  <p>$$\begin{aligned} M &= m\bigl[f(ee_r)_{+}\bigr] \cdot Y \\ X &= m_w\bigl[f(ee_r)_{-}\bigr] \cdot Y_w \\ PC &= m_w\bigl[f(ee_r)_{-}\bigr] \cdot Y_w - m\bigl[f(ee_r)_{+}\bigr] \cdot Y \end{aligned}$$</p>
+
+  <h4>Conto finanziario</h4>
+
+  <p>Il conto finanziario MK, al netto della variazione nelle riserve ufficiali, esprime i movimenti di capitale non imputabili ad azioni dell'autorità monetaria (Banca centrale). Si tratta di movimenti di capitale tout court. Essi dipendono, prima di tutto, dal differenziale tra tasso di interesse interno ed estero (positivamente), sia a lungo termine (per investimenti e prestiti a lunga scadenza) sia a breve termine (per operazioni di credito a breve e movimenti speculativi). In secondo luogo, dipendono dalle attese di variazione del cambio (positivamente):</p>
+
+  <p>$$MK = g\bigl[f_{MK}(\Delta e_e^e, (r - r_w))_{+}\bigr]$$</p>
+
+  <p>Essendo BP = PC + MK, avremo BP = X − M + MK. Assumendo prezzi dati e aspettative sulle variazioni del cambio stabili (quindi cambi nominali dati), è possibile definire le relazioni r-Y che mettono in equilibrio la bilancia dei pagamenti.</p>
+
+  <h3 id="sec4-3">4.3 Il modello IS-LM-BP</h3>
+
+  <p>L'equilibrio della bilancia dei pagamenti richiede che BP = X − M + MK = 0. La curva BP viene trovata nel modo seguente:</p>
+
+  <p>$$BP = 0 = m_w Y_w - mY + g(r - r_w)$$</p>
+
+  <p>Nel caso di una piccola economia, il reddito estero può considerarsi come dato; le esportazioni risultano esogene:</p>
+
+  <p>$$\begin{aligned} 0 &= X - mY + g(r - r_w) \\ r &= r_w - \frac{X}{g} + \frac{m}{g} \cdot Y \end{aligned}$$</p>
+
+  <p>La curva (retta) BP è inclinata positivamente in ragione m/g. La sua pendenza è tanto più spiccata quanto maggiore è m e minore è g. Nel caso di <strong>perfetta mobilità di capitali</strong>, g vale infinito, pertanto la BP sarà piatta (orizzontale) in corrispondenza del tasso di interesse estero. Nel caso di <strong>immobilità dei capitali</strong>, la pendenza è infinita: la BP è verticale.</p>
+
+  <h4>Avanzo, disavanzo e traslazioni della BP</h4>
+
+  <p>I punti al di sopra della curva BP individuano situazioni di <strong>avanzo</strong>, poiché corrispondono a coppie r-Y per cui r è maggiore al tasso di equilibrio, il che attira capitali dall'estero in misura maggiore rispetto al necessario per il pareggio della BP. Viceversa, i punti al di sotto della BP individuano situazioni di <strong>disavanzo</strong>.</p>
+
+  <p>Eventuali variazioni del cambio spostano la BP parallelamente. Un tasso di cambio superiore (apprezzamento) determina una traslazione verso l'alto: l'apprezzamento determina un peggioramento delle PC che richiede, ai fini del ristabilimento dell'equilibrio della BP, un miglioramento della MK, che può aversi solo per tassi di interesse superiori. Viceversa, una riduzione del cambio determina traslazioni della BP verso il basso. La variazione dei prezzi interni, al pari di variazioni del cambio, determina traslazioni della BP, verso l'alto nel caso di aumento, verso il basso nel caso di riduzione. Lo stesso avviene, ma in direzione opposta, nel caso di variazioni del livello dei prezzi esteri.</p>
+
+  <p>Il significato economico della pendenza positiva della BP è il seguente: all'aumentare del reddito, aumentano le importazioni, mentre le esportazioni sono date costanti, il che induce un saldo negativo della PC. Perché la BP sia in equilibrio (ossia valga zero), deve prodursi un avanzo della bilancia dei capitali MK, che può avvenire attraverso incrementi del tasso di interesse.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Curva BP nel piano r-Y. Intercetta sull'asse r pari a r<sub>w</sub> − X/g, pendenza m/g. Punti sopra la BP: zona di avanzo. Punti sotto: zona di disavanzo. Le traslazioni parallele BP', BP'' rappresentano apprezzamenti e deprezzamenti del cambio.</div>
+  </div>
+
+  <h4>Equilibrio simultaneo IS-LM-BP</h4>
+
+  <p>L'equilibrio nel mercato dei beni, della moneta e nelle relazioni con l'estero è rappresentabile graficamente da una situazione in cui le curve IS, LM e BP si intersecano in un unico punto. A partire da questa situazione, lo spostamento di una qualsiasi delle tre curve determinerà uno squilibrio su almeno uno dei tre mercati. Il sistema tenderà quindi a tornare alla situazione iniziale o a trovare un nuovo equilibrio. L'esito dipende dal tipo di squilibrio (monetario, reale, dei conti con l'estero) e dal regime di cambi ipotizzato.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Equilibrio simultaneo IS-LM-BP: le tre curve si intersecano in un unico punto sul piano r-Y. IS inclinata negativamente, LM inclinata positivamente, BP inclinata positivamente con pendenza m/g.</div>
+  </div>
+</section>
+
+<section id="sec5">
+  <h2><span class="h2-num">§5</span>La posizione monetarista alla Friedman</h2>
+
+  <p class="lead">Il principale limite dello schema IS-LM è che esso assume prezzi fissi, il che preclude l'utilizzo dell'approccio per analisi di medio-lungo periodo. Una ulteriore limitazione risiede nel fatto che non vengono considerate le condizioni dell'offerta, quindi la effettiva posizione dell'economia rispetto al potenziale produttivo. La rimozione di queste due limitazioni può considerarsi alla base dell'impostazione monetarista di Friedman e dei successivi sviluppi teorici in seno alla scuola della Nuova Macroeconomia Classica.</p>
+
+  <p>Friedman concepisce il sistema economico come <strong>intrinsecamente stabile</strong> e autonomamente tendente alla posizione di equilibrio naturale. La politica economica, ed in particolare la politica monetaria, non avrà che effetti temporanei sulle grandezze reali, dal momento che il sistema tende all'equilibrio naturale. Gli effetti, nel lungo periodo, saranno solo nominali, ossia sul livello dei prezzi. Solo politiche strutturali possono cambiare i livelli naturali.</p>
+
+  <h3 id="sec5-1">5.1 L'equilibrio naturale</h3>
+
+  <p>Friedman fa riferimento particolare al <strong>tasso di interesse naturale</strong> e al <strong>tasso di disoccupazione naturale</strong>. Il primo definisce il prezzo di equilibrio tra domanda ed offerta di capitale (investimento e risparmio), mentre il secondo definisce il tasso di disoccupazione in corrispondenza del quale il numero di posti vacanti è in relazione di equilibrio con il numero di lavoratori disoccupati (disoccupazione frizionale). I due tassi naturali definiscono equilibri di piena occupazione sul mercato dei beni e del lavoro.</p>
+
+  <p>Le posizioni naturali sono in sostanza quelle soluzioni che emergono nel lungo periodo per effetto di ipotesi di mercati concorrenziali a prezzi flessibili nel medio-lungo periodo, e in cui le decisioni di risparmio e di investimento vengono coordinate dal prezzo del capitale, cioè dal tasso di interesse. L'economia tende al pieno impiego delle risorse.</p>
+
+  <h3 id="sec5-2">5.2 Aspettative adattive</h3>
+
+  <p>Un punto fondamentale dell'analisi monetarista è dato dall'ipotesi di <strong>aspettative adattive</strong>. Secondo tale ipotesi, gli individui formerebbero le proprie aspettative sui prezzi sulla base delle aspettative passate e dello scostamento osservato tra aspettative passate e valori effettivi (meccanismo a correzione dell'errore):</p>
+
+  <p>$$P_t^e = P_{t-1}^e + \gamma\bigl(P_{t-1} - P_{t-1}^e\bigr), \qquad 0 < \gamma \leq 1$$</p>
+
+  <p>L'ipotesi che gli individui formino aspettative, in un contesto sostanzialmente neoclassico (di CP a prezzi variabili), ha rilevanza nel circoscrivere al solo breve periodo l'efficacia della politica economica, in particolare di quella monetaria.</p>
+
+  <h3 id="sec5-3">5.3 La curva di Phillips aumentata con le aspettative</h3>
+
+  <p>La curva di Phillips originaria si basava sulla osservazione di una relazione negativa tra tasso di disoccupazione e tasso di variazione del salario. Nella versione derivata, al tasso di variazione salariale è stato sostituito il tasso di inflazione, operazione possibile in virtù della formula del costo pieno.</p>
+
+  <p>Nella rielaborazione di Friedman, la variazione salariale o del livello dei prezzi viene fatta dipendere anche dalle aspettative di inflazione, che si formano in modo adattivo:</p>
+
+  <p>$$\Delta P_t = \varphi u + \Delta P_t^e$$</p>
+
+  <p>Dato il meccanismo di formazione delle aspettative, è possibile riscrivere la nuova relazione di Phillips come:</p>
+
+  <p>$$\Delta P_t = \varphi u_t + \gamma\bigl(P_{t-1} - P_{t-1}^e\bigr)$$</p>
+
+  <p>L'ultima equazione mostra come non esista una unica curva di Phillips, ma un <strong>fascio di curve di Phillips</strong>, ognuna delle quali si associa ad una diversa aspettativa sull'inflazione. Lo stato può provare a portare il tasso di disoccupazione al di sotto di quello naturale con politiche espansive, ma gli effetti potranno realizzarsi solo nel breve periodo, mentre nel lungo periodo si avranno solo effetti inflazionistici. <strong>Nel lungo periodo la curva di Phillips è verticale</strong> in corrispondenza del tasso di disoccupazione naturale u*.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Curva di Phillips di lungo periodo: retta verticale in corrispondenza di u*. Sul piano dP-u si rappresenta anche il fascio di curve di Phillips di breve periodo, ognuna associata a una diversa aspettativa di inflazione.</div>
+  </div>
+
+  <h3 id="sec5-4">5.4 Quale ruolo per la politica economica</h3>
+
+  <p>L'azione pubblica deve astenersi da interventi discrezionali volti a modificare le soluzioni naturali di mercato.</p>
+
+  <p>La <strong>politica monetaria</strong> è efficace solo nel breve periodo, mentre nel lungo periodo può generare solo effetti nelle grandezze nominali, cioè inflazione.</p>
+
+  <p>La <strong>politica fiscale</strong>, d'altro canto, è inefficace se transitoria, anche nel breve periodo, per effetto dell'ipotesi di reddito permanente adottata dai monetaristi. Nel caso fosse percepita come permanente, i suoi effetti sarebbero comunque solo transitori per effetto dello <strong>spiazzamento finanziario</strong> della spesa privata indotto dalla spesa pubblica. Tale spiazzamento si ha per effetto dell'aumento del tasso di interesse indotto dalla manovra espansiva, cui si aggiungono ulteriori aumenti del tasso di interesse connessi alla contrazione di offerta di moneta in termini reali dovuta all'aumento dei prezzi.</p>
+
+  <p>Il suggerimento dei monetaristi è pertanto quello di limitare al massimo la discrezionalità dei policy-makers, che dovrebbero legarsi a delle <strong>regole automatiche</strong> che hanno il vantaggio di essere trasparenti e stabilizzare le aspettative degli agenti economici (regola semplice di Friedman).</p>
+</section>
+
+<section id="sec6">
+  <h2><span class="h2-num">§6</span>La Nuova Macroeconomia Classica (NMC)</h2>
+
+  <p class="lead">La NMC rinforza la posizione monetarista sull'inefficacia della politica economica, fondandosi su due ipotesi fondamentali: gli operatori formano le loro aspettative in modo razionale (Muth, 1961), e i prezzi sono pienamente flessibili. Sotto queste ipotesi, la politica economica è inefficace anche nel breve periodo.</p>
+
+  <h3 id="sec6-1">6.1 Aspettative razionali</h3>
+
+  <p>Gli operatori economici sfruttano tutte le informazioni disponibili, che sono le stesse in possesso delle autorità di politica economica, per formare le proprie aspettative (previsioni) e prendere decisioni in ottica intertemporale. Non necessariamente tali informazioni sono complete: in un mercato decentrato, un operatore conosce perfettamente il prezzo della propria merce ma non necessariamente quello delle altre merci (<strong>isole di Lucas</strong>).</p>
+
+  <p>Una previsione razionale sul livello generale dei prezzi, se l'errore non è sistematico (e non può esserlo data l'ipotesi di razionalità), è corretta in media.</p>
+
+  <p>Tali previsioni razionali si basano sull'utilizzo di un modello dell'economia che è quello rilevante. Le aspettative sono infatti coerenti col modello, oltre che con l'informazione posseduta (ma qual è il modello rilevante dell'economia?).</p>
+
+  <p>Si noti che l'ipotesi di aspettative razionali semplicemente aumenta la velocità di convergenza ai risultati impliciti ai modelli teorici. Sotto questo punto di vista, l'ipotesi non è cruciale. <strong>L'ipotesi cruciale riguarda il modello che descrive il funzionamento dell'economia, che è pienamente neoclassico.</strong></p>
+
+  <h3 id="sec6-2">6.2 Prezzi flessibili ed equilibrio</h3>
+
+  <p>I mercati tendono autonomamente all'equilibrio di pieno impiego. Eventuali deviazioni temporanee dalla posizione di equilibrio possono aversi solo per effetto di errori informativi, dovuti alla forma decentrata dei mercati, o a shock esogeni di natura stocastica, cioè inattesi.</p>
+
+  <p>L'equilibrio è garantito dall'ipotesi di prezzi flessibili, che è l'unica ipotesi (nella logica concorrenziale della NMC) compatibile con l'ipotesi di razionalità economica. La politica economica può avere effetti reali di natura temporanea solo se riesce ad ingannare gli operatori privati, ossia se è inattesa. Se le mosse di politica fossero previste, esse sarebbero anticipate dagli operatori economici e neutralizzate.</p>
+
+  <h3 id="sec6-3">6.3 Inefficacia della politica economica</h3>
+
+  <p>Si consideri il caso in cui l'autorità monetaria decida di aumentare l'offerta di moneta (politica monetaria espansiva).</p>
+
+  <p>Se l'aumento di moneta è <strong>imprevisto</strong>, esso farà aumentare la domanda aggregata. Dato che il sistema è in pieno impiego, ne scaturisce un aumento dei prezzi di tutte le merci rispetto alle attese. Data la forma decentrata dei mercati, tale aumento generalizzato verrà percepito inizialmente come un aumento del prezzo relativo della propria merce, il che indurrà l'operatore ad aumentare l'offerta del proprio prodotto. Quando gli operatori capiscono che l'aumento dei prezzi è generalizzato, essi saranno indotti a ricontrarre l'offerta al valore di pieno impiego, inducendo ulteriori aumenti dei prezzi. L'esito finale è un aumento del livello generale dei prezzi: gli effetti reali sono solo transitori.</p>
+
+  <p>Se l'aumento di moneta è <strong>previsto</strong>, esso non può avere alcun effetto reale, poiché gli operatori anticiperanno gli effetti sul livello generale dei prezzi, aumentando immediatamente i prezzi dei loro prodotti senza aumentare la loro produzione.</p>
+
+  <p>Ne segue, con riferimento alla curva di Phillips aumentata con le aspettative, che essa è <strong>verticale anche nel breve periodo</strong>, a meno che i policy-maker non riescano a sorprendere gli operatori privati con mosse inattese (non sistematiche).</p>
+
+  <p>Una conseguenza paradossale: l'instabilità economica è in parte spiegata proprio dall'azione delle autorità di politica economica, che cercano di spostare il sistema dalle proprie posizioni naturali.</p>
+</section>
+
+<footer>
+  <p>Lezione 2 di 4 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione2_quiz.html">→ Quiz di ripasso</a></p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  
+  try {
+    if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
+  } catch(e) {}
+  
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+(function() {
+  const sidebarLinks = document.querySelectorAll('aside.sidebar nav a');
+  const sections = Array.from(sidebarLinks).map(link => {
+    const id = link.getAttribute('href').slice(1);
+    return { id, element: document.getElementById(id), link };
+  }).filter(s => s.element);
+
+  function updateActive() {
+    const scrollPos = window.scrollY + 100;
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.element.offsetTop <= scrollPos) current = s;
+      else break;
+    }
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+</body>
+</html>
