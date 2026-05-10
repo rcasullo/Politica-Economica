@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafico interattivo — Curva LM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --paper: #fafaf5; --paper-warm: #f2efe5; --paper-cool: #f5f4ee;
+  --muted: #5a5550; --muted-light: #8a857d;
+  --rule: #d8d4c8; --rule-strong: #b8b3a5;
+  --link: #1a4480; --accent: #6b4423;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px;
+}
+
+.wrap { max-width: 920px; margin: 0 auto; }
+
+.grafico-card {
+  background: white; border: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1.3fr 1fr;
+}
+
+.grafico-svg-wrap {
+  padding: 24px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #fdfcf7;
+}
+
+.grafico-svg-wrap svg {
+  width: 100%; height: auto; max-width: 460px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+.grafico-controls {
+  padding: 22px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9em;
+}
+
+.controls-section { margin-bottom: 22px; }
+.controls-section:last-child { margin-bottom: 0; }
+
+.controls-label {
+  font-size: 0.72em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 12px;
+}
+
+.slider-row {
+  display: grid; grid-template-columns: 36px 1fr 60px;
+  align-items: center; gap: 12px; margin-bottom: 10px;
+}
+
+.slider-label {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic; font-weight: 600; font-size: 1em;
+}
+
+.slider-row input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--rule); border-radius: 2px; outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer;
+}
+
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--ink); border-radius: 50%; cursor: pointer; border: none;
+}
+
+.slider-value {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenari { display: flex; flex-direction: column; gap: 8px; }
+
+.scenari button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em; font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper); color: var(--ink);
+  cursor: pointer; text-align: left;
+  transition: all 0.15s;
+}
+
+.scenari button:hover {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+
+.scenari button.reset {
+  border-style: dashed; color: var(--muted); font-style: italic;
+}
+
+.scenari button.reset:hover {
+  background: var(--paper-warm); color: var(--ink); border-style: solid;
+}
+
+.commento {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92em; line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  grid-column: 1 / -1;
+}
+
+.commento-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent); margin-bottom: 8px;
+}
+
+.commento p { margin-bottom: 8px; }
+.commento p:last-child { margin-bottom: 0; }
+
+.formula-inline {
+  font-family: 'Source Sans 3', monospace;
+  background: white; padding: 1px 6px; font-size: 0.95em;
+}
+
+@media (max-width: 720px) {
+  .grafico-card { grid-template-columns: 1fr; }
+  .grafico-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="grafico-card">
+
+  <div class="grafico-svg-wrap">
+    <svg viewBox="0 0 460 360" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="30" x2="60" y2="310" stroke="#1a1a1a" stroke-width="1.2"/>
+      <line x1="60" y1="310" x2="430" y2="310" stroke="#1a1a1a" stroke-width="1.2"/>
+      <text x="40" y="40" font-size="13" font-style="italic" fill="#1a1a1a">r</text>
+      <text x="425" y="328" font-size="13" font-style="italic" fill="#1a1a1a">Y</text>
+      <text x="48" y="325" font-size="11" fill="#5a5550">O</text>
+      
+      <g id="ticks-x" stroke="#5a5550" stroke-width="0.8"></g>
+      <g id="ticks-y" stroke="#5a5550" stroke-width="0.8"></g>
+      
+      <line id="lm-base-line" x1="0" y1="0" x2="0" y2="0" stroke="#999285" stroke-width="2" stroke-dasharray="5,4"/>
+      <text id="lm-base-label" x="0" y="0" font-size="12" fill="#999285" font-weight="600">LM₀</text>
+      
+      <line id="lm-new-line" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2.5"/>
+      <text id="lm-new-label" x="0" y="0" font-size="13" fill="#1a4480" font-weight="700">LM</text>
+      
+      <line id="lm-trap-line" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2.5" opacity="0"/>
+      
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b4423"/>
+        </marker>
+      </defs>
+      <line id="shift-arrow" x1="0" y1="0" x2="0" y2="0" stroke="#6b4423" stroke-width="1.5" marker-end="url(#arrowhead)" opacity="0"/>
+    </svg>
+  </div>
+
+  <div class="grafico-controls">
+    <div class="controls-section">
+      <div class="controls-label">Parametri</div>
+      
+      <div class="slider-row">
+        <span class="slider-label">L<sup>S</sup></span>
+        <input type="range" id="param-LS" min="100" max="600" step="10" value="300">
+        <span class="slider-value" id="val-LS">300</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">L₀</span>
+        <input type="range" id="param-L0" min="0" max="200" step="5" value="80">
+        <span class="slider-value" id="val-L0">80</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">k</span>
+        <input type="range" id="param-k" min="0.1" max="0.6" step="0.01" value="0.30">
+        <span class="slider-value" id="val-k">0.30</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">v</span>
+        <input type="range" id="param-v" min="500" max="5000" step="100" value="2000">
+        <span class="slider-value" id="val-v">2000</span>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="controls-label">Scenari</div>
+      <div class="scenari">
+        <button onclick="applicaScenario('espansiva')">Politica monetaria espansiva (↑L<sup>S</sup>)</button>
+        <button onclick="applicaScenario('restrittiva')">Politica monetaria restrittiva (↓L<sup>S</sup>)</button>
+        <button onclick="applicaScenario('precauzionale')">↑ domanda precauzionale (↑L₀)</button>
+        <button onclick="applicaScenario('trappola')">Trappola della liquidità (v→∞)</button>
+        <button class="reset" onclick="applicaScenario('reset')">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="commento">
+    <div class="commento-label">📖 Lettura economica</div>
+    <div id="commento-text">
+      <p>Stai osservando la situazione iniziale. La curva LM rappresenta le coppie <em>(Y, r)</em> per cui il mercato monetario è in equilibrio.</p>
+      <p>Modifica un parametro o applica uno scenario per vedere come si sposta la curva.</p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const baseParams = { LS: 300, L0: 80, k: 0.30, v: 2000 };
+let params = { ...baseParams };
+let trappolaAttiva = false;
+
+const PLOT = { xMin: 60, xMax: 430, yMin: 30, yMax: 310, YMin: 0, YMax: 1500, rMin: 0, rMax: 0.20 };
+
+function YtoX(Y) { return PLOT.xMin + (Y - PLOT.YMin) / (PLOT.YMax - PLOT.YMin) * (PLOT.xMax - PLOT.xMin); }
+function rtoY(r) { return PLOT.yMax - (r - PLOT.rMin) / (PLOT.rMax - PLOT.rMin) * (PLOT.yMax - PLOT.yMin); }
+
+function drawTicks() {
+  const ticksX = document.getElementById('ticks-x');
+  const ticksY = document.getElementById('ticks-y');
+  ticksX.innerHTML = ''; ticksY.innerHTML = '';
+  for (let Y = 0; Y <= PLOT.YMax; Y += 300) {
+    const x = YtoX(Y);
+    ticksX.innerHTML += `<line x1="${x}" y1="310" x2="${x}" y2="313"/>`;
+    if (Y > 0) ticksX.innerHTML += `<text x="${x}" y="324" font-size="9.5" fill="#8a857d" text-anchor="middle">${Y}</text>`;
+  }
+  for (let r = 0; r <= PLOT.rMax; r += 0.05) {
+    const y = rtoY(r);
+    ticksY.innerHTML += `<line x1="57" y1="${y}" x2="60" y2="${y}"/>`;
+    if (r > 0) ticksY.innerHTML += `<text x="54" y="${y+3}" font-size="9.5" fill="#8a857d" text-anchor="end">${(r*100).toFixed(0)}%</text>`;
+  }
+}
+
+function calcolaLM(p) {
+  const intercetta = (p.L0 - p.LS) / p.v;
+  const pendenza = p.k / p.v;
+  
+  const candidati = [];
+  let r1 = intercetta + pendenza * PLOT.YMin;
+  if (r1 >= PLOT.rMin && r1 <= PLOT.rMax) candidati.push({ Y: PLOT.YMin, r: r1 });
+  let r2 = intercetta + pendenza * PLOT.YMax;
+  if (r2 >= PLOT.rMin && r2 <= PLOT.rMax) candidati.push({ Y: PLOT.YMax, r: r2 });
+  if (Math.abs(pendenza) > 1e-10) {
+    let Y_rmin = (PLOT.rMin - intercetta) / pendenza;
+    if (Y_rmin >= PLOT.YMin && Y_rmin <= PLOT.YMax) candidati.push({ Y: Y_rmin, r: PLOT.rMin });
+    let Y_rmax = (PLOT.rMax - intercetta) / pendenza;
+    if (Y_rmax >= PLOT.YMin && Y_rmax <= PLOT.YMax) candidati.push({ Y: Y_rmax, r: PLOT.rMax });
+  }
+  
+  return candidati.length >= 2 ? { p1: candidati[0], p2: candidati[1], visibile: true } : { visibile: false };
+}
+
+function disegnaLM(p, lineId, labelId, labelText, posOffset) {
+  const result = calcolaLM(p);
+  const line = document.getElementById(lineId);
+  const label = document.getElementById(labelId);
+  
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0); label.setAttribute('opacity', 0); return;
+  }
+  line.setAttribute('opacity', 1); label.setAttribute('opacity', 1);
+  
+  const x1 = YtoX(result.p1.Y), y1 = rtoY(result.p1.r);
+  const x2 = YtoX(result.p2.Y), y2 = rtoY(result.p2.r);
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  
+  const xRight = Math.max(x1, x2);
+  const yRight = (xRight === x1) ? y1 : y2;
+  label.setAttribute('x', xRight - 28 + (posOffset?.x || 0));
+  label.setAttribute('y', yRight - 6 + (posOffset?.y || 0));
+  label.textContent = labelText;
+}
+
+function disegnaLMTrappola() {
+  const r_trap = 0.005;
+  const line = document.getElementById('lm-trap-line');
+  line.setAttribute('opacity', 1);
+  line.setAttribute('x1', YtoX(PLOT.YMin)); line.setAttribute('y1', rtoY(r_trap));
+  line.setAttribute('x2', YtoX(PLOT.YMax)); line.setAttribute('y2', rtoY(r_trap));
+  
+  document.getElementById('lm-new-line').setAttribute('opacity', 0);
+  const lab = document.getElementById('lm-new-label');
+  lab.setAttribute('opacity', 1);
+  lab.setAttribute('x', YtoX(PLOT.YMax) - 50);
+  lab.setAttribute('y', rtoY(r_trap) - 8);
+  lab.textContent = 'LM (trappola)';
+}
+
+function disegnaFreccia(pBase, pNew) {
+  const arrow = document.getElementById('shift-arrow');
+  const rMid = 0.08;
+  const Ybase = (pBase.LS - pBase.L0 + pBase.v * rMid) / pBase.k;
+  const Ynew = (pNew.LS - pNew.L0 + pNew.v * rMid) / pNew.k;
+  
+  if (Math.abs(Ybase - Ynew) < 30) { arrow.setAttribute('opacity', 0); return; }
+  
+  arrow.setAttribute('x1', YtoX(Ybase)); arrow.setAttribute('y1', rtoY(rMid));
+  arrow.setAttribute('x2', YtoX(Ynew)); arrow.setAttribute('y2', rtoY(rMid));
+  arrow.setAttribute('opacity', 1);
+}
+
+function aggiorna() {
+  document.getElementById('val-LS').textContent = params.LS;
+  document.getElementById('val-L0').textContent = params.L0;
+  document.getElementById('val-k').textContent = params.k.toFixed(2);
+  document.getElementById('val-v').textContent = params.v;
+  
+  disegnaLM(baseParams, 'lm-base-line', 'lm-base-label', 'LM₀', { x: -10, y: -2 });
+  document.getElementById('lm-trap-line').setAttribute('opacity', 0);
+  
+  if (trappolaAttiva) {
+    disegnaLMTrappola();
+    document.getElementById('shift-arrow').setAttribute('opacity', 0);
+  } else {
+    disegnaLM(params, 'lm-new-line', 'lm-new-label', 'LM', { x: 4, y: 4 });
+    disegnaFreccia(baseParams, params);
+  }
+  aggiornaCommento();
+}
+
+function aggiornaCommento() {
+  const c = document.getElementById('commento-text');
+  
+  if (trappolaAttiva) {
+    c.innerHTML = `
+      <p><strong>Trappola della liquidità.</strong> L'elasticità della domanda di moneta al tasso (<em>v</em>) tende all'infinito.</p>
+      <p><strong>Effetto sulla LM:</strong> nella zona rilevante la curva diventa <strong>orizzontale</strong> in corrispondenza di r ≈ 0. Lo scambio moneta-titoli si interrompe: gli operatori, di fronte all'incertezza, hanno una preferenza pressoché infinita per la liquidità.</p>
+      <p><strong>Conseguenze per la politica:</strong> la banca centrale perde il controllo dell'economia. La liquidità immessa viene tesaurizzata e non entra nel circuito della spesa: la <strong>politica monetaria è inefficace</strong>. La politica fiscale è invece al massimo della sua efficacia (assenza di retroazione monetaria).</p>
+    `;
+    return;
+  }
+  
+  const cambiamenti = [];
+  if (Math.abs(params.LS - baseParams.LS) > 0.5) cambiamenti.push(`L<sup>S</sup>: ${baseParams.LS} → ${params.LS}`);
+  if (Math.abs(params.L0 - baseParams.L0) > 0.5) cambiamenti.push(`L₀: ${baseParams.L0} → ${params.L0}`);
+  if (Math.abs(params.k - baseParams.k) > 0.005) cambiamenti.push(`k: ${baseParams.k.toFixed(2)} → ${params.k.toFixed(2)}`);
+  if (Math.abs(params.v - baseParams.v) > 0.5) cambiamenti.push(`v: ${baseParams.v} → ${params.v}`);
+  
+  const pendBase = baseParams.k / baseParams.v;
+  const pendNew = params.k / params.v;
+  
+  if (cambiamenti.length === 0) {
+    c.innerHTML = `
+      <p>La curva LM rappresenta coppie <em>(Y, r)</em> per cui il mercato monetario è in equilibrio: <span class="formula-inline">L<sup>S</sup>/P = kY + L₀ − vr</span>, ossia <span class="formula-inline">r = (L₀ − L<sup>S</sup>)/v + (k/v)·Y</span>.</p>
+      <p><strong>Tre moventi della domanda di moneta:</strong></p>
+      <ul style="margin-left: 20px;">
+        <li><strong>Transattivo</strong> (kY): cresce col reddito, in proporzione k</li>
+        <li><strong>Precauzionale</strong> (L₀): in somma fissa, indipendente da Y e r</li>
+        <li><strong>Speculativo</strong> (−vr): inverso al tasso, con sensibilità v</li>
+      </ul>
+      <p><strong>Pendenza:</strong> k/v = ${(pendBase*1000).toFixed(2)}·10⁻³. Inclinata positivamente: all'aumentare di Y, cresce la domanda transattiva; per riequilibrare il mercato (offerta data) serve un r più alto, che riduce la domanda speculativa.</p>
+    `;
+    return;
+  }
+  
+  let html = `<p><strong>Cosa è cambiato:</strong> ${cambiamenti.join(', ')}.</p>`;
+  
+  const rFix = 0.08;
+  const Ybase = (baseParams.LS - baseParams.L0 + baseParams.v * rFix) / baseParams.k;
+  const Ynew = (params.LS - params.L0 + params.v * rFix) / params.k;
+  const dY = Ynew - Ybase;
+  
+  if (Math.abs(dY) > 5) {
+    const direzione = dY > 0 ? 'destra (verso il basso)' : 'sinistra (verso l\'alto)';
+    html += `<p><strong>Effetto sulla LM:</strong> traslazione verso ${direzione}. A parità di r (es. r = 8%), Y compatibile con l'equilibrio monetario passa da ${Ybase.toFixed(0)} a ${Ynew.toFixed(0)} (${dY > 0 ? '+' : ''}${dY.toFixed(0)}).</p>`;
+  }
+  
+  if (Math.abs(pendBase - pendNew) > 0.00001) {
+    const cambioPend = pendNew > pendBase ? 'aumenta' : 'si riduce';
+    const direzPendenza = pendNew > pendBase ? 'più ripida' : 'più piatta';
+    html += `<p><strong>Effetto sulla pendenza:</strong> il rapporto k/v ${cambioPend} (da ${(pendBase*1000).toFixed(2)}·10⁻³ a ${(pendNew*1000).toFixed(2)}·10⁻³). La LM è ${direzPendenza}.</p>`;
+  }
+  
+  if (params.LS > baseParams.LS + 30 && params.L0 === baseParams.L0 && params.k === baseParams.k && params.v === baseParams.v) {
+    html += `<p><strong>Lettura — politica monetaria espansiva:</strong> la banca centrale aumenta l'offerta reale di moneta. La LM trasla verso destra (o, equivalentemente, verso il basso): a parità di reddito, il tasso di interesse compatibile con l'equilibrio monetario è inferiore. Nel modello IS-LM completo, questo determina r minore e Y maggiore.</p>`;
+  } else if (params.LS < baseParams.LS - 30 && params.L0 === baseParams.L0 && params.k === baseParams.k && params.v === baseParams.v) {
+    html += `<p><strong>Lettura — politica monetaria restrittiva:</strong> riduzione dell'offerta reale di moneta. La LM trasla verso l'alto: a parità di reddito, il tasso di interesse di equilibrio è superiore.</p>`;
+  } else if (params.L0 > baseParams.L0 + 20 && params.LS === baseParams.LS) {
+    html += `<p><strong>Lettura — aumento della domanda precauzionale:</strong> in contesti di maggiore incertezza, famiglie e imprese trattengono più liquidità per scopi precauzionali. A parità di offerta, la LM trasla verso l'alto.</p>`;
+  }
+  
+  c.innerHTML = html;
+}
+
+function applicaScenario(s) {
+  trappolaAttiva = false;
+  switch (s) {
+    case 'espansiva': params = { ...baseParams, LS: 450 }; break;
+    case 'restrittiva': params = { ...baseParams, LS: 180 }; break;
+    case 'precauzionale': params = { ...baseParams, L0: 150 }; break;
+    case 'trappola': trappolaAttiva = true; params = { ...baseParams }; break;
+    default: params = { ...baseParams };
+  }
+  document.getElementById('param-LS').value = params.LS;
+  document.getElementById('param-L0').value = params.L0;
+  document.getElementById('param-k').value = params.k;
+  document.getElementById('param-v').value = params.v;
+  aggiorna();
+}
+
+['LS', 'L0', 'k', 'v'].forEach(p => {
+  document.getElementById('param-' + p).addEventListener('input', (e) => {
+    trappolaAttiva = false;
+    params[p] = parseFloat(e.target.value);
+    aggiorna();
+  });
+});
+
+drawTicks();
+aggiorna();
+</script>
+</body>
+</html>
