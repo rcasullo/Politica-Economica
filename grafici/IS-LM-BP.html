@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafico interattivo — Modello IS-LM-BP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --is-color: #1a1a1a;
+  --lm-color: #1a4480;
+  --bp-color: #6b4423;
+  --base-gray: #b5ada0;
+  --accent: #9b3a1f;
+}
+ 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  padding: 16px;
+}
+ 
+.wrap { max-width: 1000px; margin: 0 auto; }
+ 
+header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ink);
+}
+ 
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+ 
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.8em;
+  letter-spacing: -0.015em;
+  margin-bottom: 8px;
+}
+ 
+.subtitle { color: var(--muted); font-style: italic; font-size: 1em; }
+ 
+.grafico-card {
+  background: white;
+  border: 1px solid var(--rule);
+  margin: 28px 0;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 0;
+}
+ 
+.grafico-svg-wrap {
+  padding: 24px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fdfcf7;
+}
+ 
+.grafico-svg-wrap svg {
+  width: 100%;
+  height: auto;
+  max-width: 520px;
+  font-family: 'Source Sans 3', sans-serif;
+}
+ 
+.legenda {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+ 
+.legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+ 
+.legenda-line {
+  width: 22px;
+  height: 2px;
+}
+ 
+.grafico-controls {
+  padding: 22px 24px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88em;
+}
+ 
+.controls-section { margin-bottom: 20px; }
+.controls-section:last-child { margin-bottom: 0; }
+ 
+.controls-label {
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+ 
+.regime-selector {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+}
+ 
+.regime-selector button {
+  flex: 1;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 8px 8px;
+  border: none;
+  border-right: 1px solid var(--rule-strong);
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+ 
+.regime-selector button:last-child { border-right: none; }
+ 
+.regime-selector button.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+ 
+.slider-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+ 
+.slider-label {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+ 
+.slider-row input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  outline: none;
+}
+ 
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+ 
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+ 
+.slider-value {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.88em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+ 
+.scenari { display: flex; flex-direction: column; gap: 6px; }
+ 
+.scenari button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.8em;
+  font-weight: 500;
+  padding: 7px 12px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+ 
+.scenari button:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+ 
+.scenari button.reset {
+  border-style: dashed;
+  color: var(--muted);
+  font-style: italic;
+}
+ 
+.scenari button.reset:hover {
+  background: var(--paper-warm);
+  color: var(--ink);
+  border-style: solid;
+}
+ 
+.adjust-bar {
+  display: none;
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule-strong);
+  border-left: 3px solid var(--lm-color);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85em;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+ 
+.adjust-bar.show { display: flex; }
+ 
+.adjust-bar-text {
+  color: var(--muted);
+  flex: 1;
+  line-height: 1.4;
+}
+ 
+.adjust-bar button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+ 
+.adjust-bar button:hover { opacity: 0.85; }
+.adjust-bar button:disabled { opacity: 0.3; cursor: not-allowed; }
+ 
+.commento {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  margin-top: 0;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.92em;
+  line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  grid-column: 1 / -1;
+}
+ 
+.commento-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+ 
+.commento p { margin-bottom: 8px; }
+.commento p:last-child { margin-bottom: 0; }
+ 
+.formula-inline {
+  font-family: 'Source Sans 3', monospace;
+  background: white;
+  padding: 1px 6px;
+  font-size: 0.95em;
+}
+ 
+.istruzioni {
+  background: var(--paper-warm);
+  padding: 18px 22px;
+  margin: 24px 0;
+  font-size: 0.92em;
+  border-left: 3px solid var(--rule-strong);
+}
+ 
+.istruzioni h3 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+ 
+@media (max-width: 800px) {
+  .grafico-card { grid-template-columns: 1fr; }
+  .grafico-svg-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+ 
+<div class="wrap">
+ 
+<div class="grafico-card">
+ 
+  <div class="grafico-svg-wrap">
+    <svg id="svg-islm" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="30" x2="60" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <line x1="60" y1="330" x2="490" y2="330" stroke="#1a1a1a" stroke-width="1.2"/>
+      <text x="40" y="40" font-size="13" font-style="italic" fill="#1a1a1a">r</text>
+      <text x="485" y="348" font-size="13" font-style="italic" fill="#1a1a1a">Y</text>
+      <text x="48" y="345" font-size="11" fill="#5a5550">O</text>
+      
+      <g id="ticks-x" stroke="#5a5550" stroke-width="0.8"></g>
+      <g id="ticks-y" stroke="#5a5550" stroke-width="0.8"></g>
+      
+      <!-- Curve di base (grigie tratteggiate) -->
+      <line id="is-base" x1="0" y1="0" x2="0" y2="0" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="5,4"/>
+      <line id="lm-base" x1="0" y1="0" x2="0" y2="0" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="5,4"/>
+      <line id="bp-base" x1="0" y1="0" x2="0" y2="0" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="5,4"/>
+      
+      <!-- Curve attuali -->
+      <line id="is-curve" x1="0" y1="0" x2="0" y2="0" stroke="#1a1a1a" stroke-width="2.5"/>
+      <line id="lm-curve" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2.5"/>
+      <line id="bp-curve" x1="0" y1="0" x2="0" y2="0" stroke="#6b4423" stroke-width="2.5"/>
+      
+      <!-- Etichette -->
+      <text id="is-label" x="0" y="0" font-size="13" fill="#1a1a1a" font-weight="700">IS</text>
+      <text id="lm-label" x="0" y="0" font-size="13" fill="#1a4480" font-weight="700">LM</text>
+      <text id="bp-label" x="0" y="0" font-size="13" fill="#6b4423" font-weight="700">BP</text>
+      
+      <!-- Equilibrio iniziale (grigio) -->
+      <circle id="eq-base" cx="0" cy="0" r="3.5" fill="#b5ada0" opacity="0.7"/>
+      
+      <!-- Equilibrio attuale -->
+      <circle id="eq-point" cx="0" cy="0" r="4.5" fill="#9b3a1f"/>
+      <line id="eq-line-y" x1="0" y1="0" x2="0" y2="0" stroke="#9b3a1f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+      <line id="eq-line-r" x1="0" y1="0" x2="0" y2="0" stroke="#9b3a1f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.6"/>
+      
+      <!-- Freccia di aggiustamento (BP in cambi flessibili, LM in cambi fissi) -->
+      <line id="adj-arrow" x1="0" y1="0" x2="0" y2="0" stroke="#1a4480" stroke-width="2" marker-end="url(#adjarrow)" opacity="0" stroke-dasharray="4,3"/>
+      <text id="adj-label" x="0" y="0" font-size="10" fill="#1a4480" font-weight="600" opacity="0"></text>
+      
+      <defs>
+        <marker id="adjarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#1a4480"/>
+        </marker>
+      </defs>
+    </svg>
+    
+    <div class="legenda">
+      <div class="legenda-item"><span class="legenda-line" style="background: #1a1a1a;"></span>IS (mercato beni)</div>
+      <div class="legenda-item"><span class="legenda-line" style="background: #1a4480;"></span>LM (mercato moneta)</div>
+      <div class="legenda-item"><span class="legenda-line" style="background: #6b4423;"></span>BP (estero)</div>
+      <div class="legenda-item"><span class="legenda-line" style="background: #b5ada0;"></span>Posizione iniziale</div>
+    </div>
+    
+    <div class="adjust-bar" id="adjust-bar">
+      <div class="adjust-bar-text" id="adjust-bar-text">
+        L'equilibrio IS-LM è fuori dalla BP. Mostra l'aggiustamento dinamico.
+      </div>
+      <button id="adjust-btn" onclick="avviaAggiustamento()">▶ Mostra aggiustamento</button>
+    </div>
+  </div>
+ 
+  <div class="grafico-controls">
+    <div class="controls-section">
+      <div class="controls-label">Regime di cambio</div>
+      <div class="regime-selector">
+        <button id="regime-flex" class="active" onclick="setRegime('flex')">Flessibile</button>
+        <button id="regime-fix" onclick="setRegime('fix')">Fisso</button>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Politica fiscale (IS)</div>
+      <div class="slider-row">
+        <span class="slider-label">G</span>
+        <input type="range" id="param-G" min="50" max="300" step="5" value="150">
+        <span class="slider-value" id="val-G">150</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">T</span>
+        <input type="range" id="param-T" min="0" max="200" step="5" value="80">
+        <span class="slider-value" id="val-T">80</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Politica monetaria (LM)</div>
+      <div class="slider-row">
+        <span class="slider-label">L<sup>S</sup></span>
+        <input type="range" id="param-LS" min="150" max="500" step="10" value="300">
+        <span class="slider-value" id="val-LS">300</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Apertura commerciale (IS e BP)</div>
+      <div class="slider-row">
+        <span class="slider-label">X</span>
+        <input type="range" id="param-X" min="0" max="250" step="5" value="100">
+        <span class="slider-value" id="val-X">100</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">m</span>
+        <input type="range" id="param-m" min="0.05" max="0.50" step="0.01" value="0.20">
+        <span class="slider-value" id="val-m">0.20</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Apertura ai capitali (BP)</div>
+      <div class="slider-row">
+        <span class="slider-label">g</span>
+        <input type="range" id="param-g" min="500" max="20000" step="500" value="5000">
+        <span class="slider-value" id="val-g">5000</span>
+      </div>
+    </div>
+ 
+    <div class="controls-section">
+      <div class="controls-label">Scenari</div>
+      <div class="scenari">
+        <button onclick="applicaScenario('fiscaleEspansiva')">Politica fiscale espansiva (↑G)</button>
+        <button onclick="applicaScenario('monetariaEspansiva')">Politica monetaria espansiva (↑L<sup>S</sup>)</button>
+        <button onclick="applicaScenario('haavelmo')">Bilancio in pareggio (Haavelmo)</button>
+        <button onclick="applicaScenario('shockEsteroPositivo')">Shock estero positivo (↑X)</button>
+        <button onclick="applicaScenario('mobilitaPerfetta')">Perfetta mobilità capitali (BP piatta)</button>
+        <button onclick="applicaScenario('mobilitaBassa')">Bassa mobilità capitali (BP ripida)</button>
+        <button class="reset" onclick="applicaScenario('reset')">↺ Ripristina</button>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="commento">
+    <div class="commento-label">📖 Lettura economica</div>
+    <div id="commento-text">
+      <p>Stai osservando la situazione iniziale. L'equilibrio si trova all'intersezione delle tre curve: mercato dei beni in equilibrio (IS), mercato monetario in equilibrio (LM), bilancia dei pagamenti in pareggio (BP).</p>
+      <p>Imposta un regime di cambio e applica uno scenario per vedere come si propagano gli effetti.</p>
+    </div>
+  </div>
+ 
+</div>
+ 
+</div>
+ 
+<script>
+// === MODELLO IS-LM-BP ===
+// IS: Y = (1/(1−c(1−t)+m))·(I₀ + G − cT − ar + X)
+// LM: r = (L₀ − L^S/P)/v + (k/v)·Y
+// BP: r = r_w − X/g + (m/g)·Y
+ 
+const baseParams = {
+  // IS
+  G: 150, T: 80, I0: 198, c: 0.70, t: 0.20, a: 800,
+  X: 100, m: 0.20,
+  // LM
+  LS: 300, L0: 80, k: 0.62, v: 1000,
+  // BP
+  rw: 0.09, g: 5000
+};
+ 
+let params = { ...baseParams };
+let regime = 'flex'; // 'flex' o 'fix'
+let aggiustamentoInCorso = false;
+let scenarioApplicato = null; // memoria dello scenario corrente
+let paramsPreAdj = null; // parametri prima dell'aggiustamento, per il confronto
+ 
+const PLOT = {
+  xMin: 60, xMax: 490,
+  yMin: 30, yMax: 330,
+  YMin: 0, YMax: 1500,
+  rMin: 0, rMax: 0.20
+};
+ 
+function YtoX(Y) {
+  return PLOT.xMin + (Y - PLOT.YMin) / (PLOT.YMax - PLOT.YMin) * (PLOT.xMax - PLOT.xMin);
+}
+function rtoY(r) {
+  return PLOT.yMax - (r - PLOT.rMin) / (PLOT.rMax - PLOT.rMin) * (PLOT.yMax - PLOT.yMin);
+}
+ 
+function drawTicks() {
+  const ticksX = document.getElementById('ticks-x');
+  const ticksY = document.getElementById('ticks-y');
+  ticksX.innerHTML = '';
+  ticksY.innerHTML = '';
+  for (let Y = 0; Y <= PLOT.YMax; Y += 300) {
+    const x = YtoX(Y);
+    ticksX.innerHTML += `<line x1="${x}" y1="330" x2="${x}" y2="333"/>`;
+    if (Y > 0) ticksX.innerHTML += `<text x="${x}" y="344" font-size="9.5" fill="#8a857d" text-anchor="middle">${Y}</text>`;
+  }
+  for (let r = 0; r <= PLOT.rMax; r += 0.05) {
+    const y = rtoY(r);
+    ticksY.innerHTML += `<line x1="57" y1="${y}" x2="60" y2="${y}"/>`;
+    if (r > 0) ticksY.innerHTML += `<text x="54" y="${y+3}" font-size="9.5" fill="#8a857d" text-anchor="end">${(r*100).toFixed(0)}%</text>`;
+  }
+}
+ 
+// Calcola intersezioni di una retta r = a + b·Y con i bordi del grafico
+function clipRetta(intercetta_r, pendenza) {
+  const candidati = [];
+  
+  let r_Ymin = intercetta_r + pendenza * PLOT.YMin;
+  if (r_Ymin >= PLOT.rMin && r_Ymin <= PLOT.rMax) {
+    candidati.push({ Y: PLOT.YMin, r: r_Ymin });
+  }
+  let r_Ymax = intercetta_r + pendenza * PLOT.YMax;
+  if (r_Ymax >= PLOT.rMin && r_Ymax <= PLOT.rMax) {
+    candidati.push({ Y: PLOT.YMax, r: r_Ymax });
+  }
+  if (Math.abs(pendenza) > 1e-10) {
+    let Y_rmin = (PLOT.rMin - intercetta_r) / pendenza;
+    if (Y_rmin >= PLOT.YMin && Y_rmin <= PLOT.YMax) {
+      candidati.push({ Y: Y_rmin, r: PLOT.rMin });
+    }
+    let Y_rmax = (PLOT.rMax - intercetta_r) / pendenza;
+    if (Y_rmax >= PLOT.YMin && Y_rmax <= PLOT.YMax) {
+      candidati.push({ Y: Y_rmax, r: PLOT.rMax });
+    }
+  }
+  
+  return candidati.length >= 2 ? { p1: candidati[0], p2: candidati[1], visibile: true } : { visibile: false };
+}
+ 
+// IS: r = (intercetta − k·Y)/a, dove k = 1−c(1−t)+m
+// equivalente: r = intercetta/a − (k/a)·Y
+function paramsIS(p) {
+  const k = 1 - p.c * (1 - p.t) + p.m;
+  const intercetta = p.I0 + p.G - p.c * p.T + p.X;
+  return { intercetta_r: intercetta / p.a, pendenza: -k / p.a, k_is: k };
+}
+ 
+// LM: r = (L0 − LS)/v + (k/v)·Y
+function paramsLM(p) {
+  return { intercetta_r: (p.L0 - p.LS) / p.v, pendenza: p.k / p.v };
+}
+ 
+// BP: r = rw − X/g + (m/g)·Y
+function paramsBP(p) {
+  return { intercetta_r: p.rw - p.X / p.g, pendenza: p.m / p.g };
+}
+ 
+function disegnaCurva(params_eq, lineId, labelId, labelText, lineBaseId, basePoint) {
+  const { intercetta_r, pendenza } = params_eq;
+  const result = clipRetta(intercetta_r, pendenza);
+  
+  const line = document.getElementById(lineId);
+  const label = document.getElementById(labelId);
+  
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0);
+    label.setAttribute('opacity', 0);
+    return;
+  }
+  
+  line.setAttribute('opacity', 1);
+  label.setAttribute('opacity', 1);
+  
+  const x1 = YtoX(result.p1.Y);
+  const y1 = rtoY(result.p1.r);
+  const x2 = YtoX(result.p2.Y);
+  const y2 = rtoY(result.p2.r);
+  
+  line.setAttribute('x1', x1);
+  line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2);
+  line.setAttribute('y2', y2);
+  
+  // Label sul punto a Y maggiore
+  const xRight = Math.max(x1, x2);
+  const yRight = (xRight === x1) ? y1 : y2;
+  label.setAttribute('x', xRight - 28);
+  label.setAttribute('y', yRight - 6);
+  label.textContent = labelText;
+}
+ 
+function disegnaCurvaBase(params_eq, lineId) {
+  const { intercetta_r, pendenza } = params_eq;
+  const result = clipRetta(intercetta_r, pendenza);
+  
+  const line = document.getElementById(lineId);
+  if (!result.visibile) {
+    line.setAttribute('opacity', 0);
+    return;
+  }
+  
+  line.setAttribute('opacity', 0.6);
+  line.setAttribute('x1', YtoX(result.p1.Y));
+  line.setAttribute('y1', rtoY(result.p1.r));
+  line.setAttribute('x2', YtoX(result.p2.Y));
+  line.setAttribute('y2', rtoY(result.p2.r));
+}
+ 
+// Calcola il punto di equilibrio IS-LM (intersezione)
+function calcoloEquilibrioISLM(p) {
+  // IS: r = ai_is - bi_is * Y     (bi_is = k_is/a)
+  // LM: r = ai_lm + bi_lm * Y
+  // ai_is - bi_is*Y = ai_lm + bi_lm*Y
+  // Y* = (ai_is - ai_lm) / (bi_is + bi_lm)
+  const is = paramsIS(p);
+  const lm = paramsLM(p);
+  
+  // is.pendenza è negativa, lm.pendenza è positiva
+  const Y_star = (is.intercetta_r - lm.intercetta_r) / (lm.pendenza - is.pendenza);
+  const r_star = lm.intercetta_r + lm.pendenza * Y_star;
+  
+  return { Y: Y_star, r: r_star };
+}
+ 
+function disegnaEquilibrio(p, pBase) {
+  const eqBase = calcoloEquilibrioISLM(pBase);
+  const eqNew = calcoloEquilibrioISLM(p);
+  
+  // Punto base (grigio, sempre visibile)
+  const baseDot = document.getElementById('eq-base');
+  if (eqBase.Y >= PLOT.YMin && eqBase.Y <= PLOT.YMax && eqBase.r >= PLOT.rMin && eqBase.r <= PLOT.rMax) {
+    baseDot.setAttribute('cx', YtoX(eqBase.Y));
+    baseDot.setAttribute('cy', rtoY(eqBase.r));
+    baseDot.setAttribute('opacity', 0.6);
+  } else {
+    baseDot.setAttribute('opacity', 0);
+  }
+  
+  // Punto nuovo (rosso)
+  const newDot = document.getElementById('eq-point');
+  const lineY = document.getElementById('eq-line-y');
+  const lineR = document.getElementById('eq-line-r');
+  
+  if (eqNew.Y >= PLOT.YMin && eqNew.Y <= PLOT.YMax && eqNew.r >= PLOT.rMin && eqNew.r <= PLOT.rMax) {
+    const cx = YtoX(eqNew.Y);
+    const cy = rtoY(eqNew.r);
+    newDot.setAttribute('cx', cx);
+    newDot.setAttribute('cy', cy);
+    newDot.setAttribute('opacity', 1);
+    
+    lineY.setAttribute('x1', cx);
+    lineY.setAttribute('y1', cy);
+    lineY.setAttribute('x2', cx);
+    lineY.setAttribute('y2', PLOT.yMax);
+    lineY.setAttribute('opacity', 0.5);
+    
+    lineR.setAttribute('x1', PLOT.xMin);
+    lineR.setAttribute('y1', cy);
+    lineR.setAttribute('x2', cx);
+    lineR.setAttribute('y2', cy);
+    lineR.setAttribute('opacity', 0.5);
+  } else {
+    newDot.setAttribute('opacity', 0);
+    lineY.setAttribute('opacity', 0);
+    lineR.setAttribute('opacity', 0);
+  }
+  
+  return { eqBase, eqNew };
+}
+ 
+function disegnaFrecciaAggiustamento(eq, regime, r_diff_BP) {
+  const arrow = document.getElementById('adj-arrow');
+  const label = document.getElementById('adj-label');
+  
+  // Soglia minima per disegnare la freccia
+  if (Math.abs(r_diff_BP) < 0.005) {
+    arrow.setAttribute('opacity', 0);
+    label.setAttribute('opacity', 0);
+    return;
+  }
+  
+  const eqX = YtoX(eq.eqNew.Y);
+  const eqY = rtoY(eq.eqNew.r);
+  
+  if (regime === 'flex') {
+    // In cambi flessibili: la BP trasla per riportare l'equilibrio sull'incrocio IS-LM
+    // Direzione: se r_diff_BP > 0 (sopra BP, avanzo) → cambio si apprezza → BP trasla verso l'alto
+    // se r_diff_BP < 0 (sotto BP, disavanzo) → cambio si deprezza → BP trasla verso il basso
+    // Animazione: freccia verticale corta dalla BP attuale verso l'equilibrio IS-LM
+    const bp = paramsBP(params);
+    const r_BP_at_eqY = bp.intercetta_r + bp.pendenza * eq.eqNew.Y;
+    const xStart = eqX;
+    const yStart = rtoY(r_BP_at_eqY);
+    const yEnd = eqY;
+    
+    arrow.setAttribute('x1', xStart);
+    arrow.setAttribute('y1', yStart);
+    arrow.setAttribute('x2', xStart);
+    arrow.setAttribute('y2', yEnd);
+    arrow.setAttribute('stroke', '#6b4423');
+    arrow.setAttribute('opacity', 1);
+    
+    const labelTxt = r_diff_BP > 0 ? 'BP↑' : 'BP↓';
+    label.setAttribute('x', xStart + 8);
+    label.setAttribute('y', (yStart + yEnd) / 2);
+    label.setAttribute('fill', '#6b4423');
+    label.setAttribute('opacity', 1);
+    label.textContent = labelTxt;
+  } else {
+    // In cambi fissi: la LM trasla per riportare l'equilibrio sulla BP
+    // Direzione: se r_diff_BP > 0 (sopra BP, avanzo) → BC compra valuta → L^S aumenta → LM trasla a destra
+    // se r_diff_BP < 0 (sotto BP, disavanzo) → BC vende valuta → L^S si riduce → LM trasla a sinistra
+    // Animazione: freccia orizzontale dall'equilibrio IS-LM verso il punto sulla BP corrispondente
+    const lm = paramsLM(params);
+    const is = paramsIS(params);
+    const bp = paramsBP(params);
+    
+    // Trovo intersezione IS-BP (dove la LM dovrebbe spostare l'equilibrio)
+    // is: r = is.intercetta_r + is.pendenza*Y
+    // bp: r = bp.intercetta_r + bp.pendenza*Y
+    const Y_isbp = (is.intercetta_r - bp.intercetta_r) / (bp.pendenza - is.pendenza);
+    const r_isbp = bp.intercetta_r + bp.pendenza * Y_isbp;
+    
+    // Disegno la freccia dall'equilibrio attuale al punto IS-BP
+    const xStart = eqX;
+    const yStart = eqY;
+    const xEnd = YtoX(Y_isbp);
+    const yEnd = rtoY(r_isbp);
+    
+    if (Y_isbp >= PLOT.YMin && Y_isbp <= PLOT.YMax && r_isbp >= PLOT.rMin && r_isbp <= PLOT.rMax) {
+      arrow.setAttribute('x1', xStart);
+      arrow.setAttribute('y1', yStart);
+      arrow.setAttribute('x2', xEnd);
+      arrow.setAttribute('y2', yEnd);
+      arrow.setAttribute('stroke', '#1a4480');
+      arrow.setAttribute('opacity', 1);
+      
+      const labelTxt = r_diff_BP > 0 ? 'LM→' : 'LM←';
+      label.setAttribute('x', (xStart + xEnd) / 2);
+      label.setAttribute('y', Math.min(yStart, yEnd) - 8);
+      label.setAttribute('fill', '#1a4480');
+      label.setAttribute('opacity', 1);
+      label.textContent = labelTxt;
+    } else {
+      arrow.setAttribute('opacity', 0);
+      label.setAttribute('opacity', 0);
+    }
+  }
+}
+ 
+// Calcola dove dovrebbe trovarsi la curva di aggiustamento per ripristinare l'equilibrio simultaneo
+// In cambi flessibili: trovo X tale che la BP passi per l'equilibrio IS-LM
+//   (in realtà è il cambio reale che si sposta, ma noi traslando X otteniamo lo stesso effetto sulla BP)
+// In cambi fissi: trovo LS tale che la LM passi per l'incrocio IS-BP
+function calcolaTargetAggiustamento() {
+  if (regime === 'flex') {
+    // Voglio che BP passi per l'equilibrio IS-LM corrente
+    // La BP si sposta perché il cambio cambia, ma anche la IS si sposta (X è in IS).
+    // Approccio semplificato: trovo l'X necessario per cui IS, LM, BP si incontrino simultaneamente.
+    // Risolvo: r_IS(Y;X) = r_LM(Y) e r_LM(Y) = r_BP(Y;X)
+    // Da r_LM(Y) = r_BP(Y;X): (L0-LS)/v + (k/v)*Y = rw - X/g + (m/g)*Y
+    //   X = g*[rw - (L0-LS)/v - (k/v)*Y + (m/g)*Y]
+    //   X = g*rw - g*(L0-LS)/v + (m - g*k/v)*Y
+    // Da r_IS(Y;X) = r_LM(Y): (I0+G-cT+X - Y*k_is)/a = (L0-LS)/v + (k/v)*Y
+    //   I0+G-cT+X = a*[(L0-LS)/v + (k/v)*Y] + Y*k_is
+    //   X = a*(L0-LS)/v + a*(k/v)*Y + Y*k_is - I0-G+cT
+    // Setto le due espressioni di X uguali e risolvo per Y, poi calcolo X
+    const p = params;
+    const k_is = 1 - p.c * (1 - p.t) + p.m;
+    
+    // X1(Y) = g*rw - g*(L0-LS)/v + (m - g*k/v)*Y    (da BP=LM)
+    // X2(Y) = a*(L0-LS)/v + a*(k/v)*Y + Y*k_is - I0-G+cT    (da IS=LM)
+    // X1 = X2
+    // g*rw - g*(L0-LS)/v + (m - g*k/v)*Y = a*(L0-LS)/v + a*(k/v)*Y + Y*k_is - I0-G+cT
+    // costanteA - costanteB + (penA)*Y = costanteC + (penB)*Y + Y*k_is - costanteD
+    const costA = p.g * p.rw - p.g * (p.L0 - p.LS) / p.v;
+    const penA = p.m - p.g * p.k / p.v;
+    const costB = p.a * (p.L0 - p.LS) / p.v;
+    const penB = p.a * p.k / p.v;
+    const costD = p.I0 + p.G - p.c * p.T;
+    
+    // costA + penA*Y = costB + penB*Y + k_is*Y - costD
+    // costA + costD - costB = (penB + k_is - penA)*Y
+    const Y_target = (costA + costD - costB) / (penB + k_is - penA);
+    
+    // Calcolo X target con una delle due formule
+    const X_target = costA + penA * Y_target;
+    
+    return { X: X_target, Y_target, r_target: (p.L0 - p.LS) / p.v + (p.k / p.v) * Y_target };
+  } else {
+    // In cambi fissi: voglio che LM passi per l'incrocio IS-BP
+    // r_LM(Y) = r_BP(Y) → (L0-LS)/v + (k/v)*Y = rw - X/g + (m/g)*Y
+    // E voglio che questo punto sia anche su IS: r_IS(Y) = r_BP(Y)
+    // Trovo prima Y* dall'incrocio IS-BP, poi calcolo LS necessario
+    const p = params;
+    const k_is = 1 - p.c * (1 - p.t) + p.m;
+    
+    // IS: r = (I0+G-cT+X)/a - (k_is/a)*Y
+    // BP: r = rw - X/g + (m/g)*Y
+    // Setto uguali:
+    // (I0+G-cT+X)/a - (k_is/a)*Y = rw - X/g + (m/g)*Y
+    // (I0+G-cT+X)/a + X/g - rw = (m/g + k_is/a)*Y
+    const intercetta_IS = p.I0 + p.G - p.c * p.T + p.X;
+    const Y_target = (intercetta_IS / p.a + p.X / p.g - p.rw) / (p.m / p.g + k_is / p.a);
+    const r_target = p.rw - p.X / p.g + (p.m / p.g) * Y_target;
+    
+    // Trovo LS che porti la LM a passare per (Y_target, r_target)
+    // r_target = (L0-LS)/v + (k/v)*Y_target
+    // LS = L0 + (k*Y_target - v*r_target)
+    const LS_target = p.L0 + p.k * Y_target - p.v * r_target;
+    
+    return { LS: LS_target, Y_target, r_target };
+  }
+}
+ 
+function avviaAggiustamento() {
+  if (aggiustamentoInCorso) return;
+  
+  // Memorizzo i parametri pre-aggiustamento per il confronto finale
+  paramsPreAdj = { ...params };
+  
+  const target = calcolaTargetAggiustamento();
+  if (!target || isNaN(target.Y_target)) {
+    return;
+  }
+  
+  aggiustamentoInCorso = true;
+  document.getElementById('adjust-btn').disabled = true;
+  document.getElementById('adjust-btn').textContent = 'Aggiustamento in corso…';
+  
+  // Identifico il parametro che deve cambiare
+  const startVal = regime === 'flex' ? params.X : params.LS;
+  const endVal = regime === 'flex' ? target.X : target.LS;
+  const paramKey = regime === 'flex' ? 'X' : 'LS';
+  
+  const durata = 1500; // millisecondi
+  const tStart = performance.now();
+  
+  function step(now) {
+    const t = Math.min((now - tStart) / durata, 1);
+    // Easing: ease-in-out per movimento naturale
+    const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    
+    params[paramKey] = startVal + (endVal - startVal) * ease;
+    
+    // Aggiorno gli slider visualizzati
+    if (regime === 'flex') {
+      document.getElementById('param-X').value = params.X;
+    } else {
+      document.getElementById('param-LS').value = params.LS;
+    }
+    
+    aggiorna();
+    
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      // Fine aggiustamento
+      params[paramKey] = endVal;
+      if (regime === 'flex') {
+        document.getElementById('param-X').value = params.X;
+      } else {
+        document.getElementById('param-LS').value = params.LS;
+      }
+      aggiorna();
+      
+      aggiustamentoInCorso = false;
+      const btn = document.getElementById('adjust-btn');
+      btn.disabled = false;
+      btn.textContent = '▶ Mostra aggiustamento';
+      // Nascondo la barra perché ora siamo in equilibrio
+      document.getElementById('adjust-bar').classList.remove('show');
+      
+      // Aggiungo commento finale post-aggiustamento
+      mostraCommentoFinale(target);
+    }
+  }
+  
+  requestAnimationFrame(step);
+}
+ 
+function mostraCommentoFinale(target) {
+  const c = document.getElementById('commento-text');
+  const Y_iniziale = baseParams ? 500 : 0;
+  const r_iniziale = 0.09;
+  
+  const Y_finale = target.Y_target;
+  const r_finale = target.r_target;
+  
+  let causa, paramFinale;
+  if (regime === 'flex') {
+    const variazione = paramsPreAdj.X < params.X ? 'aumento' : 'riduzione';
+    const movCambio = paramsPreAdj.X < params.X ? 'deprezzamento' : 'apprezzamento';
+    causa = `il cambio si è ${movCambio.endsWith('o') ? movCambio.slice(0,-1)+'ato' : movCambio} (${variazione} di X effettivo da ${paramsPreAdj.X.toFixed(0)} a ${params.X.toFixed(0)} per traslare la BP)`;
+    paramFinale = `X = ${params.X.toFixed(0)}`;
+  } else {
+    const variazione = paramsPreAdj.LS < params.LS ? 'aumentata' : 'ridotta';
+    causa = `l'offerta di moneta è stata ${variazione} endogenamente da ${paramsPreAdj.LS.toFixed(0)} a ${params.LS.toFixed(0)} (per intervento BC sul mercato dei cambi)`;
+    paramFinale = `L<sup>S</sup> = ${params.LS.toFixed(0)}`;
+  }
+  
+  const html = `
+    <p><strong>✓ Aggiustamento completato</strong> (regime: ${regime === 'flex' ? 'cambi flessibili' : 'cambi fissi'}). ${causa.charAt(0).toUpperCase() + causa.slice(1)}.</p>
+    <p><strong>Confronto iniziale → finale:</strong></p>
+    <ul style="margin-left: 20px; font-family: 'Source Serif 4', serif;">
+      <li>Reddito Y: ${Y_iniziale} → ${Y_finale.toFixed(0)} (${Y_finale > Y_iniziale ? '+' : ''}${(Y_finale - Y_iniziale).toFixed(0)})</li>
+      <li>Tasso r: ${(r_iniziale*100).toFixed(2)}% → ${(r_finale*100).toFixed(2)}% (${r_finale > r_iniziale ? '+' : ''}${((r_finale - r_iniziale)*100).toFixed(2)} p.p.)</li>
+      <li>Parametro modificato endogenamente: ${paramFinale}</li>
+    </ul>
+    <p>Il sistema è ora in <strong>equilibrio simultaneo</strong>: le tre curve IS, LM, BP si incontrano nuovamente nello stesso punto. Per ripetere o cambiare scenario, usa i bottoni a destra.</p>
+  `;
+  c.innerHTML = html;
+}
+ 
+function aggiorna() {
+  document.getElementById('val-G').textContent = params.G;
+  document.getElementById('val-T').textContent = params.T;
+  document.getElementById('val-LS').textContent = params.LS;
+  document.getElementById('val-X').textContent = params.X;
+  document.getElementById('val-m').textContent = params.m.toFixed(2);
+  document.getElementById('val-g').textContent = params.g;
+  
+  // Disegna curve di base
+  disegnaCurvaBase(paramsIS(baseParams), 'is-base');
+  disegnaCurvaBase(paramsLM(baseParams), 'lm-base');
+  disegnaCurvaBase(paramsBP(baseParams), 'bp-base');
+  
+  // Disegna curve attuali
+  disegnaCurva(paramsIS(params), 'is-curve', 'is-label', 'IS');
+  disegnaCurva(paramsLM(params), 'lm-curve', 'lm-label', 'LM');
+  disegnaCurva(paramsBP(params), 'bp-curve', 'bp-label', 'BP');
+  
+  // Equilibrio
+  const eq = disegnaEquilibrio(params, baseParams);
+  
+  // Calcolo r_diff_BP per la freccia di aggiustamento
+  const bp = paramsBP(params);
+  const r_BP_at_Yeq = bp.intercetta_r + bp.pendenza * eq.eqNew.Y;
+  const r_diff_BP = eq.eqNew.r - r_BP_at_Yeq;
+  
+  // Disegno la freccia di aggiustamento secondo il regime
+  disegnaFrecciaAggiustamento(eq, regime, r_diff_BP);
+  
+  // Mostro o nascondo la barra di aggiustamento
+  const adjustBar = document.getElementById('adjust-bar');
+  const adjustText = document.getElementById('adjust-bar-text');
+  if (Math.abs(r_diff_BP) > 0.005 && !aggiustamentoInCorso) {
+    adjustBar.classList.add('show');
+    if (regime === 'flex') {
+      adjustText.innerHTML = `Squilibrio della BP. In <strong>cambi flessibili</strong>, il cambio si muove e la BP trasla per riportare l'equilibrio.`;
+    } else {
+      adjustText.innerHTML = `Squilibrio della BP. In <strong>cambi fissi</strong>, la BC interviene e la LM trasla per riportare l'equilibrio.`;
+    }
+  } else if (!aggiustamentoInCorso) {
+    adjustBar.classList.remove('show');
+  }
+  
+  aggiornaCommento(eq);
+}
+ 
+function aggiornaCommento(eq) {
+  const c = document.getElementById('commento-text');
+  
+  const cambiamenti = [];
+  if (Math.abs(params.G - baseParams.G) > 0.5) {
+    cambiamenti.push(`G: ${baseParams.G} → ${params.G}`);
+  }
+  if (Math.abs(params.T - baseParams.T) > 0.5) {
+    cambiamenti.push(`T: ${baseParams.T} → ${params.T}`);
+  }
+  if (Math.abs(params.LS - baseParams.LS) > 0.5) {
+    cambiamenti.push(`L<sup>S</sup>: ${baseParams.LS} → ${params.LS}`);
+  }
+  if (Math.abs(params.X - baseParams.X) > 0.5) {
+    cambiamenti.push(`X: ${baseParams.X} → ${params.X}`);
+  }
+  if (Math.abs(params.m - baseParams.m) > 0.005) {
+    cambiamenti.push(`m: ${baseParams.m.toFixed(2)} → ${params.m.toFixed(2)}`);
+  }
+  if (Math.abs(params.g - baseParams.g) > 0.5) {
+    cambiamenti.push(`g: ${baseParams.g} → ${params.g}`);
+  }
+  
+  const dY = eq.eqNew.Y - eq.eqBase.Y;
+  const dr = eq.eqNew.r - eq.eqBase.r;
+  
+  // Calcolo posizione equilibrio rispetto a BP
+  const bp = paramsBP(params);
+  const r_BP_at_Yeq = bp.intercetta_r + bp.pendenza * eq.eqNew.Y;
+  const r_diff_BP = eq.eqNew.r - r_BP_at_Yeq;
+  
+  if (cambiamenti.length === 0) {
+    c.innerHTML = `
+      <p>Stai osservando la <strong>situazione iniziale</strong> in regime di cambio <strong>${regime === 'flex' ? 'flessibile' : 'fisso'}</strong>.</p>
+      <p>L'equilibrio iniziale è in (Y* = ${eq.eqBase.Y.toFixed(0)}, r* = ${(eq.eqBase.r*100).toFixed(2)}%). A questo punto le tre curve si intersecano: i mercati dei beni, della moneta e della BP sono in equilibrio simultaneo.</p>
+      <p>Applica uno scenario per vedere come una manovra di politica economica perturba l'equilibrio.</p>
+    `;
+    return;
+  }
+  
+  let html = `<p><strong>Cosa è cambiato:</strong> ${cambiamenti.join(', ')}.</p>`;
+  
+  // Nuovo equilibrio IS-LM
+  html += `<p><strong>Nuovo equilibrio IS-LM:</strong> Y* passa da ${eq.eqBase.Y.toFixed(0)} a ${eq.eqNew.Y.toFixed(0)} (${dY > 0 ? '+' : ''}${dY.toFixed(0)}); r* passa da ${(eq.eqBase.r*100).toFixed(2)}% a ${(eq.eqNew.r*100).toFixed(2)}% (${dr > 0 ? '+' : ''}${(dr*100).toFixed(2)} p.p.).</p>`;
+  
+  // Posizione rispetto a BP, distinta per regime
+  if (Math.abs(r_diff_BP) > 0.003) {
+    const stato = r_diff_BP > 0 ? 'avanzo' : 'disavanzo';
+    const posizione = r_diff_BP > 0 ? 'sopra' : 'sotto';
+    
+    html += `<p><strong>Squilibrio della BP:</strong> il nuovo equilibrio IS-LM si trova <strong>${posizione} la BP</strong> (zona di ${stato}). Il tasso di interesse interno è ${r_diff_BP > 0 ? 'superiore' : 'inferiore'} a quello necessario al pareggio dei conti con l'estero.</p>`;
+    
+    if (regime === 'flex') {
+      const direzCambio = r_diff_BP > 0 ? 'apprezza' : 'deprezza';
+      const direzPC = r_diff_BP > 0 ? 'peggiorano' : 'migliorano';
+      const direzBP = r_diff_BP > 0 ? "verso l'alto" : 'verso il basso';
+      const flussoK = r_diff_BP > 0 ? 'entrano' : 'escono';
+      const xm = r_diff_BP > 0 ? 'X cala, M sale' : 'X sale, M cala';
+      const effettoY = r_diff_BP > 0 ? 'attenuato' : 'amplificato';
+      
+      html += `<p><strong>Aggiustamento — cambi flessibili:</strong> ${flussoK} capitali per il differenziale di tasso. Il cambio si <strong>${direzCambio}</strong> liberamente sul mercato delle valute. Le partite correnti ${direzPC} (${xm}). La <strong>BP trasla ${direzBP}</strong> e con essa anche la IS (X è componente di entrambe). L'effetto finale sul reddito è <strong>${effettoY}</strong>. La freccia tratteggiata sul grafico mostra la direzione dell'aggiustamento.</p>`;
+    } else {
+      const direzLS = r_diff_BP > 0 ? 'aumenta' : 'si riduce';
+      const direzLM = r_diff_BP > 0 ? 'verso destra' : 'verso sinistra';
+      const azione = r_diff_BP > 0 ? 'compra valuta estera' : 'vende valuta estera';
+      const effettoY = r_diff_BP > 0 ? 'amplificato' : 'attenuato (o annullato)';
+      
+      html += `<p><strong>Aggiustamento — cambi fissi:</strong> per difendere la parità del cambio, la banca centrale <strong>${azione}</strong> in cambio di moneta nazionale. L'offerta di moneta L<sup>S</sup> ${direzLS} <em>endogenamente</em>: la BC perde il controllo della politica monetaria, che è dettata dalla BP. La <strong>LM trasla ${direzLM}</strong> fino a riportare l'equilibrio sulla BP. L'effetto finale sul reddito è <strong>${effettoY}</strong>. La freccia tratteggiata sul grafico mostra la direzione dell'aggiustamento.</p>`;
+    }
+  } else {
+    html += `<p><strong>Posizione rispetto alla BP:</strong> il nuovo equilibrio si trova praticamente sulla BP. I conti con l'estero sono in pareggio anche dopo la manovra: il regime di cambio non comporta aggiustamenti aggiuntivi.</p>`;
+  }
+  
+  // Letture specifiche per scenario, distinte per regime
+  if (params.G > baseParams.G + 50 && params.LS === baseParams.LS && params.T === baseParams.T) {
+    if (regime === 'flex') {
+      html += `<p><strong>Lettura — politica fiscale espansiva in cambi flessibili:</strong> l'effetto espansivo è <strong>parzialmente compensato</strong> dall'apprezzamento. L'aumento di r attira capitali, la moneta si apprezza, le esportazioni cadono. La politica fiscale è meno efficace che in regime di cambi fissi.</p>`;
+    } else {
+      html += `<p><strong>Lettura — politica fiscale espansiva in cambi fissi:</strong> l'effetto espansivo è <strong>amplificato</strong>. L'aumento di r attira capitali, la BC è obbligata a comprare valuta per difendere il cambio, espandendo L<sup>S</sup>. La LM trasla a destra, sostenendo ulteriormente l'espansione. <strong>La politica fiscale è il principale strumento efficace in regime di cambi fissi.</strong></p>`;
+    }
+  }
+  if (params.LS > baseParams.LS + 80 && params.G === baseParams.G && params.T === baseParams.T) {
+    if (regime === 'flex') {
+      html += `<p><strong>Lettura — politica monetaria espansiva in cambi flessibili:</strong> l'effetto è <strong>amplificato</strong>. La riduzione di r genera deflussi di capitali, la moneta si deprezza, le esportazioni nette migliorano: la IS si rinforza. <strong>La politica monetaria è il principale strumento efficace in regime di cambi flessibili.</strong></p>`;
+    } else {
+      html += `<p><strong>Lettura — politica monetaria espansiva in cambi fissi:</strong> la manovra è <strong>inefficace</strong>. La riduzione di r genera deflussi; la BC vende valuta per difendere il cambio, contraendo la base monetaria. La LM è costretta a tornare al punto di partenza. <strong>In cambi fissi la BC perde il controllo dell'offerta di moneta</strong>: questa è determinata endogenamente dalla bilancia dei pagamenti.</p>`;
+    }
+  }
+  if (params.G > baseParams.G + 30 && params.T > baseParams.T + 30 && Math.abs((params.G-baseParams.G)-(params.T-baseParams.T)) < 5) {
+    html += `<p><strong>Lettura — Haavelmo:</strong> spesa pubblica e imposta in somma fissa aumentano della stessa quantità (ΔG = ΔT). La IS si trasla parallelamente verso destra; nel modello completo, l'effetto sul reddito è amplificato dal moltiplicatore e mitigato dall'incremento del tasso di interesse (e dell'eventuale aggiustamento sul mercato dei cambi).</p>`;
+  }
+  if (params.X > baseParams.X + 30 && params.G === baseParams.G && params.T === baseParams.T && params.LS === baseParams.LS) {
+    html += `<p><strong>Lettura — shock estero positivo:</strong> l'aumento delle esportazioni esogene X trasla <strong>contemporaneamente</strong> la IS verso destra (perché X è una componente della domanda aggregata) e la BP verso il basso (perché un livello di X più alto riduce il tasso necessario al pareggio dei conti con l'estero per ogni Y). Il nuovo equilibrio si caratterizza per un reddito più alto.</p>`;
+  }
+  if (Math.abs(params.m - baseParams.m) > 0.05 && params.G === baseParams.G && params.T === baseParams.T && params.LS === baseParams.LS && params.X === baseParams.X) {
+    const versoM = params.m > baseParams.m ? 'apertura' : 'chiusura';
+    html += `<p><strong>Lettura — variazione propensione all'importazione:</strong> il parametro m incide sia sulla IS (riducendo il moltiplicatore: parte del reddito generato si traduce in importazioni, sottratte alla domanda interna) sia sulla pendenza della BP (m/g aumenta con m). Maggiore ${versoM} commerciale dell'economia.</p>`;
+  }
+  
+  c.innerHTML = html;
+}
+ 
+function setRegime(r) {
+  regime = r;
+  document.getElementById('regime-flex').classList.toggle('active', r === 'flex');
+  document.getElementById('regime-fix').classList.toggle('active', r === 'fix');
+  aggiorna();
+}
+ 
+function applicaScenario(s) {
+  // Reset stato aggiustamento
+  aggiustamentoInCorso = false;
+  paramsPreAdj = null;
+  scenarioApplicato = s;
+  const btn = document.getElementById('adjust-btn');
+  btn.disabled = false;
+  btn.textContent = '▶ Mostra aggiustamento';
+  
+  switch (s) {
+    case 'fiscaleEspansiva':
+      params = { ...baseParams, G: 220 };
+      break;
+    case 'monetariaEspansiva':
+      params = { ...baseParams, LS: 420 };
+      break;
+    case 'haavelmo':
+      params = { ...baseParams, G: 200, T: 130 };
+      break;
+    case 'shockEsteroPositivo':
+      params = { ...baseParams, X: 180 };
+      break;
+    case 'mobilitaPerfetta':
+      params = { ...baseParams, g: 18000 };
+      break;
+    case 'mobilitaBassa':
+      params = { ...baseParams, g: 1000 };
+      break;
+    case 'reset':
+    default:
+      params = { ...baseParams };
+  }
+  document.getElementById('param-G').value = params.G;
+  document.getElementById('param-T').value = params.T;
+  document.getElementById('param-LS').value = params.LS;
+  document.getElementById('param-X').value = params.X;
+  document.getElementById('param-m').value = params.m;
+  document.getElementById('param-g').value = params.g;
+  aggiorna();
+}
+ 
+['G', 'T', 'LS', 'X', 'm', 'g'].forEach(p => {
+  document.getElementById('param-' + p).addEventListener('input', (e) => {
+    params[p] = parseFloat(e.target.value);
+    aggiorna();
+  });
+});
+ 
+drawTicks();
+aggiorna();
+</script>
+</body>
+</html>
