@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politica monetaria in cambi flessibili — IS-LM-BP</title>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --accent: #6b4423;
+  --accent-strong: #9b3a1f;
+  --is-color: #1a4480;
+  --lm-color: #6b4423;
+  --bp-color: #2d5a2d;
+  --highlight: #c41e3a;
+  --success: #2d5a2d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 900px; margin: 0 auto; }
+
+h1 { font-size: 1.2em; font-weight: 700; margin-bottom: 4px; }
+
+.subtitle {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+  align-items: start;
+}
+
+.chart-wrap {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 8px;
+}
+
+svg { display: block; width: 100%; height: auto; max-height: 520px; }
+
+.controls {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.85em;
+}
+
+.control-block {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.control-block h3 {
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.slider-block { margin-bottom: 8px; }
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.slider-row input[type=range] { flex: 1; height: 14px; cursor: pointer; }
+
+.slider-row .slider-value {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 90px;
+  text-align: right;
+}
+
+.slider-label {
+  display: block;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.slider-hint {
+  font-family: 'Georgia', serif;
+  font-size: 0.72em;
+  font-style: italic;
+  color: var(--muted-light);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.step-button {
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  font-family: inherit;
+  font-size: 0.95em;
+  font-weight: 600;
+  padding: 9px 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 6px;
+  transition: background 0.15s;
+}
+
+.step-button:hover { background: var(--accent-strong); }
+.step-button:disabled { background: var(--muted-light); cursor: not-allowed; }
+
+.reset-button {
+  background: var(--paper);
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.85em;
+  padding: 6px 10px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.reset-button:hover { background: var(--paper-warm); }
+
+.numeric {
+  background: var(--paper-warm);
+  border-left: 3px solid var(--ink);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.82em;
+}
+
+.numeric .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.numeric .row:last-child { border-bottom: none; }
+.numeric .label { color: var(--muted); }
+.numeric .value { font-variant-numeric: tabular-nums; font-weight: 600; }
+.numeric .value.success { color: var(--success); }
+.numeric .value.contribution { color: var(--accent); }
+
+.commentary {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--bp-color);
+  padding: 10px 12px;
+  font-family: 'Georgia', serif;
+  font-size: 0.85em;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.commentary.show { display: block; }
+.commentary { display: none; }
+.commentary strong { font-style: normal; color: var(--ink); }
+
+.step-indicator {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.75em;
+  color: var(--muted);
+}
+
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-color { width: 18px; height: 2px; }
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+  body { font-size: 14px; padding: 12px; }
+}
+
+text.label-line {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+text.axis-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 11px;
+  fill: var(--muted);
+}
+
+text.point-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 10px;
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.curve { fill: none; stroke-width: 2; transition: opacity 0.4s; }
+.curve.is { stroke: var(--is-color); }
+.curve.lm { stroke: var(--lm-color); }
+.curve.bp { stroke: var(--bp-color); stroke-dasharray: 6 4; }
+.curve.shadow { stroke-width: 1.5; opacity: 0.35; stroke-dasharray: 3 3; }
+
+.point { stroke-width: 2; fill: var(--paper); }
+.point.eq { stroke: var(--ink); }
+.point.intermediate { stroke: var(--highlight); }
+.point.final { stroke: var(--success); }
+
+.arrow {
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.arrow.shift { stroke: var(--highlight); marker-end: url(#arrowhead-red); }
+.arrow.depreciation { stroke: var(--accent); marker-end: url(#arrowhead-accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Politica monetaria in cambi flessibili — IS-LM-BP</h1>
+<p class="subtitle">In regime di cambi flessibili la BC non difende il cambio. La politica monetaria è efficace e tanto più amplificata quanto più piatta è BP.</p>
+
+<div class="layout">
+
+<div class="chart-wrap">
+  <svg viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg" id="chart">
+    <defs>
+      <marker id="arrowhead-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#c41e3a"/>
+      </marker>
+      <marker id="arrowhead-accent" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#6b4423"/>
+      </marker>
+    </defs>
+    
+    <line x1="60" y1="40" x2="60" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
+    <line x1="60" y1="420" x2="560" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
+    
+    <text x="40" y="35" class="axis-label" text-anchor="end" font-weight="700">r</text>
+    <text x="565" y="438" class="axis-label" font-weight="700">Y</text>
+    
+    <g id="y-ticks">
+      <line x1="56" y1="380" x2="60" y2="380" stroke="#1a1a1a"/>
+      <text x="52" y="384" class="axis-label" text-anchor="end">4</text>
+      <line x1="56" y1="304" x2="60" y2="304" stroke="#1a1a1a"/>
+      <text x="52" y="308" class="axis-label" text-anchor="end">8</text>
+      <line x1="56" y1="228" x2="60" y2="228" stroke="#1a1a1a"/>
+      <text x="52" y="232" class="axis-label" text-anchor="end">12</text>
+      <line x1="56" y1="152" x2="60" y2="152" stroke="#1a1a1a"/>
+      <text x="52" y="156" class="axis-label" text-anchor="end">16</text>
+      <text x="40" y="55" class="axis-label" text-anchor="end" font-size="9">(%)</text>
+    </g>
+    
+    <g id="x-ticks">
+      <line x1="160" y1="420" x2="160" y2="424" stroke="#1a1a1a"/>
+      <text x="160" y="438" class="axis-label" text-anchor="middle">300</text>
+      <line x1="260" y1="420" x2="260" y2="424" stroke="#1a1a1a"/>
+      <text x="260" y="438" class="axis-label" text-anchor="middle">400</text>
+      <line x1="360" y1="420" x2="360" y2="424" stroke="#1a1a1a"/>
+      <text x="360" y="438" class="axis-label" text-anchor="middle">500</text>
+      <line x1="460" y1="420" x2="460" y2="424" stroke="#1a1a1a"/>
+      <text x="460" y="438" class="axis-label" text-anchor="middle">600</text>
+    </g>
+    
+    <g id="curves"></g>
+    <g id="annotations"></g>
+  </svg>
+  
+  <div class="legend">
+    <div class="legend-item"><span class="legend-color" style="background: #1a4480;"></span>IS</div>
+    <div class="legend-item"><span class="legend-color" style="background: #6b4423;"></span>LM</div>
+    <div class="legend-item"><span class="legend-color" style="background-image: linear-gradient(to right, #2d5a2d 4px, transparent 4px, transparent 8px, #2d5a2d 8px); height: 2px;"></span>BP</div>
+  </div>
+</div>
+
+<div class="controls">
+
+<div class="control-block">
+  <h3>Pendenza di BP</h3>
+  <div class="slider-block">
+    <span class="slider-label">Sensibilità di MK al tasso</span>
+    <div class="slider-row">
+      <input type="range" id="bpSlope" min="0" max="100" value="70" step="1">
+      <span class="slider-value" id="bpSlopeValue">media</span>
+    </div>
+    <div class="slider-hint">Slider a sinistra: capitali immobili, BP ripida, politica monetaria meno efficace. A destra: capitali perfettamente mobili, BP piatta, politica monetaria massimamente efficace.</div>
+  </div>
+</div>
+
+<div class="control-block">
+  <h3>Manovra di policy</h3>
+  <button class="step-button" id="advanceBtn">Avvia: politica monetaria espansiva</button>
+  <button class="reset-button" id="resetBtn">Riporta allo stato iniziale</button>
+  <div class="step-indicator" id="stepIndicator">Fase 0 di 4 — equilibrio iniziale</div>
+</div>
+
+<div class="numeric" id="numericBox">
+  <div class="row"><span class="label">Reddito iniziale (Y₀)</span><span class="value">500</span></div>
+  <div class="row"><span class="label">Y₁ — dopo shock LM</span><span class="value" id="y1">—</span></div>
+  <div class="row"><span class="label">Y₂ — equilibrio finale</span><span class="value success" id="y2">—</span></div>
+  <div class="row"><span class="label">Contributo LM puro</span><span class="value contribution" id="contribLM">—</span></div>
+  <div class="row"><span class="label">Contributo cambio</span><span class="value contribution" id="contribCambio">—</span></div>
+  <div class="row"><span class="label">ΔY totale</span><span class="value success" id="deltaY">—</span></div>
+</div>
+
+<div class="commentary" id="commentary">
+  <span id="commentaryText"></span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+// PARAMETRI BASE
+// IS1: Y = 800 - 30r  ->  r = (800-Y)/30
+// LM1: r = -10 + 0.04 Y  (passa per (500, 10))
+// LM2: r = -12 + 0.04 Y  (shock monetario, meno aggressivo per evitare r negativi)
+// 
+// BP1 passa per E0=(500,10) con pendenza s (variabile via slider)
+// 
+// In cambi flessibili, il deprezzamento causa:
+//   - shift di IS verso destra: Δα = f(s) — maggiore quando BP è più piatta
+//   - shift di BP verso il basso: Δr_BP = funzione di α e s, calcolata dal vincolo che IS2∩LM2 stia su BP2
+//
+// Modello empirico: shift_alpha(s) = MAX_SHIFT * (1 - s/SMAX) con MAX_SHIFT=50, SMAX=0.04
+// che riproduce il fatto qualitativo dichiarato dal prof: BP piatta = max efficacia.
+
+const PARAMS = {
+  is1: { alpha: 800, beta: 30 },
+  lm1: { gamma: -10, delta: 0.04 },
+  lm2: { gamma: -12, delta: 0.04 },
+  MAX_SHIFT: 50,
+  SMAX: 0.04
+};
+
+let bpSlope = 0.0105; // valore iniziale slider 70
+
+function sliderToSlope(v) {
+  // v in 0..100 → slope in [0.035, 0.000]
+  return 0.035 * (1 - v/100);
+}
+
+function bpInterceptInit() {
+  return 10 - bpSlope * 500;
+}
+
+function bp1Line(Y) {
+  return bpInterceptInit() + bpSlope * Y;
+}
+
+function shiftAlpha() {
+  // shift di IS in funzione della pendenza di BP
+  // piatta (s=0) → shift max = 50
+  // ripida (s=SMAX) → shift = 0
+  return PARAMS.MAX_SHIFT * Math.max(0, 1 - bpSlope/PARAMS.SMAX);
+}
+
+function is2Line(Y) {
+  const alpha2 = PARAMS.is1.alpha + shiftAlpha();
+  return (alpha2 - Y) / PARAMS.is1.beta;
+}
+
+function lmLine(lmKey, Y) {
+  return PARAMS[lmKey].gamma + PARAMS[lmKey].delta * Y;
+}
+
+function intersectISLM(isLineFunc, lmKey) {
+  // is: Y = alpha_is - beta*r, lm: r = gamma + delta*Y
+  // alpha_is - beta*(gamma+delta*Y) = Y
+  // Y*(1+beta*delta) = alpha_is - beta*gamma
+  const lm = PARAMS[lmKey];
+  // Estraiamo alpha dalla funzione IS via test
+  const r0 = isLineFunc(0); // r quando Y=0 → r = alpha/beta
+  const alpha = r0 * PARAMS.is1.beta;
+  const Y = (alpha - PARAMS.is1.beta * lm.gamma) / (1 + PARAMS.is1.beta * lm.delta);
+  const r = isLineFunc(Y);
+  return { Y, r };
+}
+
+function modelToSVG(Y, r) {
+  const x = 60 + (Y - 200);
+  const y = 420 - r * 19;
+  return { x, y };
+}
+
+function linePath(yFn, Y1, Y2) {
+  const p1 = modelToSVG(Y1, yFn(Y1));
+  const p2 = modelToSVG(Y2, yFn(Y2));
+  return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+}
+
+// BP2 traslata, passa per E2
+function bp2Line(Y, E2) {
+  // BP2: stessa pendenza di BP1, traslata in modo da passare per E2
+  return E2.r + bpSlope * (Y - E2.Y);
+}
+
+let currentStep = 0;
+const TOTAL_STEPS = 4;
+
+function computeEquilibria() {
+  const eq0 = { Y: 500, r: 10 };
+  // E1 = IS1 ∩ LM2
+  const is1Func = Y => (PARAMS.is1.alpha - Y) / PARAMS.is1.beta;
+  const eq1 = intersectISLM(is1Func, 'lm2');
+  // E2 = IS2 ∩ LM2 (con IS2 che dipende da bpSlope)
+  const eq2 = intersectISLM(is2Line, 'lm2');
+  return { eq0, eq1, eq2 };
+}
+
+function getStepData(step, eqs) {
+  const contribLM = Math.round(eqs.eq1.Y - eqs.eq0.Y);
+  const contribCambio = Math.round(eqs.eq2.Y - eqs.eq1.Y);
+  const deltaTot = Math.round(eqs.eq2.Y - eqs.eq0.Y);
+  
+  return [
+    { label: "Fase 0 di 4 — equilibrio iniziale", yInt: "—", yFin: "—", contribLM: "—", contribCambio: "—", deltaY: "—", commentary: "" },
+    { label: "Fase 1 di 4 — shock monetario",
+      yInt: Math.round(eqs.eq1.Y), yFin: "—", contribLM: "+" + contribLM, contribCambio: "—", deltaY: "—",
+      commentary: "<strong>Shock applicato.</strong> La BC aumenta la BM: LM₁ trasla in LM₂. Nuovo equilibrio IS-LM in E₁ con tasso più basso e reddito più alto. Ma E₁ è <em>sotto BP</em>: BP è in disavanzo."
+    },
+    { label: "Fase 2 di 4 — il cambio si deprezza",
+      yInt: Math.round(eqs.eq1.Y), yFin: "—", contribLM: "+" + contribLM, contribCambio: "—", deltaY: "—",
+      commentary: "<strong>Cambi flessibili</strong>: la BC <em>non interviene</em>. Il deflusso di capitali genera un deprezzamento della moneta nazionale. La BP si sposta verso il basso (il deprezzamento migliora le PC, il pareggio della BP richiede ora un tasso più basso)."
+    },
+    { label: "Fase 3 di 4 — la IS si sposta a destra",
+      yInt: Math.round(eqs.eq1.Y), yFin: "—", contribLM: "+" + contribLM, contribCambio: "+" + contribCambio, deltaY: "—",
+      commentary: "<strong>Effetto del cambio sulla domanda.</strong> Il deprezzamento rende più competitive le merci nazionali: ↑X, ↓M. La componente (X − M) cresce, e IS trasla verso destra: IS₁ → IS₂."
+    },
+    { label: "Fase 4 di 4 — equilibrio finale",
+      yInt: Math.round(eqs.eq1.Y), yFin: Math.round(eqs.eq2.Y),
+      contribLM: "+" + contribLM, contribCambio: "+" + contribCambio, deltaY: "+" + deltaTot,
+      commentary: `<strong>Risultato: politica monetaria efficace e amplificata.</strong> L'effetto totale (+${deltaTot}) è maggiore del contributo iniziale della LM (+${contribLM}): il canale del cambio ha amplificato la manovra. <em>Prova a muovere lo slider della pendenza di BP</em>: più BP è piatta (mobilità dei capitali maggiore), più grande è il contributo del cambio, più efficace è la politica monetaria. Al limite BP piatta, l'aggiustamento avviene tutto via cambio.`
+    }
+  ][step];
+}
+
+function drawState(step) {
+  const curves = document.getElementById('curves');
+  const annotations = document.getElementById('annotations');
+  curves.innerHTML = '';
+  annotations.innerHTML = '';
+  
+  const Yvals = { min: 250, max: 700 };
+  const eqs = computeEquilibria();
+  
+  // IS
+  if (step <= 2) {
+    curves.innerHTML += `<path class="curve is" d="${linePath(Y => (PARAMS.is1.alpha - Y)/PARAMS.is1.beta, Yvals.min, Yvals.max)}"/>`;
+  } else {
+    curves.innerHTML += `<path class="curve is shadow" d="${linePath(Y => (PARAMS.is1.alpha - Y)/PARAMS.is1.beta, Yvals.min, Yvals.max)}"/>`;
+    if (shiftAlpha() > 0.5) {
+      curves.innerHTML += `<path class="curve is" d="${linePath(is2Line, Yvals.min, Yvals.max)}"/>`;
+    } else {
+      curves.innerHTML += `<path class="curve is" d="${linePath(Y => (PARAMS.is1.alpha - Y)/PARAMS.is1.beta, Yvals.min, Yvals.max)}"/>`;
+    }
+  }
+  
+  // LM
+  if (step === 0) {
+    curves.innerHTML += `<path class="curve lm" d="${linePath(Y => lmLine('lm1', Y), Yvals.min, Yvals.max)}"/>`;
+  } else {
+    curves.innerHTML += `<path class="curve lm shadow" d="${linePath(Y => lmLine('lm1', Y), Yvals.min, Yvals.max)}"/>`;
+    curves.innerHTML += `<path class="curve lm" d="${linePath(Y => lmLine('lm2', Y), Yvals.min, Yvals.max)}"/>`;
+  }
+  
+  // BP
+  if (step <= 1) {
+    curves.innerHTML += `<path class="curve bp" d="${linePath(bp1Line, Yvals.min, Yvals.max)}"/>`;
+  } else {
+    // BP1 ombra + BP2
+    curves.innerHTML += `<path class="curve bp shadow" d="${linePath(bp1Line, Yvals.min, Yvals.max)}"/>`;
+    const bp2Fn = Y => bp2Line(Y, eqs.eq2);
+    curves.innerHTML += `<path class="curve bp" d="${linePath(bp2Fn, Yvals.min, Yvals.max)}"/>`;
+  }
+  
+  const p0 = modelToSVG(eqs.eq0.Y, eqs.eq0.r);
+  const p1 = modelToSVG(eqs.eq1.Y, eqs.eq1.r);
+  const p2 = modelToSVG(eqs.eq2.Y, eqs.eq2.r);
+  
+  if (step === 0) {
+    annotations.innerHTML += `<circle class="point eq" cx="${p0.x}" cy="${p0.y}" r="5"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p0.x + 8}" y="${p0.y - 8}">E₀</text>`;
+  } else if (step === 1) {
+    annotations.innerHTML += `<circle class="point eq" cx="${p0.x}" cy="${p0.y}" r="5" opacity="0.5"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p0.x + 8}" y="${p0.y - 8}" opacity="0.5">E₀</text>`;
+    annotations.innerHTML += `<circle class="point intermediate" cx="${p1.x}" cy="${p1.y}" r="6"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p1.x + 8}" y="${p1.y + 4}">E₁</text>`;
+    annotations.innerHTML += `<text x="${p1.x + 8}" y="${p1.y + 20}" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#c41e3a" font-weight="600">BP &lt; 0</text>`;
+    const a1 = modelToSVG(420, lmLine('lm1', 420));
+    const a2 = modelToSVG(420, lmLine('lm2', 420));
+    annotations.innerHTML += `<path class="arrow shift" d="M ${a1.x} ${a1.y} L ${a2.x} ${a2.y}"/>`;
+  } else if (step === 2) {
+    annotations.innerHTML += `<circle class="point intermediate" cx="${p1.x}" cy="${p1.y}" r="6"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p1.x + 8}" y="${p1.y + 4}">E₁</text>`;
+    // Freccia BP1 → BP2 (al livello Y=550)
+    const a1 = modelToSVG(550, bp1Line(550));
+    const a2 = modelToSVG(550, bp2Line(550, eqs.eq2));
+    annotations.innerHTML += `<path class="arrow depreciation" d="M ${a1.x} ${a1.y} L ${a2.x} ${a2.y}"/>`;
+    annotations.innerHTML += `<text x="${a1.x + 8}" y="${(a1.y + a2.y)/2 + 4}" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#6b4423" font-weight="600">↓ deprezzamento</text>`;
+  } else if (step === 3) {
+    annotations.innerHTML += `<circle class="point intermediate" cx="${p1.x}" cy="${p1.y}" r="6" opacity="0.5"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p1.x + 8}" y="${p1.y + 4}" opacity="0.5">E₁</text>`;
+    if (shiftAlpha() > 0.5) {
+      // Freccia IS1 → IS2 a Y_intermedio
+      const a1 = modelToSVG(450, (PARAMS.is1.alpha - 450) / PARAMS.is1.beta);
+      const a2 = modelToSVG(450, is2Line(450));
+      annotations.innerHTML += `<path class="arrow shift" d="M ${a1.x} ${a1.y - 1} L ${a2.x + 25} ${a2.y - 1}"/>`;
+      annotations.innerHTML += `<text x="${a1.x + 30}" y="${a1.y - 10}" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#c41e3a" font-weight="600">↑X, ↓M</text>`;
+    }
+  } else if (step === 4) {
+    annotations.innerHTML += `<circle class="point eq" cx="${p0.x}" cy="${p0.y}" r="5" opacity="0.5"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p0.x + 8}" y="${p0.y - 8}" opacity="0.5">E₀</text>`;
+    annotations.innerHTML += `<circle class="point intermediate" cx="${p1.x}" cy="${p1.y}" r="5" opacity="0.5"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p1.x + 8}" y="${p1.y + 4}" opacity="0.5">E₁</text>`;
+    annotations.innerHTML += `<circle class="point final" cx="${p2.x}" cy="${p2.y}" r="6" fill="#2d5a2d"/>`;
+    annotations.innerHTML += `<text class="point-label" x="${p2.x + 8}" y="${p2.y + 4}">E₂</text>`;
+    const deltaTot = Math.round(eqs.eq2.Y - eqs.eq0.Y);
+    annotations.innerHTML += `<text x="${p2.x + 8}" y="${p2.y + 20}" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#2d5a2d" font-weight="600">ΔY = +${deltaTot}</text>`;
+  }
+  
+  // Etichette curve
+  if (step <= 2) {
+    const isEnd = modelToSVG(680, (PARAMS.is1.alpha - 680) / PARAMS.is1.beta);
+    annotations.innerHTML += `<text class="label-line" x="${isEnd.x - 80}" y="${isEnd.y + 18}" fill="#1a4480">IS</text>`;
+  } else if (shiftAlpha() > 0.5) {
+    const is1End = modelToSVG(680, (PARAMS.is1.alpha - 680) / PARAMS.is1.beta);
+    const is2End = modelToSVG(680, is2Line(680));
+    annotations.innerHTML += `<text class="label-line" x="${is1End.x - 90}" y="${is1End.y + 18}" fill="#1a4480" opacity="0.5">IS₁</text>`;
+    annotations.innerHTML += `<text class="label-line" x="${is2End.x - 90}" y="${is2End.y + 18}" fill="#1a4480">IS₂</text>`;
+  } else {
+    const isEnd = modelToSVG(680, (PARAMS.is1.alpha - 680) / PARAMS.is1.beta);
+    annotations.innerHTML += `<text class="label-line" x="${isEnd.x - 80}" y="${isEnd.y + 18}" fill="#1a4480">IS</text>`;
+  }
+  
+  if (step === 0) {
+    const lmEnd = modelToSVG(680, lmLine('lm1', 680));
+    annotations.innerHTML += `<text class="label-line" x="${lmEnd.x - 80}" y="${lmEnd.y + 18}" fill="#6b4423">LM</text>`;
+  } else {
+    const lm1End = modelToSVG(680, lmLine('lm1', 680));
+    const lm2End = modelToSVG(680, lmLine('lm2', 680));
+    annotations.innerHTML += `<text class="label-line" x="${lm1End.x - 90}" y="${lm1End.y + 18}" fill="#6b4423" opacity="0.5">LM₁</text>`;
+    annotations.innerHTML += `<text class="label-line" x="${lm2End.x - 90}" y="${lm2End.y + 18}" fill="#6b4423">LM₂</text>`;
+  }
+  
+  if (step <= 1) {
+    const bpEnd = modelToSVG(680, bp1Line(680));
+    annotations.innerHTML += `<text class="label-line" x="${bpEnd.x - 80}" y="${bpEnd.y - 8}" fill="#2d5a2d">BP</text>`;
+  } else {
+    const bp1End = modelToSVG(680, bp1Line(680));
+    const bp2End = modelToSVG(680, bp2Line(680, eqs.eq2));
+    annotations.innerHTML += `<text class="label-line" x="${bp1End.x - 80}" y="${bp1End.y - 8}" fill="#2d5a2d" opacity="0.5">BP₁</text>`;
+    annotations.innerHTML += `<text class="label-line" x="${bp2End.x - 80}" y="${bp2End.y - 8}" fill="#2d5a2d">BP₂</text>`;
+  }
+  
+  // Pannello laterale
+  const sd = getStepData(step, eqs);
+  document.getElementById('stepIndicator').textContent = sd.label;
+  document.getElementById('y1').textContent = sd.yInt;
+  document.getElementById('y2').textContent = sd.yFin;
+  document.getElementById('contribLM').textContent = sd.contribLM;
+  document.getElementById('contribCambio').textContent = sd.contribCambio;
+  document.getElementById('deltaY').textContent = sd.deltaY;
+  
+  const commentary = document.getElementById('commentary');
+  if (sd.commentary) {
+    commentary.classList.add('show');
+    document.getElementById('commentaryText').innerHTML = sd.commentary;
+  } else {
+    commentary.classList.remove('show');
+  }
+  
+  const btn = document.getElementById('advanceBtn');
+  if (step === 0) btn.textContent = 'Avvia: politica monetaria espansiva';
+  else if (step === 1) btn.textContent = 'Mostra deprezzamento del cambio →';
+  else if (step === 2) btn.textContent = 'Mostra spostamento della IS →';
+  else if (step === 3) btn.textContent = 'Mostra equilibrio finale →';
+  else if (step === 4) { btn.textContent = '✓ Simulazione completata'; btn.disabled = true; return; }
+  btn.disabled = false;
+}
+
+function updateSlopeLabel(v) {
+  const labels = ['piatta', 'molto piatta', 'piatta', 'medio-piatta', 'media', 'medio-ripida', 'ripida', 'molto ripida', 'ripidissima'];
+  const idx = Math.round((100 - v) / 100 * 8);
+  document.getElementById('bpSlopeValue').textContent = labels[idx];
+}
+
+document.getElementById('bpSlope').addEventListener('input', (e) => {
+  bpSlope = sliderToSlope(parseFloat(e.target.value));
+  updateSlopeLabel(parseFloat(e.target.value));
+  drawState(currentStep);
+});
+
+document.getElementById('advanceBtn').addEventListener('click', () => {
+  if (currentStep < TOTAL_STEPS) { currentStep++; drawState(currentStep); }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  currentStep = 0; drawState(0);
+});
+
+updateSlopeLabel(70);
+drawState(0);
+</script>
+</body>
+</html>
