@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lezione 3 — Politica Economica: teoria normativa e politica monetaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --base-size: 18px;
+  --max-width: 1200px;
+  --content-width: 720px;
+  --sidebar-width: 240px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --content-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.layout {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 60px;
+  transition: padding 0.2s ease;
+}
+
+body.presentation .layout {
+  grid-template-columns: 1fr;
+  max-width: var(--content-width);
+}
+
+aside.sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-family: 'Source Sans 3', sans-serif;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+body.presentation aside.sidebar { display: none; }
+
+.sidebar-title {
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar nav ol {
+  list-style: none;
+  counter-reset: sec;
+}
+
+.sidebar nav > ol > li {
+  counter-increment: sec;
+  margin-bottom: 6px;
+}
+
+.sidebar nav a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.78em;
+  padding: 6px 0 6px 26px;
+  position: relative;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar nav > ol > li > a {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sidebar nav > ol > li > a::before {
+  content: counter(sec);
+  position: absolute;
+  left: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-light);
+  font-weight: 500;
+}
+
+.sidebar nav a:hover {
+  color: var(--ink);
+  border-left-color: var(--rule-strong);
+}
+
+.sidebar nav a.active {
+  color: var(--ink);
+  border-left-color: var(--ink);
+  font-weight: 600;
+}
+
+.sidebar nav ol ol {
+  list-style: none;
+  margin-left: 0;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.sidebar nav ol ol a {
+  font-size: 0.74em;
+  padding: 3px 0 3px 26px;
+  font-weight: 400;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+main.content {
+  max-width: var(--content-width);
+  min-width: 0;
+}
+
+header.lezione-header {
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.lezione-meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.4em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.18em;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+section {
+  margin: 72px 0 0;
+  scroll-margin-top: 24px;
+}
+
+h2 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.65em;
+  line-height: 1.25;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
+}
+
+h2 .h2-num {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--muted-light);
+  vertical-align: middle;
+  margin-right: 16px;
+  letter-spacing: 0.05em;
+}
+
+h3 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+  font-size: 1.22em;
+  margin: 44px 0 16px;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
+}
+
+h4 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.82em;
+  margin: 28px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+p {
+  margin-bottom: 18px;
+  text-align: left;
+  hyphens: auto;
+  max-width: 65ch;
+}
+
+body.presentation p { max-width: 75ch; }
+
+.lead {
+  font-size: 1.08em;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+ul, ol {
+  margin: 16px 0 22px 28px;
+  max-width: 62ch;
+}
+
+li {
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+code {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em;
+  background: var(--paper-warm);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.formula {
+  font-family: 'Source Sans 3', monospace;
+  background: var(--paper-warm);
+  padding: 12px 18px;
+  margin: 16px 0;
+  font-size: 0.95em;
+  border-left: 2px solid var(--rule-strong);
+  max-width: 62ch;
+  overflow-x: auto;
+}
+
+.box {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  padding: 20px 24px;
+  margin: 24px 0;
+  max-width: 65ch;
+  position: relative;
+}
+
+.box-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.box p { margin-bottom: 12px; }
+.box p:last-child { margin-bottom: 0; }
+
+.box.teorema {
+  background: #f0eee3;
+  border-left-color: var(--ink);
+  padding: 24px 28px;
+}
+
+.box.teorema .box-label { color: var(--ink); }
+
+.box.teorema .teorema-enunciato {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 1.05em;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.box.definizione {
+  background: var(--paper-cool);
+  border-left-color: var(--rule-strong);
+}
+
+.box.esempio {
+  background: var(--paper-warm);
+  border-left-color: var(--rule-strong);
+}
+
+.figure-placeholder {
+  margin: 28px 0;
+  padding: 32px 24px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--paper-warm),
+    var(--paper-warm) 10px,
+    var(--paper-cool) 10px,
+    var(--paper-cool) 20px
+  );
+  border: 1px dashed var(--rule-strong);
+  text-align: center;
+  font-family: 'Source Sans 3', sans-serif;
+  max-width: 62ch;
+}
+
+.figure-placeholder .placeholder-label {
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.figure-placeholder .placeholder-desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.95em;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.86em;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+th {
+  background: var(--paper-warm);
+  font-weight: 600;
+  font-size: 0.94em;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+}
+
+footer {
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 32px; }
+  aside.sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
+  }
+  .sidebar nav { display: none; }
+  .sidebar.expanded nav { display: block; }
+  .sidebar-title { cursor: pointer; }
+  .sidebar-title::after { content: " ▾"; color: var(--muted-light); }
+  .sidebar.expanded .sidebar-title::after { content: " ▴"; }
+}
+
+@media (max-width: 640px) {
+  .layout { padding: 40px 20px 80px; }
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.35em; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+  body { font-size: 17px; }
+}
+
+@media print {
+  body { font-size: 11pt; background: white; }
+  .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+  aside.sidebar { display: none; }
+  h2 { page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  .box, .figure-placeholder { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title" onclick="this.parentElement.classList.toggle('expanded')">Indice</div>
+  <nav>
+    <ol>
+      <li>
+        <a href="#sec1">Teoria normativa della politica economica</a>
+        <ol>
+          <li><a href="#sec1-1">Obiettivi e strumenti</a></li>
+          <li><a href="#sec1-2">Espressione degli obiettivi</a></li>
+          <li><a href="#sec1-3">Classificazione degli strumenti</a></li>
+          <li><a href="#sec1-4">Il modello e la forma ridotta</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec2">Controllabilità e regola di Tinbergen</a>
+        <ol>
+          <li><a href="#sec2-1">Forma ridotta invertita</a></li>
+          <li><a href="#sec2-2">Regola aurea</a></li>
+          <li><a href="#sec2-3">Esempio applicativo</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec3">Limiti dell'approccio e critica di Lucas</a>
+      </li>
+      <li>
+        <a href="#sec4">Economia monetaria e intermediari finanziari</a>
+        <ol>
+          <li><a href="#sec4-1">Funzioni della moneta</a></li>
+          <li><a href="#sec4-2">Instabilità intrinseca</a></li>
+          <li><a href="#sec4-3">Intermediari finanziari</a></li>
+          <li><a href="#sec4-4">Aggregati monetari</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec5">Banca centrale e base monetaria</a>
+        <ol>
+          <li><a href="#sec5-1">Ruolo della BC</a></li>
+          <li><a href="#sec5-2">Base monetaria</a></li>
+          <li><a href="#sec5-3">Quattro canali di creazione</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec6">Banche commerciali e offerta di moneta</a>
+        <ol>
+          <li><a href="#sec6-1">Moltiplicatore dei depositi</a></li>
+          <li><a href="#sec6-2">Moltiplicatore della moneta</a></li>
+          <li><a href="#sec6-3">BM e curva LM</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec7">Controllo dell'offerta di moneta</a>
+        <ol>
+          <li><a href="#sec7-1">Endogeneità del moltiplicatore</a></li>
+          <li><a href="#sec7-2">Dal controllo della BM al tasso</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec8">Politica monetaria in IS-LM-BP</a>
+        <ol>
+          <li><a href="#sec8-1">Regime di cambi fissi</a></li>
+          <li><a href="#sec8-2">Regime di cambi flessibili</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec9">Efficacia della politica monetaria</a>
+        <ol>
+          <li><a href="#sec9-1">Ritardi tipici</a></li>
+          <li><a href="#sec9-2">Asimmetria degli effetti</a></li>
+          <li><a href="#sec9-3">Limiti strutturali</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+</aside>
+
+<main class="content">
+
+<header class="lezione-header">
+  <div class="lezione-meta">Lezione 3 / 4 — Politica Economica</div>
+  <h1>Teoria normativa e politica monetaria</h1>
+  <p class="subtitle">Obiettivi e strumenti, regola di Tinbergen, critica di Lucas. Moneta, banca centrale, base monetaria, banche commerciali. Politica monetaria in regime di cambi fissi e flessibili, efficacia ed asimmetrie.</p>
+</header>
+
+<section id="sec1">
+  <h2><span class="h2-num">§1</span>La teoria normativa della politica economica</h2>
+
+  <p class="lead">La teoria normativa definisce ciò che l'operatore pubblico dovrebbe fare agendo razionalmente al fine di supplire alle carenze o ai fallimenti del mercato. La sistematizzazione teorica e l'impostazione di modalità scientifiche si deve soprattutto ai lavori di Jan Tinbergen (1956). Un intervento di politica economica si definisce come <strong>programma di intervento</strong>: un insieme di decisioni coordinate e coerenti, nel quale le finalità politico-economiche (obiettivi) vengono analizzate e poste in relazione all'insieme delle azioni possibili (strumenti), dato un modello di analisi che descrive il funzionamento del sistema economico.</p>
+
+  <p>Avendo analizzato in Lezione 2 le diverse posizioni teoriche sul modello rilevante dell'economia, occorre ora analizzare gli altri due elementi costitutivi del programma di intervento: obiettivi e strumenti.</p>
+
+  <h3 id="sec1-1">1.1 Obiettivi e strumenti</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Obiettivo</span>
+    <p>Un <strong>obiettivo</strong> è una finalità di politica economica misurabile in termini di grandezze economicamente rilevanti (reddito, occupazione, disoccupazione, inflazione). Con riferimento ad un modello di politica economica, l'obiettivo rappresenta una <em>variabile endogena</em>.</p>
+  </div>
+
+  <p>Per <strong>variabile endogena</strong> si intende un fenomeno misurabile la cui grandezza è influenzata dalle altre variabili del sistema economico. Essa può influenzare le altre variabili, ma ciò non è necessario a definirla come endogena.</p>
+
+  <div class="box definizione">
+    <span class="box-label">Strumento</span>
+    <p>Uno <strong>strumento</strong> è una grandezza economica misurabile sotto il controllo delle autorità di politica economica (tasso di interesse, spesa pubblica, aliquote di imposizione). Con riferimento ad un modello di politica economica, lo strumento rappresenta una <em>variabile esogena</em>.</p>
+  </div>
+
+  <p>Per <strong>variabile esogena</strong> si intende un fenomeno misurabile la cui grandezza non è influenzata dalle altre variabili del sistema economico, mentre essa influenza queste ultime. Il fatto che la variabile esogena influenzi le altre variabili del sistema, o alcune di esse, non è necessario a definirla come esogena, ma è necessario a definirla come strumento.</p>
+
+  <h4>Tre condizioni per la qualifica di strumento</h4>
+
+  <p>Perché possa essere considerata uno strumento, una variabile deve soddisfare tre condizioni essenziali:</p>
+
+  <ol>
+    <li><strong>Controllabilità</strong>: deve essere effettivamente sotto il controllo delle autorità.</li>
+    <li><strong>Efficacia</strong>: deve essere efficace rispetto all'obiettivo prefissato. L'efficacia è data dalla forza della relazione tra obiettivo e strumento, che si misura attraverso la derivata parziale dell'obiettivo rispetto allo strumento (\(\partial y / \partial x\), dove l'obiettivo è \(y\) e lo strumento è \(x\) — è il concetto di moltiplicatore visto nella Lezione 2).</li>
+    <li><strong>Indipendenza (separabilità)</strong>: deve poter essere distinta da altri strumenti, sia in termini di controllabilità sia di efficacia. Due variabili che abbiano la stessa efficacia sullo stesso obiettivo costituiscono un unico strumento.</li>
+  </ol>
+
+  <h4>Relazioni tra obiettivi</h4>
+
+  <p>I diversi obiettivi possono essere tra loro <strong>indipendenti, coerenti, o sostituti</strong>.</p>
+
+  <p>Nel primo caso (indipendenti), le azioni per il raggiungimento di un obiettivo non hanno effetti sugli altri obiettivi. Nel secondo caso (coerenti), gli effetti sulle altre variabili obiettivo hanno lo stesso segno: il raggiungimento di un obiettivo favorisce il raggiungimento di altri. Nel terzo caso (sostituti), gli effetti hanno segno diverso: il raggiungimento di un obiettivo rende più difficile il raggiungimento di altri. È questo il caso del <em>trade-off</em> classico tra inflazione e disoccupazione descritto dalla curva di Phillips.</p>
+
+  <h3 id="sec1-2">1.2 Modi di esprimere gli obiettivi</h3>
+
+  <p>Esistono quattro modi per esprimere gli obiettivi: metodo degli <strong>obiettivi fissi</strong>, metodo delle <strong>priorità</strong>, metodo degli <strong>obiettivi flessibili con saggio marginale di sostituzione costante</strong>, metodo degli <strong>obiettivi flessibili con SMS variabile</strong>.</p>
+
+  <h4>Obiettivi fissi</h4>
+
+  <p>Si fissano valori-bersaglio per le variabili-obiettivo e si determina il valore degli strumenti necessari al raggiungimento di tali valori, trascurando la caratterizzazione di indipendenza, coerenza o sostituibilità degli obiettivi. L'esempio tipico è quello che definisce la relazione tra reddito del sud e del nord, o quello della relazione tra inflazione e disoccupazione lungo la curva di Phillips.</p>
+
+  <h4>Priorità</h4>
+
+  <p>Come nel caso degli obiettivi fissi, si fissano valori per la variabile-obiettivo e si determina il valore degli strumenti. La differenza è che non si conosce esattamente la posizione del vincolo (incertezza sul modello o sui parametri). Si definisce ad esempio un valore per il reddito del sud e quindi si massimizza il reddito del nord, compatibilmente con il primo obiettivo. Il risultato effettivo dipenderà dalla posizione effettiva della curva di trasformazione.</p>
+
+  <h4>Obiettivi flessibili con SMS variabile</h4>
+
+  <p>Il problema di politica economica espresso in forma di obiettivi flessibili è del tutto equivalente al problema della massimizzazione dell'utilità del consumatore. Lo stato massimizza (minimizza) una <strong>funzione del benessere sociale (FBS)</strong>, una funzione di utilità (disutilità) collettiva rappresentata da curve di indifferenza, ognuna associata ad un dato livello di benessere (o malessere) sociale. In tal caso il decisore politico prende in considerazione la dipendenza tra obiettivi.</p>
+
+  <h4>Obiettivi flessibili con SMS costante</h4>
+
+  <p>Il problema è impostato in modo analogo al caso di SMS variabile, con l'unica differenza che la FBS è espressa in forma lineare. Nel caso del problema della distribuzione ottima tra reddito del nord (\(Y_n\)) e del sud (\(Y_s\)):</p>
+
+  <p>$$W = aY_n + bY_s \quad \Rightarrow \quad Y_n = \frac{W}{a} - \frac{b}{a}Y_s$$</p>
+
+  <p>Nel caso del problema della scelta tra inflazione e disoccupazione:</p>
+
+  <p>$$W = a\,dP + bu \quad \Rightarrow \quad dP = \frac{W}{a} - \frac{b}{a}u$$</p>
+
+  <p>Se \(a = b = 1\) si ha l'<strong>indice di malessere di Okun</strong>: la somma di inflazione e disoccupazione, semplice misura del disagio macroeconomico complessivo.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Rappresentazione delle quattro modalità di espressione degli obiettivi: obiettivi fissi (punto target sul vincolo), priorità (con incertezza sul vincolo), obiettivi flessibili con FBS rappresentata da curve di indifferenza nel piano (Y<sub>n</sub>, Y<sub>s</sub>) o (dP, u).</div>
+  </div>
+
+  <h3 id="sec1-3">1.3 Classificazione degli strumenti</h3>
+
+  <p>Gli strumenti rappresentano le leve della politica economica: variabili manovrate dalle autorità al fine dell'ottenimento degli obiettivi prefissati. Esistono diverse classificazioni delle tipologie di variabili strumentali.</p>
+
+  <h4>Quantitative, qualitative, di riforma (Tinbergen)</h4>
+
+  <p>Con riferimento alla classificazione proposta da Tinbergen, si distingue tra politiche quantitative, qualitative e di riforma.</p>
+
+  <ul>
+    <li>Le <strong>politiche quantitative</strong> consistono nella variazione del valore di uno strumento esistente (es. spesa pubblica).</li>
+    <li>Le <strong>politiche qualitative</strong> consistono nell'introduzione di un nuovo strumento, o nella cancellazione di uno strumento esistente (es. introduzione di nuove imposte, cancellazione dell'IRAP).</li>
+    <li>Le <strong>politiche di riforma</strong> consistono nell'introduzione o cancellazione di uno strumento, ove ciò comporti modifiche sostanziali delle regole di funzionamento del sistema economico (nazionalizzazioni, privatizzazioni, separazione tra credito a breve e medio-lungo termine).</li>
+  </ul>
+
+  <h4>Controllo diretto vs controllo indiretto</h4>
+
+  <p>Con riferimento al meccanismo attraverso il quale si producono gli effetti sulle variabili-obiettivo, si distingue tra:</p>
+
+  <ul>
+    <li>Le <strong>misure di controllo diretto</strong> mirano al raggiungimento degli obiettivi imponendo determinati comportamenti agli operatori economici (esempio: contingentamento delle importazioni).</li>
+    <li>Le <strong>misure di controllo indiretto</strong> mirano al raggiungimento degli obiettivi attraverso la modifica degli incentivi economici da cui dipendono i comportamenti degli operatori privati (politica monetaria, politica fiscale, politica del cambio, politica dei dazi).</li>
+  </ul>
+
+  <h4>Misure discrezionali vs regole automatiche</h4>
+
+  <p>Con riferimento alle modalità di intervento, si distingue inoltre tra:</p>
+
+  <ul>
+    <li>Le <strong>misure discrezionali</strong> sono strumenti manovrati a discrezione dell'autorità, sulla base di una valutazione specifica caso per caso dell'opportunità della manovra.</li>
+    <li>Le <strong>regole automatiche</strong> sono strumenti che entrano in funzione automaticamente, in risposta a variazioni di alcune variabili obiettivo. Esempi: regola di Taylor (politica monetaria), regola semplice di Friedman (espansione monetaria a tasso costante), stabilizzatori automatici (sussidi di disoccupazione, imposizione progressiva).</li>
+  </ul>
+
+  <p>Le regole automatiche hanno il pregio di ridurre i <strong>ritardi tipici</strong> delle manovre discrezionali: il ritardo di osservazione, quello amministrativo, e quello negli effetti.</p>
+
+  <h3 id="sec1-4">1.4 Il modello e la forma ridotta</h3>
+
+  <p>Una volta definiti gli obiettivi di politica economica e individuati gli strumenti efficaci per il loro raggiungimento, essi devono trovare rappresentazione in un modello matematico del funzionamento del sistema economico che li mette in relazione.</p>
+
+  <p>Il modello viene prima espresso in <strong>forma strutturale</strong> (FS): una forma in cui compaiono tutte le equazioni di comportamento, derivate dall'analisi economica teorica e verificate dall'analisi econometrica.</p>
+
+  <h4>Tipologia delle equazioni</h4>
+
+  <p>Si distinguono cinque tipi di equazioni:</p>
+
+  <ul>
+    <li><strong>Equazioni di definizione</strong>: identità contabili (es. \(D = C + I\)).</li>
+    <li><strong>Equazioni di comportamento</strong>: relazioni che descrivono le scelte degli operatori (es. equazione del consumo \(C = cY^D\), dell'investimento \(I = I_0 - ar\)).</li>
+    <li><strong>Equazioni tecniche</strong>: relazioni di natura tecnologica (es. funzione di produzione \(Y = AN\)).</li>
+    <li><strong>Equazioni di equilibrio</strong>: relazioni che esprimono condizioni di compatibilità tra grandezze (es. \(Y = D\)).</li>
+    <li><strong>Equazioni istituzionali</strong>: vincoli imposti da norme o consuetudini (es. il divieto di finanziamento monetario della spesa: \(dG = dT + dB\), con \(B\) titoli di debito).</li>
+  </ul>
+
+  <p>Perché possa essere utilizzato, un modello in FS deve rendere possibile l'individuazione delle variabili rispetto al loro status di endogena/esogena, obiettivo/strumento, e una chiara classificazione della tipologia di equazioni.</p>
+
+  <p>Dopo la FS, il modello viene espresso in <strong>forma ridotta (FR)</strong>: una formulazione nella quale il modello strutturale viene risolto rispetto alle variabili obiettivo, eliminando le variabili irrilevanti. È in forma ridotta che lavorammo già nella Lezione 2 quando derivammo IS e LM.</p>
+</section>
+
+<section id="sec2">
+  <h2><span class="h2-num">§2</span>Controllabilità e regola di Tinbergen</h2>
+
+  <p class="lead">Per poter risolvere un problema di politica economica, il modello deve essere matematicamente trattabile: serve la forma ridotta invertita. La regola di Tinbergen stabilisce la condizione di esistenza della soluzione.</p>
+
+  <h3 id="sec2-1">2.1 Forma ridotta invertita</h3>
+
+  <p>Se il problema di politica economica è espresso in termini di <strong>obiettivi fissi</strong>, si procede così:</p>
+
+  <ol>
+    <li>Si esprime il modello in forma ridotta, risolvendolo rispetto alla/e variabile/i obiettivo (forma generale: \(y = f(x)\), con \(y\) obiettivo e \(x\) strumento).</li>
+    <li>Si passa alla <strong>forma ridotta invertita (FRI)</strong>: una formulazione in cui si assegna il valore target all'obiettivo e si risolve rispetto allo strumento. Se la FR è \(y = f(x)\), la FRI sarà \(x = g(y)\), con \(g\) inversa di \(f\).</li>
+  </ol>
+
+  <p>Se il problema è espresso in termini di <strong>obiettivi flessibili</strong>, si imposta un problema di massimo (o minimo) vincolato: \(\max W = f(y_1, y_2)\) soggetto al modello dell'economia (in forma strutturale o ridotta). È il cosiddetto <strong>approccio ottimizzante</strong>.</p>
+
+  <h3 id="sec2-2">2.2 La regola aurea della politica economica</h3>
+
+  <p>Per ottenere la FRI devono essere soddisfatte alcune condizioni, di fatto condizioni che definiscono la possibilità di risolvere un problema matematico.</p>
+
+  <div class="box teorema">
+    <span class="box-label">Regola di Tinbergen (regola aurea della politica economica)</span>
+    <p class="teorema-enunciato">Perché un sistema possa essere risolto è che ci siano un numero di incognite almeno pari al numero di equazioni. Nel caso della risolvibilità di un problema ad obiettivi fissi con modello espresso in forma ridotta, deve essere disponibile un numero di strumenti (incognite) <strong>almeno pari al numero di obiettivi</strong> (che definiscono il numero di equazioni, dato che si ha una equazione per ogni obiettivo).</p>
+  </div>
+
+  <p>Si possono distinguere tre casi:</p>
+
+  <ol>
+    <li><strong>Sistema determinato</strong>: il numero di strumenti è uguale al numero di obiettivi. Esiste una soluzione unica.</li>
+    <li><strong>Sistema sotto-determinato</strong>: il numero di strumenti è superiore a quello degli obiettivi. Esistono molteplici soluzioni: si prende a caso il valore degli strumenti in eccesso e si determina la FRI attraverso gli altri.</li>
+    <li><strong>Sistema sovra-determinato</strong>: il numero di strumenti è inferiore a quello degli obiettivi. <em>Non esiste alcuna soluzione</em>. Le opzioni sono: trascurare gli obiettivi in eccesso, ricercare nuovi strumenti, oppure abbandonare l'impostazione ad obiettivi fissi e passare all'approccio ottimizzante con obiettivi flessibili.</li>
+  </ol>
+
+  <h3 id="sec2-3">2.3 Esempio applicativo</h3>
+
+  <p>Si assuma che il governo si sia prefissato uno specifico obiettivo di occupazione \(N^*\) (obiettivo fisso). Si assuma inoltre che il funzionamento dell'economia sia descrivibile da un modello keynesiano a prezzi fissi. Vediamo i passaggi per ottenere FS, FR e FRI.</p>
+
+  <p><strong>Forma strutturale</strong>:</p>
+
+  <p>$$\begin{aligned} Y &= AN \quad &\text{(funzione di produzione, } A = \pi\text{)} \\ Y &= C + I + G \\ C &= cY^D \\ I &= I_0 - ar \\ Y^D &= Y - tY \end{aligned}$$</p>
+
+  <p><strong>Forma ridotta</strong>:</p>
+
+  <p>$$N = \frac{1}{A} \cdot \frac{1}{1-c(1-t)} \cdot (I_0 - ar + G)$$</p>
+
+  <p><strong>Forma ridotta invertita</strong>: assumendo \(G\) come strumento (lo stato vuole raggiungere \(N^*\) manovrando \(G\)):</p>
+
+  <p>$$G = A\,[1-c(1-t)]\, N^* - (I_0 - ar)$$</p>
+
+  <p>Lo strumento \(G\) viene così determinato a partire dal valore target \(N^*\). Il governo legge dall'equazione FRI quanto deve spendere per ottenere quel livello di occupazione, dati gli altri parametri dell'economia (produttività del lavoro \(A\), propensione al consumo \(c\), aliquota \(t\), sensibilità degli investimenti al tasso \(a\), valore atteso degli investimenti autonomi \(I_0\), tasso di interesse \(r\)).</p>
+</section>
+
+<section id="sec3">
+  <h2><span class="h2-num">§3</span>Limiti dell'approccio classico e critica di Lucas</h2>
+
+  <p class="lead">L'approccio di Tinbergen è potente ma ha alcuni limiti, alcuni di natura strutturale (modelli statici), altri di natura più sostanziale (le aspettative degli operatori). Il limite più discusso è quello sollevato da Robert Lucas (Nobel 1995).</p>
+
+  <p>I limiti dell'approccio classico alla teoria normativa sono essenzialmente tre:</p>
+
+  <ul>
+    <li><strong>Natura statica e deterministica</strong> dei modelli, che mal si adatta alle dinamiche di lungo periodo e alla presenza di shock stocastici.</li>
+    <li><strong>Mancata rappresentazione delle aspettative</strong>: gli operatori sono assunti come privi di anticipazione razionale sui movimenti futuri delle variabili.</li>
+    <li><strong>Mancanza di microfondazione</strong>: le relazioni di comportamento (consumo, investimento, domanda di moneta) non sono derivate da processi di ottimizzazione in cui siano specificate completamente le ipotesi sulle preferenze e sulla tecnica produttiva.</li>
+  </ul>
+
+  <div class="box teorema">
+    <span class="box-label">Critica di Lucas</span>
+    <p class="teorema-enunciato">La mancanza di microfondazione fa sì che i parametri stimati siano <em>convoluzioni</em> di parametri profondi (tecnologici e psicologici) e di parametri di aspettativa. Ciò fa sì che tali parametri <strong>non siano invarianti rispetto a interventi di policy</strong>: gli operatori razionali modificano le loro aspettative a seguito o in previsione degli interventi stessi. Il modello che si intende utilizzare per calibrare le policy non è più il modello rilevante dell'economia.</p>
+  </div>
+
+  <p>Il punto è cruciale dal punto di vista pratico: il governo stima un modello sui dati passati e calibra la propria manovra sulla base dei parametri stimati. Ma quando applica la manovra, gli operatori reagiscono modificando il proprio comportamento futuro, e i parametri stimati cambiano. Il modello, in altri termini, è valido solo finché la politica non lo perturba. È questo il senso di non-invarianza dei parametri rispetto alle politiche.</p>
+
+  <p>Si noti tuttavia che la critica di Lucas non è devastante quanto spesso riconosciuto. Il fatto che i parametri di comportamento stimati possano cambiare è un'ipotesi <em>verificabile</em> dall'econometrico, attraverso test di cambiamento strutturale per modifiche note della policy. La critica indica un'attenzione metodologica importante, più che la negazione integrale dell'utilizzabilità dei modelli.</p>
+</section>
+
+<section id="sec4">
+  <h2><span class="h2-num">§4</span>Economia monetaria e intermediari finanziari</h2>
+
+  <p class="lead">Affrontiamo la politica monetaria. La politica monetaria ha per obiettivo la stabilità monetaria interna ed esterna; storicamente si osserva un peso crescente dell'obiettivo del controllo dell'inflazione. Si attua attraverso manovre della base monetaria e attraverso manovre del tasso di interesse. In condizioni di perfetto funzionamento del mercato del credito le due manovre hanno effetti equivalenti; in crisi di liquidità e di fiducia prevale invece la manovra sugli aggregati monetari. Per capirla bisogna prima fissare alcuni concetti di base sulla moneta e sugli intermediari finanziari.</p>
+
+  <h3 id="sec4-1">4.1 Definizione e funzioni della moneta</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Economia monetaria</span>
+    <p>Un'economia monetaria si caratterizza per il fatto che le transazioni di beni e servizi sono regolate attraverso l'uso di strumenti monetari (anche moneta-merce: conchiglie, bestiame), e non attraverso lo scambio diretto di beni come nell'economia di baratto. La moneta ha carattere sostanzialmente <strong>fiduciario</strong>: le sue funzioni vengono esplicate perché convenzionalmente si attribuisce fiducia al mezzo di pagamento.</p>
+  </div>
+
+  <p>Con riferimento alla moneta, è possibile individuare tre funzioni tipiche:</p>
+
+  <ol>
+    <li><strong>Mezzo di pagamento</strong>, o intermediario negli scambi. Il ruolo fondamentale consiste nella riduzione dei costi di transazione: mercati decentrati comportano costi di spostamento e informazione che la moneta abbatte. Permette inoltre la specializzazione distributiva.</li>
+    <li><strong>Unità di conto</strong> (o numerario, o misura di valore). La moneta è il "bene" nei termini del quale sono calcolati tutti i prezzi e contabilizzati i valori. Non è necessaria coincidenza tra unità di conto e mezzo di pagamento: si pensi alla contabilità in dollari con prezzi in moneta nazionale.</li>
+    <li><strong>Riserva di valore</strong>. La moneta è un mezzo per il trasferimento del potere di acquisto nel tempo, in associazione ad altre attività finanziarie e reali.</li>
+  </ol>
+
+  <h3 id="sec4-2">4.2 Instabilità intrinseca dell'economia monetaria</h3>
+
+  <p>L'esistenza di una economia monetaria, se da un lato favorisce gli scambi, dall'altro espone l'economia ad una <strong>instabilità intrinseca</strong>. L'instabilità deriva dalla separazione tra atto di vendita e atto di acquisto e dalla possibilità di <em>tesaurizzare</em>: chi vende un bene può non spendere immediatamente la moneta ricevuta, e trattenerla come riserva di valore. Questo apre la possibilità di squilibri tra produzione, vendita e consumo aggregato che nell'economia di baratto non possono manifestarsi.</p>
+
+  <p>È il punto su cui Keynes costruisce molta della sua analisi: la moneta non è solo un velo che facilita gli scambi, ma una variabile attiva, capace di influenzare il livello di produzione e di occupazione attraverso il comportamento di domanda di moneta dei risparmiatori (Lezione 2, §3.5).</p>
+
+  <h3 id="sec4-3">4.3 Intermediari finanziari</h3>
+
+  <p>La scissione tra momento della cessione e momento dell'acquisto (o, in modo equivalente, tra percezione del reddito e spesa) rende necessaria l'esistenza di strumenti che soddisfino simultaneamente le esigenze delle <strong>unità in surplus di risparmio</strong> e le esigenze di spesa delle <strong>unità in deficit</strong>. Tali strumenti si caratterizzano come crediti diretti ed indiretti.</p>
+
+  <h4>Crediti diretti</h4>
+
+  <p>Attraverso i <strong>crediti diretti</strong> le unità in surplus cedono pro-tempore il loro potere d'acquisto alle unità in deficit (attraverso prestiti, obbligazioni, azioni emesse da privati o dallo stato e sottoscritte dalle famiglie). I crediti diretti vengono negoziati nei mercati dei capitali, dove si distinguono <em>mercati primari</em> (titoli all'emissione) e <em>mercati secondari</em> (titoli in essere, ovvero la borsa valori).</p>
+
+  <h4>Crediti indiretti</h4>
+
+  <p>Attraverso i <strong>crediti indiretti</strong> le unità in surplus cedono agli intermediari finanziari il loro risparmio, e questi ultimi lo cedono alle unità in deficit. Lo sviluppo degli intermediari finanziari si spiega per tre motivi: esistenza di economie di scala nella gestione dell'informazione; possibilità di <em>trasformazione della scadenza</em> tipica del credito attraverso l'operare della legge dei grandi numeri; possibilità di <em>diversificazione del rischio</em> connessa all'accumulazione del risparmio e alla sua destinazione al finanziamento di attività diverse.</p>
+
+  <p>Crediti diretti ed indiretti definiscono l'insieme delle <strong>passività finanziarie</strong> di una economia.</p>
+
+  <h3 id="sec4-4">4.4 Moneta come attestazione debitoria e aggregati monetari</h3>
+
+  <p>La moneta è una <strong>passività</strong> emessa da un intermediario finanziario. Possono essere individuati due tipi di moneta in corrispondenza di due tipi di intermediari che la emettono: le <strong>banconote</strong>, create dagli istituti di emissione, e i <strong>depositi</strong>, creati dalle banche commerciali.</p>
+
+  <p>Le banconote hanno <em>corso legale</em>: la loro funzione come mezzo di pagamento è stabilita per legge. Fino al 1914 era possibile convertire le banconote in monete metalliche o in oro. Venuta meno la convertibilità, l'accettazione delle banconote è stata imposta per legge (<em>corso forzoso</em>).</p>
+
+  <p>I depositi bancari assumono ruolo di moneta su base esclusivamente fiduciaria. Le operazioni sui depositi bancari si effettuano a mezzo di assegno o giroconto.</p>
+
+  <h4>Gli aggregati monetari nell'EMU</h4>
+
+  <p>Recentemente sono state create nuove passività finanziarie che hanno assunto rilievo come forma di pagamento per il loro elevato grado di liquidità, e possono essere fatte rientrare nel concetto di moneta. La distinzione tra moneta e quasi-moneta è quindi sfumata. Per dare conto di queste gradazioni, nell'Unione Monetaria Europea si distinguono <strong>tre aggregati monetari</strong>:</p>
+
+  <ul>
+    <li><strong>M1</strong>: costituito da circolante (monete e banconote nelle mani del pubblico) e depositi a vista (non vincolati).</li>
+    <li><strong>M2</strong>: costituito da M1 più depositi vincolati fino a due anni e con preavviso fino a tre mesi.</li>
+    <li><strong>M3</strong>: costituito da M2 più operazioni pronti contro termine, fondi di investimento e titoli di debito con scadenza fino a due anni.</li>
+  </ul>
+
+  <p>L'aggregato di riferimento per la politica monetaria della BCE è M3. M1 è invece l'aggregato che si avvicina di più al concetto stretto di "moneta" inteso nel modello IS-LM (offerta di moneta \(L^S\)).</p>
+</section>
+
+<section id="sec5">
+  <h2><span class="h2-num">§5</span>Banca centrale e base monetaria</h2>
+
+  <p class="lead">La banca centrale è l'istituzione che governa il sistema monetario. Il suo controllo sulla quantità di moneta in circolazione non è diretto, ma passa attraverso il controllo di una grandezza più ristretta: la base monetaria.</p>
+
+  <h3 id="sec5-1">5.1 Il ruolo della banca centrale</h3>
+
+  <p>La banca centrale assume due ruoli fondamentali:</p>
+
+  <ul>
+    <li>È <strong>prestatore di ultima istanza</strong> per le banche commerciali: fornisce loro la liquidità necessaria a fronteggiare richieste imprevedibili dei correntisti. Per questo ruolo opera come <em>banca delle banche</em>.</li>
+    <li>Assume ruolo di <strong>vigilanza</strong> sull'operato delle banche commerciali, per assicurare la stabilità e la solidità del sistema finanziario.</li>
+  </ul>
+
+  <p>Tra le attività di regolazione della BC c'è quella di fissare un <strong>vincolo di riserva obbligatoria</strong>: ogni banca commerciale è obbligata a detenere, sotto forma di depositi presso la BC o monete e banconote in cassa, una quota dei depositi raccolti dal pubblico. A questo si aggiungono le <strong>riserve a carattere libero</strong>, che le banche detengono volontariamente come buffer di liquidità.</p>
+
+  <h3 id="sec5-2">5.2 Definizione di base monetaria</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Base monetaria (BM)</span>
+    <p>La base monetaria, o <strong>moneta ad alto potenziale</strong>, comprende tutte le passività a vista emesse dalle autorità monetarie (banche centrali) — quindi monete e banconote — nonché quelle prontamente trasformabili in esse (depositi delle banche commerciali presso la BC).</p>
+  </div>
+
+  <p>Le attività finanziarie utilizzabili per la costituzione della riserva obbligatoria formano appunto la base monetaria. Dal momento che anche il pubblico detiene moneta e banconote, si distingue tra:</p>
+
+  <ul>
+    <li><strong>Base monetaria del pubblico</strong> (\(BM_P\)): circolante nelle mani di famiglie e imprese.</li>
+    <li><strong>Base monetaria delle banche</strong> (\(BM_B\)): riserve obbligatorie e libere detenute dalle banche commerciali presso la BC, più contanti in cassa.</li>
+  </ul>
+
+  <p>Si ha quindi: \(BM = BM_P + BM_B\).</p>
+
+  <h3 id="sec5-3">5.3 Quattro canali di creazione della base monetaria</h3>
+
+  <p>La base monetaria viene creata dalla banca centrale per effetto di quattro <strong>canali di creazione</strong>:</p>
+
+  <h4>1. Canale estero</h4>
+
+  <p>La BC crea (o distrugge) base monetaria attraverso il settore estero quando <strong>acquista</strong> (o <strong>cede</strong>) <em>riserve in oro o altre valute</em>. La creazione di BM attraverso questo canale è sottratta alla volontà della BC in caso di accordi di cambio fisso. In tal caso, ad avanzi (disavanzi) della bilancia dei pagamenti corrisponde creazione (distruzione) di BM, poiché la BC è obbligata ad acquistare (vendere) riserve in valuta estera per mantenere stabile il cambio.</p>
+
+  <p>È un punto cruciale che torna nella discussione sulla politica monetaria in regimi di cambi fissi (§8.1): in tali regimi la BC perde sostanzialmente il controllo dell'offerta di moneta, perché questa è dettata dalle esigenze di stabilizzazione del cambio.</p>
+
+  <h4>2. Canale Tesoro</h4>
+
+  <p>La BC crea base monetaria attraverso il canale Tesoro quando <strong>acquista titoli di debito pubblico sul mercato primario</strong>, cioè li sottoscrive direttamente dallo Stato emittente. Fino agli anni Ottanta la BC italiana era obbligata ad acquistare i titoli di Stato non sottoscritti dal mercato (logica del <em>signoraggio</em>). Dal 1993, in attuazione degli accordi di Maastricht, tale canale di creazione è venuto meno: il finanziamento monetario del debito pubblico è proibito.</p>
+
+  <h4>3. Operazioni di mercato aperto</h4>
+
+  <p>La BC crea o distrugge base monetaria attraverso <strong>operazioni di acquisto o vendita di titoli sul mercato secondario</strong>. Costituiscono uno strumento pienamente <em>discrezionale</em>: la BC sceglie autonomamente quando e in che misura intervenire. Per questo motivo le operazioni di mercato aperto assumono grosso rilievo nelle operazioni delle banche centrali contemporanee.</p>
+
+  <p>Un acquisto di titoli sul secondario espande BM (la BC paga in moneta i titoli che acquista, immettendo liquidità nel sistema); una vendita la contrae (la BC ritira moneta in cambio di titoli).</p>
+
+  <h4>4. Rifinanziamento bancario</h4>
+
+  <p>La BC crea o distrugge base monetaria attraverso le <strong>operazioni di finanziamento delle banche commerciali</strong>. In genere tale canale opera attraverso la modifica del <strong>tasso ufficiale di sconto</strong>, al quale la BC sconta le cambiali in possesso delle banche commerciali ed effettua il finanziamento a breve. Riducendo il tasso ufficiale, la BC rende meno costoso per le banche prendere a prestito riserve dalla banca centrale, e incentiva l'espansione del credito.</p>
+</section>
+
+<section id="sec6">
+  <h2><span class="h2-num">§6</span>Banche commerciali, depositi e offerta di moneta</h2>
+
+  <p class="lead">L'offerta di moneta in senso ampio non coincide con la base monetaria: le banche commerciali, attraverso il meccanismo dei depositi e delle riserve frazionarie, moltiplicano la base monetaria creata dalla BC. Vediamo come.</p>
+
+  <h3 id="sec6-1">6.1 Il moltiplicatore dei depositi</h3>
+
+  <p>Oltre alla moneta legale, costituiscono mezzi di scambio anche i <strong>depositi creati dalle banche commerciali</strong>. La moneta in senso stretto (aggregato M1) è definita dal circolante in mano al pubblico e dai depositi a vista presso le banche.</p>
+
+  <p>L'ammontare di depositi è legato alla quantità di base monetaria attraverso due comportamenti stabili:</p>
+
+  <p>Il pubblico mantiene un rapporto alquanto costante tra circolante in suo possesso (\(BM_P\)) e depositi presso le banche (\(D\)). Definendo \(h\) tale rapporto:</p>
+
+  <p>$$BM_P = h\,D, \qquad h > 0$$</p>
+
+  <p>Le banche mantengono un rapporto alquanto costante, in ragione \(j\), tra depositi raccolti dal pubblico e riserve di base monetaria (obbligatorie e libere):</p>
+
+  <p>$$BM_B = j\,D, \qquad 0 \le j \le 1$$</p>
+
+  <p>Dato che \(BM = BM_P + BM_B\), si ottiene:</p>
+
+  <p>$$BM = D(h + j) \quad \Rightarrow \quad D = \frac{BM}{h + j}$$</p>
+
+  <p>Questo è il <strong>moltiplicatore dei depositi</strong>: \(1/(h+j)\). Una unità di base monetaria genera \(1/(h+j)\) unità di depositi.</p>
+
+  <h3 id="sec6-2">6.2 Il moltiplicatore della moneta</h3>
+
+  <p>Definendo l'offerta di moneta \(L^S\) come aggregato M1 (\(L^S = BM_P + D\)), si ha:</p>
+
+  <p>$$L^S = h\,D + D = h \cdot \frac{1}{h+j}\,BM + \frac{1}{h+j}\,BM = \frac{1+h}{h+j} \cdot BM$$</p>
+
+  <div class="box definizione">
+    <span class="box-label">Moltiplicatore della moneta</span>
+    <p>$$L^S = \frac{1+h}{h+j} \cdot BM$$</p>
+    <p>Il coefficiente \((1+h)/(h+j)\) è il <strong>moltiplicatore della moneta</strong>. Esso indica quante unità di offerta di moneta vengono create dal sistema bancario per ogni unità di base monetaria messa a disposizione dalla BC.</p>
+  </div>
+
+  <p>Un esempio numerico aiuta a fissare il concetto. Supponiamo \(h = 0{,}2\) (il pubblico tiene 20 centesimi di circolante per ogni euro depositato) e \(j = 0{,}1\) (le banche tengono 10 centesimi di riserve per ogni euro depositato). Il moltiplicatore è \((1+0{,}2)/(0{,}2+0{,}1) = 1{,}2/0{,}3 = 4\). Ogni euro di base monetaria genera 4 euro di offerta di moneta M1.</p>
+
+  <h3 id="sec6-3">6.3 Base monetaria e curva LM</h3>
+
+  <p>Nella derivazione della curva LM in Lezione 2 si assumeva che la BC controllasse direttamente \(L^S\). In effetti ciò non è vero: la BC controlla \(BM\) e, attraverso il moltiplicatore della moneta, \(L^S\). La curva LM e la condizione di equilibrio del mercato monetario possono pertanto essere riformulate facendo riferimento alla BM anziché all'offerta di moneta:</p>
+
+  <p>$$\frac{L^S}{P} = \frac{1+h}{h+j} \cdot \frac{BM}{P} = L^D$$</p>
+
+  <p>Sostituendo nell'equazione di equilibrio \(L^S/P = kY + L_0 - vr\), si ottiene la LM "in base monetaria":</p>
+
+  <p>$$\frac{1+h}{h+j} \cdot \frac{BM}{P} = kY + L_0 - vr$$</p>
+
+  <p>che, risolta per \(r\), dà:</p>
+
+  <p>$$r = \frac{L_0}{v} - \frac{1+h}{v(h+j)} \cdot \frac{BM}{P} + \frac{k}{v}\,Y$$</p>
+
+  <p>L'<strong>equilibrio simultaneo IS-LM in economia aperta</strong>, in termini di base monetaria, assume la forma:</p>
+
+  <p>$$Y = \frac{1}{1 - c(1-t) + m + ak/v}\left[\frac{a}{v}\left(\frac{1+h}{h+j}\cdot\frac{BM}{P} - L_0\right) + I_0 + G + X\right]$$</p>
+
+  <p>Il risultato è importante: la BC non manovra direttamente l'offerta di moneta, ma la base monetaria. Tutto quello che si è detto nella Lezione 2 sulla politica monetaria espansiva o restrittiva nel modello IS-LM va riletto in chiave di manovra di BM, con l'intermediazione del moltiplicatore della moneta.</p>
+</section>
+
+<section id="sec7">
+  <h2><span class="h2-num">§7</span>Il controllo dell'offerta di moneta</h2>
+
+  <p class="lead">Il moltiplicatore della moneta ha significato potenziale, non effettivo. I coefficienti h e j non sono costanti: variano in modo endogeno rispetto al tasso di interesse, e questo introduce ulteriori complicazioni per il controllo dell'offerta di moneta da parte della BC.</p>
+
+  <h3 id="sec7-1">7.1 Endogeneità del moltiplicatore al tasso di interesse</h3>
+
+  <p>I moltiplicatori dei depositi e della moneta ora ricavati hanno <strong>significato potenziale e non effettivo</strong>. Essi rappresentano la <em>massima</em> creazione di moneta possibile data la base monetaria.</p>
+
+  <p>I coefficienti \(h\) e \(j\) non sono costanti: variano in particolare in corrispondenza di variazioni effettive ed attese del <strong>tasso di interesse</strong>:</p>
+
+  <ul>
+    <li>Con riferimento alle <strong>riserve libere</strong>: le banche sono indotte a contrarle a fronte di innalzamenti del tasso di interesse, perché ritengono più lucrativa la concessione di crediti. Ciò induce riduzioni di \(j\).</li>
+    <li>Con riferimento al <strong>circolante</strong>: un innalzamento del tasso di interesse induce il pubblico a detenere meno circolante, poiché ritiene più conveniente depositarlo in banca in depositi fruttiferi. Ciò induce riduzioni di \(h\).</li>
+  </ul>
+
+  <p>Il risultato è che il moltiplicatore tende ad <strong>aumentare in corrispondenza di innalzamenti del tasso di interesse</strong> e a ridursi in corrispondenza di riduzioni del tasso. La dinamica del moltiplicatore opera quindi in <em>direzione opposta</em> rispetto alle finalità di politica monetaria, riducendone — a parità di intervento e di altre condizioni — l'efficacia.</p>
+
+  <h4>Conseguenza per la controllabilità</h4>
+
+  <p>Tali considerazioni possono compromettere l'efficacia della politica monetaria, qualora essa si attui attraverso variazioni del tasso di interesse. Una politica monetaria <em>restrittiva</em>, alzando il tasso di interesse, potrebbe essere parzialmente neutralizzata dall'espansione di credito prodotta dalle banche attraverso la contrazione delle riserve libere (\(\downarrow j\)), espansione resa possibile dall'aumento di depositi prodotto dal pubblico attraverso la contrazione del circolante (\(\downarrow h\)). Il moltiplicatore della moneta aumenta proprio mentre la BC sta cercando di contrarre l'offerta.</p>
+
+  <h3 id="sec7-2">7.2 Dal controllo della base monetaria al controllo del tasso</h3>
+
+  <p>Per le complicazioni appena viste, le banche centrali contemporanee — inclusa la BCE — operano sempre meno attraverso il controllo diretto della base monetaria, e sempre più attraverso il controllo del <strong>tasso di interesse di riferimento</strong> (refi rate per la BCE, federal funds rate per la Fed).</p>
+
+  <p>La logica del controllo passa dunque da una <em>quantità</em> (base monetaria, riserve obbligatorie) a un <em>prezzo</em> (il tasso al quale la BC presta liquidità alle banche). Questa transizione è coerente con la prassi delle regole automatiche come la <strong>regola di Taylor</strong>, che lega meccanicamente la manovra del tasso di interesse all'inflazione e all'output gap rispetto al loro target.</p>
+
+  <p>Il passaggio dal controllo della BM al controllo del tasso non elimina i problemi di efficacia visti sopra, ma li affronta in una prospettiva diversa: anziché provare a fissare la quantità di moneta sapendo che il moltiplicatore può sabotare l'intento, si fissa il "costo del denaro" e si lascia che il moltiplicatore aggiusti la quantità.</p>
+</section>
+
+<section id="sec8">
+  <h2><span class="h2-num">§8</span>Politica monetaria nel modello IS-LM-BP</h2>
+
+  <p class="lead">L'efficacia della politica monetaria dipende in modo cruciale dal regime di cambio. Nel modello Mundell-Fleming (IS-LM-BP) i due regimi producono esiti opposti: in cambi fissi la politica monetaria è sostanzialmente inefficace, in cambi flessibili è efficace e amplificata. Vediamo entrambi i casi.</p>
+
+  <h3 id="sec8-1">8.1 Politica monetaria in regime di cambi fissi</h3>
+
+  <p>In regime di <strong>cambi fissi</strong> la BC è vincolata ad intervenire attraverso operazioni di acquisto/cessione di riserve in valuta estera al fine di garantire la stabilità del cambio. Ciò comporta, in presenza di capitali mobili, una sostanziale <strong>inefficacia della politica monetaria</strong> di stabilizzazione.</p>
+
+  <h4>La sequenza in cambi fissi</h4>
+
+  <p>Consideriamo una politica monetaria espansiva (\(\uparrow BM\), quindi \(\uparrow L^S\)). La sequenza è la seguente:</p>
+
+  <ol>
+    <li>Il tasso di interesse interno si riduce.</li>
+    <li>Il reddito aumenta, importazioni in crescita: le partite correnti peggiorano.</li>
+    <li>La caduta di r genera deflussi di capitali (i capitali cercano rendimenti più alti all'estero): la BP va in disavanzo.</li>
+    <li>Per difendere il cambio, la BC deve <strong>acquistare moneta nazionale in cambio di riserve in valuta estera</strong>: contrae la base monetaria.</li>
+    <li>L'offerta di moneta tende a contrarsi fino al punto di partenza. La LM torna indietro.</li>
+  </ol>
+
+  <p>L'esito finale è il ripristino dell'equilibrio iniziale, con base monetaria interna invariata (sebbene con un nuovo mix di attività della BC: meno credito interno, più riserve in valuta estera spese sul mercato dei cambi). <strong>La politica monetaria è tanto più inefficace quanto maggiore è la sensibilità dei movimenti di capitale al tasso di interesse</strong> (cioè quanto più piatta è la BP).</p>
+
+  <h4>Meccanismo di trasmissione schematizzato</h4>
+
+  <p>$$\uparrow BM \to \uparrow Y, \downarrow r \to \uparrow M, \downarrow MK \to BP < 0 \to \downarrow BM \to Y \text{ torna indietro}$$</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">IS-LM-BP in cambi fissi: politica monetaria espansiva. LM₁ trasla a LM₂ (verso destra); l'equilibrio IS-LM cade sotto BP; la BC è costretta a contrarre BM per difendere il cambio; LM torna a LM₃ ≈ LM₁. Esito: politica monetaria inefficace.</div>
+  </div>
+
+  <p>Il <a href="grafici/PolMonetaria-CambiFissi.html" target="_blank">grafico interattivo</a> qui sotto mostra le tre fasi del meccanismo. Lo <strong>slider "Pendenza di BP"</strong> consente di esplorare come varia il disavanzo intermedio al variare della mobilità dei capitali; l'esito finale è però sempre lo stesso (ΔY = 0): ecco perché si dice che in cambi fissi la politica monetaria è inefficace <em>indipendentemente</em> dalla pendenza di BP.</p>
+
+  <iframe src="grafici/PolMonetaria-CambiFissi.html" style="width:100%; max-width:62ch; height:780px; border:1px solid var(--rule); margin:16px 0;"></iframe>
+
+  <h3 id="sec8-2">8.2 Politica monetaria in regime di cambi flessibili</h3>
+
+  <p>In regime di <strong>cambi flessibili</strong> la BC <em>non è vincolata</em> ad intervenire sul mercato dei cambi: il cambio è libero di fluttuare in base alla domanda e offerta di valuta. La politica monetaria torna efficace.</p>
+
+  <h4>La sequenza in cambi flessibili</h4>
+
+  <p>Consideriamo nuovamente una politica monetaria espansiva. La sequenza è la seguente:</p>
+
+  <ol>
+    <li>Il tasso di interesse interno si riduce. Il reddito aumenta; le importazioni crescono.</li>
+    <li>Il differenziale di tasso negativo provoca deflussi di capitali: BP in disavanzo.</li>
+    <li>Sul mercato delle valute, l'eccesso di offerta di moneta nazionale provoca un <strong>deprezzamento</strong> del cambio. La BP si sposta verso il basso (il deprezzamento migliora le PC; il livello di r compatibile col pareggio della BP è inferiore a quello pre-shock).</li>
+    <li>Il deprezzamento stimola le esportazioni e contrae le importazioni: la <strong>IS si sposta verso destra</strong> (perché X è componente della IS e ora è maggiore).</li>
+    <li>Si determina un nuovo equilibrio contraddistinto da un più alto livello del reddito e un più basso tasso di interesse.</li>
+  </ol>
+
+  <p>In questo regime la politica monetaria è tanto più efficace quanto maggiore è la sensibilità dei movimenti di capitale al tasso di interesse (BP piatta): perché tale sensibilità amplifica la fuga di capitali e di conseguenza il deprezzamento del cambio, che a sua volta amplifica il miglioramento delle PC.</p>
+
+  <h4>Meccanismo di trasmissione schematizzato</h4>
+
+  <p>$$\uparrow BM \to \uparrow Y, \downarrow r \to \downarrow MK \to BP < 0 \to \uparrow e_r \to \uparrow X, \downarrow M \to \uparrow Y$$</p>
+
+  <p>L'esito finale è un'espansione effettiva del reddito, sostenuta dal canale del cambio. Si tratta dell'esatto opposto del caso a cambi fissi.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">IS-LM-BP in cambi flessibili: politica monetaria espansiva. LM₁ trasla a LM₂; deprezzamento del cambio; BP₁ trasla in BP₂ (verso il basso); IS₁ trasla a destra in IS₂; nuovo equilibrio in (Y₂ > Y₁, r₂ < r₁).</div>
+  </div>
+
+  <p>Il <a href="grafici/PolMonetaria-CambiFlessibili.html" target="_blank">grafico interattivo</a> qui sotto mostra le quattro fasi della trasmissione, con il contributo al ΔY decomposto in <em>effetto LM puro</em> ed <em>effetto cambio</em>. Lo <strong>slider "Pendenza di BP"</strong> in questo caso è cruciale: muovendolo si vede come l'efficacia della politica monetaria varia con la mobilità dei capitali. Al limite BP piatta (capitali perfettamente mobili) l'aggiustamento avviene tutto via cambio e ΔY è massimo; al limite BP ripida (capitali immobili) il contributo del cambio si annulla e resta solo il debole effetto LM puro. È la verifica grafica dell'enunciato di Tancioni secondo cui la politica monetaria è tanto più efficace quanto più piatta è BP.</p>
+
+  <iframe src="grafici/PolMonetaria-CambiFlessibili.html" style="width:100%; max-width:62ch; height:820px; border:1px solid var(--rule); margin:16px 0;"></iframe>
+
+  <p>Confrontando i due grafici è immediato vedere la radicale diversità di esito: in cambi fissi ΔY=0; in cambi flessibili ΔY è amplificato dal canale del cambio.</p>
+</section>
+
+<section id="sec9">
+  <h2><span class="h2-num">§9</span>Considerazioni sull'efficacia della politica monetaria</h2>
+
+  <p class="lead">Oltre alle considerazioni sul regime di cambio, l'efficacia complessiva della politica monetaria dipende da fattori legati ai ritardi, alle asimmetrie negli effetti, e ai limiti strutturali legati alla domanda di credito.</p>
+
+  <h3 id="sec9-1">9.1 I ritardi tipici</h3>
+
+  <p>La politica monetaria condivide con gli altri strumenti il <strong>ritardo di cognizione</strong>: il tempo che intercorre tra il manifestarsi del fenomeno e la sua rilevazione da parte delle autorità.</p>
+
+  <p>Risulta tuttavia <em>superiore</em> agli altri strumenti per quanto riguarda il <strong>ritardo amministrativo</strong>: la BC può deliberare la manovra in via autonoma, senza mediazione politica e legislativa (ed è proprio l'<em>autonomia delle banche centrali</em> che assicura questa rapidità).</p>
+
+  <p>Risulta invece <em>inferiore</em> per quanto riguarda il <strong>ritardo negli effetti</strong>, con speciale riferimento all'obiettivo della stabilizzazione dei prezzi, del reddito e dell'occupazione. Gli aggiustamenti di portafoglio di banche e pubblico sono lenti, e la trasmissione del segnale monetario alle decisioni reali (investimenti, consumi durevoli) richiede mesi se non anni.</p>
+
+  <p>Il ritardo negli effetti è invece <em>contratto</em> con riferimento all'obiettivo della <strong>stabilità esterna</strong> (mercati dei capitali internazionali molto reattivi a variazioni del differenziale dei tassi di interesse).</p>
+
+  <h3 id="sec9-2">9.2 Asimmetria degli effetti</h3>
+
+  <p>Il limite maggiore della politica monetaria risiede nell'<strong>asimmetria degli effetti</strong>: essa risulta in genere efficace quando usata in senso restrittivo e poco efficace quando usata in senso espansivo, specialmente in fasi cicliche fortemente negative.</p>
+
+  <p>Il motivo è il seguente. La politica monetaria ha effetti reali soprattutto attraverso lo <strong>stimolo all'attività di investimento</strong> (e in misura minore al consumo). In situazioni di recessione, o in fasi caratterizzate da aspettative negative, è difficile che la riduzione del tasso di interesse generi nuovi investimenti: le imprese che sperimentano margini di capacità produttiva inutilizzati non saranno disposte ad aumentare la propria capacità produttiva attraverso investimenti aggiuntivi. Al massimo effettueranno investimenti di razionalizzazione dei processi (sostituzione di lavoro con capitale), che possono avere effetti <em>peggiorativi</em> sull'occupazione, almeno nel breve periodo.</p>
+
+  <p>La metafora classica è quella della "corda": "non si può spingere una corda" (you can't push on a string). La BC può abbassare il tasso quanto vuole, ma se gli operatori privati non hanno volontà di investire, la liquidità immessa resta inerte. È il caso estremo della trappola della liquidità (Lezione 2, §3.6).</p>
+
+  <h3 id="sec9-3">9.3 Altri limiti strutturali</h3>
+
+  <p>Riassumendo i punti già emersi e aggiungendone alcuni:</p>
+
+  <ul>
+    <li><strong>Endogeneità del moltiplicatore</strong>: il moltiplicatore della moneta si muove in direzione opposta alle finalità della politica monetaria (§7.1), riducendone l'efficacia. Una manovra restrittiva è in parte vanificata dall'espansione endogena del moltiplicatore stesso.</li>
+    <li><strong>Limite inferiore al tasso di interesse</strong>: il tasso nominale non può scendere significativamente sotto lo zero (zero lower bound). Quando l'economia richiederebbe tassi reali fortemente negativi per stimolare la domanda, la politica monetaria tradizionale è impotente. È la situazione vissuta dalle economie sviluppate dopo il 2008.</li>
+    <li><strong>Effetti annuncio e credibilità</strong>: se usata in modo deciso e aggressivo, la politica monetaria può risultare molto efficace, posto che la BC si sia costituita una <em>credibilità</em> che le conferisce la possibilità di agire anche attraverso semplici annunci, senza necessità di interventi quantitativi consistenti. La credibilità è un capitale reputazionale costruito nel tempo, fragile e facile da perdere.</li>
+  </ul>
+
+  <p>L'insieme di questi vincoli ha portato, dopo la crisi del 2008, all'adozione di strumenti non convenzionali (allentamento quantitativo, forward guidance, tassi negativi) che però esulano dal programma del corso e fanno parte di sviluppi più recenti della prassi delle banche centrali.</p>
+</section>
+
+<footer>
+  <p>Lezione 3 di 4 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione2_note.html">← Lezione 2</a> · <a href="lezione3_quiz.html">→ Quiz di ripasso</a> · <a href="lezione4_note.html">→ Lezione 4</a></p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  
+  try {
+    if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
+  } catch(e) {}
+  
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+(function() {
+  const sidebarLinks = document.querySelectorAll('aside.sidebar nav a');
+  const sections = Array.from(sidebarLinks).map(link => {
+    const id = link.getAttribute('href').slice(1);
+    return { id, element: document.getElementById(id), link };
+  }).filter(s => s.element);
+
+  function updateActive() {
+    const scrollPos = window.scrollY + 100;
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.element.offsetTop <= scrollPos) current = s;
+      else break;
+    }
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+</body>
+</html>
