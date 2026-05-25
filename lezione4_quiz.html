@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Lezione 4 — Politica Economica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --green: #2d6a3a;
+  --red: #9b2920;
+  --base-size: 18px;
+  --max-width: 760px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --max-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.1em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.08em;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.progress-info {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  margin: 28px 0 8px;
+  font-weight: 500;
+}
+
+.progress-bar {
+  background: var(--paper-warm);
+  height: 4px;
+  margin-bottom: 40px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.question { display: none; }
+.question.active { display: block; }
+
+.q-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.q-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.22em;
+  line-height: 1.45;
+  margin-bottom: 28px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  max-width: 62ch;
+}
+
+.options { list-style: none; margin: 0; }
+
+.option {
+  border: 1px solid var(--rule);
+  background: #fdfcf7;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 0.96em;
+  line-height: 1.55;
+  transition: border-color 0.15s, background 0.15s;
+  max-width: 62ch;
+}
+
+.option:hover:not(.disabled) {
+  border-color: var(--ink);
+  background: #fff;
+}
+
+.option-letter {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--muted);
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+.option.correct {
+  border-color: var(--green);
+  border-left: 3px solid var(--green);
+  background: #f4f8f5;
+}
+.option.correct .option-letter { color: var(--green); }
+
+.option.wrong {
+  border-color: var(--red);
+  border-left: 3px solid var(--red);
+  background: #fbf3f2;
+}
+.option.wrong .option-letter { color: var(--red); }
+
+.option.disabled { cursor: default; }
+.option.disabled:not(.correct):not(.wrong) { opacity: 0.55; }
+
+.feedback {
+  display: none;
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  font-size: 0.92em;
+  line-height: 1.6;
+  max-width: 62ch;
+}
+.feedback.show { display: block; }
+.feedback.correct { border-left-color: var(--green); background: #f4f8f5; }
+.feedback.wrong { border-left-color: var(--red); background: #fbf3f2; }
+
+.feedback-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.feedback.correct .feedback-label { color: var(--green); }
+.feedback.wrong .feedback-label { color: var(--red); }
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 11px 22px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+  transition: opacity 0.15s;
+  letter-spacing: 0.02em;
+}
+
+button:hover:not(:disabled) { opacity: 0.85; }
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+button.secondary { background: transparent; color: var(--ink); }
+
+.results {
+  display: none;
+  text-align: center;
+  padding: 48px 0;
+}
+.results.show { display: block; }
+
+.score-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.score-display {
+  font-family: 'Source Serif 4', serif;
+  font-size: 4em;
+  font-weight: 700;
+  margin: 8px 0 24px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.score-display .total {
+  color: var(--muted-light);
+  font-weight: 400;
+  font-size: 0.6em;
+}
+
+.score-message {
+  font-size: 1.05em;
+  color: var(--muted);
+  margin-bottom: 36px;
+  font-style: italic;
+}
+
+.review {
+  margin-top: 56px;
+  text-align: left;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.review h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.18em;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--rule);
+  display: flex;
+  gap: 14px;
+  font-size: 0.92em;
+  line-height: 1.5;
+}
+
+.review-mark {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+
+.review-mark.ok { color: var(--green); }
+.review-mark.no { color: var(--red); }
+
+footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 40px 20px 80px; }
+  h1 { font-size: 1.65em; }
+  .actions { flex-direction: column-reverse; }
+  .actions button { width: 100%; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="wrap">
+
+<header>
+  <div class="meta">Quiz · Lezione 4 · Politica Economica</div>
+  <h1>Verifica di ripasso</h1>
+  <p class="subtitle">Quindici domande a scelta multipla. Risposta unica.</p>
+</header>
+
+<div class="progress-info">
+  <span id="progressText">Domanda 1 di 15</span>
+  <span id="scoreText">Risposte corrette: 0</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="quiz-area" id="quizArea"></div>
+
+<div class="results" id="results">
+  <div class="score-label">Punteggio finale</div>
+  <div class="score-display"><span id="finalScore">0</span><span class="total">/15</span></div>
+  <div class="score-message" id="scoreMessage"></div>
+  <button onclick="restartQuiz()">Rifai il quiz</button>
+  <div class="review">
+    <h3>Riepilogo</h3>
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Quiz Lezione 4 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione4_note.html">← Note della lezione</a></p>
+</footer>
+
+</div>
+
+<script>
+const questionsRaw = [
+  {
+    q: "Il saldo primario del bilancio pubblico è definito come:",
+    options: [
+      "La differenza tra entrate totali e spese pubbliche al netto degli interessi sul debito",
+      "La differenza tra entrate totali e spese pubbliche, compresi gli interessi sul debito",
+      "La differenza tra entrate tributarie e spesa per consumi pubblici (G), escludendo trasferimenti e investimenti",
+      "Il rapporto tra debito pubblico e PIL al netto della componente strutturale"
+    ],
+    explanation: "Il saldo primario depura il saldo complessivo della componente per interessi, isolando l'azione discrezionale del governo. È l'indicatore più importante per valutare la sostenibilità del debito, perché può essere influenzato direttamente dalle scelte di bilancio (a differenza degli interessi, che dipendono dallo stock di debito e dai tassi). La sfumatura sbagliata descrive invece il saldo complessivo (o netto da finanziare)."
+  },
+  {
+    q: "Un'imposta proporzionale, rispetto a una imposta in somma fissa, modifica la pendenza della curva IS perché:",
+    options: [
+      "Riduce il moltiplicatore della politica fiscale: la pendenza di IS diventa meno ripida (in valore assoluto) e l'efficacia della manovra fiscale si riduce",
+      "Aumenta il moltiplicatore della politica fiscale, perché stabilizza automaticamente il reddito disponibile",
+      "Non altera né la pendenza né il moltiplicatore: ne cambia solo l'intercetta",
+      "Modifica la pendenza solo se l'aliquota t supera il valore critico (1−c), oltre il quale il moltiplicatore diverge"
+    ],
+    explanation: "Con T = tY, il moltiplicatore diventa 1/[1−c(1−t)] anziché 1/(1−c). Poiché c(1−t) < c, il denominatore è maggiore e quindi il moltiplicatore è minore. La pendenza della IS in valore assoluto diventa minore (la retta è più piatta sul piano r-Y). L'imposta proporzionale agisce come stabilizzatore automatico, ma a costo di un'efficacia ridotta della politica fiscale discrezionale. La sfumatura sbagliata coglie metà del concetto (stabilizzazione) ma sbaglia sul moltiplicatore."
+  },
+  {
+    q: "Il teorema di Haavelmo afferma che:",
+    options: [
+      "La politica fiscale ha effetti espansivi anche con bilancio in pareggio (ΔG = ΔT): ΔY = ΔG = ΔT",
+      "La politica fiscale è efficace solo se finanziata in deficit; il bilancio in pareggio neutralizza l'effetto",
+      "Il moltiplicatore della spesa pubblica è sempre uguale a quello delle imposte, quindi ΔG = ΔT genera ΔY = 0",
+      "L'efficacia della politica fiscale dipende dalla composizione della spesa, non dal saldo del bilancio"
+    ],
+    explanation: "Con imposte in somma fissa, il moltiplicatore della spesa è 1/(1−c), quello delle imposte è −c/(1−c). La somma è (1−c)/(1−c) = 1. Quindi ΔY = ΔG quando ΔG = ΔT: la politica fiscale a bilancio in pareggio è ancora espansiva, ma con moltiplicatore esattamente pari a 1. La sfumatura sbagliata confonde il moltiplicatore unitario con un effetto nullo."
+  },
+  {
+    q: "Il finanziamento della spesa pubblica con creazione di base monetaria (signoraggio):",
+    options: [
+      "È stato abolito in Italia dal 1993 in attuazione degli accordi di Maastricht, che vietano alla BC di finanziare direttamente il Tesoro acquistando titoli sul mercato primario",
+      "È pienamente operativo nell'Eurozona attraverso il canale Tesoro della BCE",
+      "È stato abolito dalla riforma bancaria del 1936 e mai più reintrodotto",
+      "È consentito solo per spese di emergenza certificate dal Parlamento nazionale"
+    ],
+    explanation: "Il canale Tesoro era pienamente operativo prima del 1993: la BC era obbligata ad acquistare i titoli non sottoscritti dal mercato (signoraggio). Dal 1993, in attuazione degli accordi di Maastricht, questo canale è venuto meno: la BC non può più finanziare direttamente il Tesoro acquistando sul primario. Le operazioni di QE che la BCE ha condotto in anni recenti riguardano il mercato secondario, e sono cosa diversa."
+  },
+  {
+    q: "In regime di cambi fissi con capitali molto mobili (BP piatta), una manovra fiscale espansiva:",
+    options: [
+      "Risulta molto efficace, perché la BC è obbligata ad acquistare valuta estera in eccesso (BP in avanzo), espandendo la BM e amplificando l'effetto sul reddito",
+      "Risulta inefficace, perché la BC è obbligata a vendere riserve per difendere il cambio, contraendo la BM e annullando l'effetto fiscale",
+      "Risulta efficace ma in misura ridotta, perché l'aumento di r attira capitali ma genera anche un disavanzo delle partite correnti",
+      "Risulta efficace solo se accompagnata da un'estensione del controllo dei movimenti di capitale"
+    ],
+    explanation: "Caso §4.1: lo spostamento di IS a destra fa salire Y e r; il maggior r attira capitali (effetto 2) più di quanto le maggiori importazioni peggiorino le PC (effetto 1). La BP va in avanzo. La BC deve acquistare la valuta in eccesso, immettendo BM: la LM si sposta a destra. L'espansione fiscale è amplificata dall'effetto monetario automatico. La sfumatura sbagliata descrive invece il caso §4.2 (capitali immobili), in cui l'effetto è opposto."
+  },
+  {
+    q: "In regime di cambi flessibili con capitali molto mobili, la stessa manovra fiscale espansiva:",
+    options: [
+      "Risulta relativamente inefficace: l'apprezzamento del cambio riduce le esportazioni e fa retrocedere la IS, attenuando l'effetto espansivo iniziale",
+      "Risulta più efficace che in cambi fissi, perché il deprezzamento del cambio rinforza la spinta alla domanda aggregata",
+      "Non ha alcun effetto sul reddito perché il cambio si aggiusta istantaneamente in modo da neutralizzare la manovra",
+      "Risulta efficace ma con uno sfasamento temporale dovuto all'effetto J"
+    ],
+    explanation: "Caso §4.3: l'aumento di G fa salire Y e r; il maggior r attira capitali e genera avanzo; ma ora il cambio non è fisso, e l'afflusso di capitali fa apprezzare la moneta nazionale. L'apprezzamento peggiora la posizione netta sui beni: la IS torna verso sinistra. Nel caso limite di mobilità perfetta dei capitali (BP orizzontale), la politica fiscale è del tutto inefficace. È il complementare della politica monetaria, che invece in cambi flessibili è massimamente efficace."
+  },
+  {
+    q: "L'equazione dinamica del rapporto debito/PIL (in termini approssimati) è:",
+    options: [
+      "Δ(B/Y) ≈ (r − g)·(B/Y) − pb, dove pb è il saldo primario in rapporto al PIL",
+      "Δ(B/Y) ≈ (g − r)·(B/Y) + pb, dove pb è il saldo primario in rapporto al PIL",
+      "Δ(B/Y) ≈ deficit complessivo / PIL, indipendentemente da r e g",
+      "Δ(B/Y) ≈ (r − π)·(B/Y), dove π è il tasso di inflazione"
+    ],
+    explanation: "L'identità della dinamica del debito (forma snowball) è Δ(B/Y) ≈ (r − g)·(B/Y) − pb. Quando r > g (tasso reale superiore al tasso di crescita), il rapporto cresce in modo automatico anche con saldo primario nullo (effetto valanga). Per stabilizzare il rapporto serve un saldo primario positivo pari a (r−g)·(B/Y). La sfumatura sbagliata inverte il segno del differenziale r-g, generando la conclusione opposta sulla sostenibilità."
+  },
+  {
+    q: "Una politica dei redditi di tipo dirigistico si basa su:",
+    options: [
+      "Controlli amministrativi diretti su salari nominali, prezzi o margini di profitto, imposti dall'autorità pubblica",
+      "Trasferimenti monetari ai redditieri più bassi finanziati tramite imposizione progressiva",
+      "Concertazione tripartita tra governo, sindacati e organizzazioni datoriali con accordi non vincolanti",
+      "Indicizzazione automatica dei salari al costo della vita, con clausole di scala mobile"
+    ],
+    explanation: "Le politiche dirigistiche dei redditi prevedono interventi diretti dell'autorità: blocco/regolamentazione dei salari, dei prezzi o dei margini di profitto. Sono coercitive e poco flessibili. La sfumatura sbagliata descrive invece una politica redistributiva (trasferimenti). La concertazione tripartita è una politica istituzionale di tipo concertativo, non dirigistico."
+  },
+  {
+    q: "La condizione di Marshall-Lerner per cui una svalutazione del cambio migliora le partite correnti è:",
+    options: [
+      "La somma in valore assoluto delle elasticità della domanda di esportazioni e importazioni rispetto al cambio reale deve essere maggiore di 1: |η_X| + |η_M| > 1",
+      "Le elasticità di esportazioni e importazioni devono essere uguali tra loro, in modo che gli effetti reddito si compensino",
+      "Il prodotto delle elasticità deve essere maggiore di 1: |η_X| · |η_M| > 1",
+      "L'elasticità della domanda di esportazioni deve essere superiore all'unità: |η_X| > 1"
+    ],
+    explanation: "La condizione di Marshall-Lerner richiede |η_X| + |η_M| > 1 (somma delle elasticità in valore assoluto). Solo allora una svalutazione migliora le partite correnti, perché l'effetto di volume (più esportazioni, meno importazioni) supera l'effetto-prezzo negativo (le importazioni costano di più in valuta nazionale). Se la somma è inferiore a 1, la svalutazione peggiora paradossalmente le PC."
+  },
+  {
+    q: "L'effetto J descrive:",
+    options: [
+      "Un peggioramento iniziale delle partite correnti dopo una svalutazione, seguito da un miglioramento progressivo quando i volumi reagiscono ai nuovi prezzi relativi",
+      "L'andamento ciclico delle partite correnti in fase di apprezzamento del cambio reale",
+      "L'effetto asimmetrico delle politiche commerciali, più efficaci in restrizione che in espansione",
+      "L'effetto di trascinamento dell'inflazione importata sui prezzi interni dopo una svalutazione"
+    ],
+    explanation: "L'effetto J: subito dopo una svalutazione, i prezzi delle importazioni in valuta nazionale aumentano, ma i volumi (esportazioni e importazioni) reagiscono lentamente. Nel breve termine domina l'effetto-prezzo (peggioramento PC); nel medio termine i volumi si adeguano alla nuova competitività e le PC migliorano. La curva del saldo delle PC nel tempo assume la forma di una J: scende prima di risalire. È perché Marshall-Lerner vale nel medio-lungo periodo, non subito."
+  },
+  {
+    q: "Nell'identità contabile fondamentale del bilancio pubblico T − C_g − I_g − Tr_c − Tr_k − INT = B_s, la variabile B_s rappresenta:",
+    options: [
+      "Il saldo finanziario del settore pubblico (positivo se avanzo, negativo se disavanzo da finanziare con emissione di titoli)",
+      "Lo stock di base monetaria emessa dalla Banca Centrale per finanziare la spesa pubblica",
+      "Il saldo del bilancio strutturale al netto della componente ciclica",
+      "L'ammontare dei trasferimenti correnti agli enti locali"
+    ],
+    explanation: "B_s è il saldo finanziario: se positivo, lo stato ha un avanzo (può ridurre il debito o accumulare riserve); se negativo, ha un disavanzo da coprire con emissione di titoli (B_s negativo significa che lo stato deve indebitarsi). T sono entrate; C_g e I_g consumi e investimenti pubblici; Tr_c e Tr_k trasferimenti correnti e in conto capitale; INT interessi sul debito esistente."
+  },
+  {
+    q: "Lo spiazzamento finanziario (crowding out) della politica fiscale espansiva si manifesta:",
+    options: [
+      "Tramite l'aumento del tasso di interesse, che riduce gli investimenti privati e attenua l'effetto espansivo iniziale; la sua misura è data dal termine ak/v",
+      "Tramite l'apprezzamento del cambio nominale, che riduce le esportazioni",
+      "Solo in regime di cambi fissi, dove la BC è costretta a contrarre la BM",
+      "Solo quando l'aliquota dell'imposta proporzionale supera la soglia critica c·(1−t)"
+    ],
+    explanation: "Lo spiazzamento finanziario è la retroazione monetaria nel modello IS-LM standard: ΔG fa salire Y, ma anche r (LM positivamente inclinata); il maggior r contrae gli investimenti privati, riducendo l'espansione netta. La misura è ak/v (sensibilità degli investimenti al tasso × pendenza di LM). Quanto più ripida è LM (k alto, v basso), tanto più forte lo spiazzamento. L'apprezzamento del cambio è un fenomeno distinto (crowding out via canale estero, presente solo in cambi flessibili)."
+  },
+  {
+    q: "Nella formula del costo pieno P = (w/PMeL)·(1+g), le variazioni dei prezzi (dP) si scompongono come:",
+    options: [
+      "dP = dw − dPMeL + d(1+g): inflazione come somma di variazione salariale, variazione di produttività (con segno meno) e variazione del mark-up",
+      "dP = dw + dPMeL + dg: variazioni cumulate di salario, produttività e mark-up",
+      "dP = (dw·PMeL − w·dPMeL)/PMeL²: solo la componente del costo del lavoro per unità di prodotto",
+      "dP = (1+g)·dw: il mark-up si applica direttamente all'aumento salariale"
+    ],
+    explanation: "Linearizzando P = (w/PMeL)(1+g) si ottiene dP = dw − dPMeL + d(1+g): l'inflazione è il risultato della differenza tra crescita salariale e crescita della produttività (CLUP), più la dinamica del mark-up. Se w cresce come la produttività, il CLUP è stabile e l'inflazione viene tutta dal mark-up. Questa formula chiarisce la logica del 'conflitto distributivo' come motore dell'inflazione."
+  },
+  {
+    q: "Tra le politiche di rientro dal debito pubblico, una politica di austerità di tipo espansivo:",
+    options: [
+      "Sostiene che una contrazione fiscale credibile può stimolare la fiducia e la crescita, attraverso minori premi al rischio e aspettative di future riduzioni delle imposte",
+      "Combina aumenti di imposte e tagli di spesa per ottenere effetti pro-ciclici massimi",
+      "Si applica solo in regimi di cambio flessibile, dove il deprezzamento sostiene la domanda estera",
+      "È un sinonimo di politica monetaria espansiva accomodante in fase di consolidamento fiscale"
+    ],
+    explanation: "L'austerità espansiva (Giavazzi-Pagano e altri) sostiene che, sotto certe condizioni (alto debito, alta credibilità del programma), una contrazione fiscale può paradossalmente stimolare la crescita: i premi al rischio sui titoli scendono, le famiglie anticipano riduzioni di imposte future (visione ricardiana), gli investimenti privati rispondono positivamente. È una tesi controversa: le evidenze empiriche post-2010 (Eurozona) sono state largamente sfavorevoli."
+  },
+  {
+    q: "Le politiche commerciali protezionistiche (dazi e contingentamenti), pur a parità di effetto sul prezzo interno, si differenziano per:",
+    options: [
+      "Con i dazi lo stato incassa il maggior prezzo come gettito fiscale; con i contingentamenti la rendita va ai produttori interni",
+      "I dazi sono permessi dall'OMC mentre i contingentamenti sono sempre vietati",
+      "I dazi influiscono solo sul prezzo, mentre i contingentamenti influiscono solo sulla quantità",
+      "I dazi hanno effetto solo sul commercio extra-UE; i contingentamenti su quello intra-UE"
+    ],
+    explanation: "L'effetto su prezzo interno, produzione interna e consumi è identico per dazi e contingentamenti. La differenza chiave è chi incassa la rendita: lo stato (entrate fiscali) con i dazi, i produttori interni (extra-profitti) con i contingentamenti. Per questo motivo i contingentamenti sono spesso preferiti politicamente dai produttori, mentre i dazi sono preferiti dai ministri delle Finanze. Entrambi sono regolati (non vietati in assoluto) dagli accordi commerciali."
+  }
+];
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let questions = [];
+function buildQuestions() {
+  questions = questionsRaw.map(qRaw => {
+    const indexed = qRaw.options.map((opt, i) => ({ text: opt, originalIdx: i }));
+    const shuffled = shuffleArray(indexed);
+    const correctIdx = shuffled.findIndex(o => o.originalIdx === 0);
+    return {
+      q: qRaw.q,
+      options: shuffled.map(o => o.text),
+      correct: correctIdx,
+      explanation: qRaw.explanation
+    };
+  });
+}
+
+let currentQuestion = 0;
+let userAnswers = [];
+let score = 0;
+
+const quizArea = document.getElementById('quizArea');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const results = document.getElementById('results');
+
+function renderQuestion(idx) {
+  const q = questions[idx];
+  const html = `
+    <div class="question active" id="q${idx}">
+      <div class="q-num">Domanda ${idx + 1} di ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options" id="options-${idx}">
+        ${q.options.map((opt, i) => `
+          <li class="option" data-idx="${i}" onclick="selectOption(${idx}, ${i})">
+            <span class="option-letter">${String.fromCharCode(65 + i)}.</span>
+            <span>${opt}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="feedback" id="feedback-${idx}">
+        <div class="feedback-label" id="feedback-label-${idx}"></div>
+        <div id="feedback-text-${idx}"></div>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="prevQuestion()" ${idx === 0 ? 'disabled' : ''}>← Precedente</button>
+        <button id="next-btn-${idx}" onclick="nextQuestion()" disabled>${idx === questions.length - 1 ? 'Vedi risultati →' : 'Prossima →'}</button>
+      </div>
+    </div>
+  `;
+  quizArea.innerHTML = html;
+  updateProgress();
+  if (userAnswers[idx] !== undefined) showAnswerState(idx);
+}
+
+function selectOption(qIdx, optIdx) {
+  if (userAnswers[qIdx] !== undefined) return;
+  userAnswers[qIdx] = optIdx;
+  if (optIdx === questions[qIdx].correct) score++;
+  showAnswerState(qIdx);
+  updateProgress();
+}
+
+function showAnswerState(qIdx) {
+  const q = questions[qIdx];
+  const userAnswer = userAnswers[qIdx];
+  const options = document.querySelectorAll(`#options-${qIdx} .option`);
+  options.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === q.correct) opt.classList.add('correct');
+    else if (i === userAnswer) opt.classList.add('wrong');
+  });
+  const feedback = document.getElementById(`feedback-${qIdx}`);
+  const label = document.getElementById(`feedback-label-${qIdx}`);
+  const text = document.getElementById(`feedback-text-${qIdx}`);
+  const isCorrect = userAnswer === q.correct;
+  feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  label.textContent = isCorrect ? 'Risposta corretta' : 'Risposta errata';
+  text.innerHTML = q.explanation;
+  document.getElementById(`next-btn-${qIdx}`).disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    renderQuestion(currentQuestion);
+  } else showResults();
+}
+
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion(currentQuestion);
+  }
+}
+
+function updateProgress() {
+  const answered = userAnswers.filter(a => a !== undefined).length;
+  progressFill.style.width = (answered / questions.length) * 100 + '%';
+  progressText.textContent = `Domanda ${currentQuestion + 1} di ${questions.length}`;
+  scoreText.textContent = `Risposte corrette: ${score}`;
+}
+
+function showResults() {
+  quizArea.style.display = 'none';
+  document.querySelector('.progress-info').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  results.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score / questions.length;
+  const msg = pct === 1 ? "Risultato eccellente." :
+              pct >= 0.8 ? "Buon risultato." :
+              pct >= 0.6 ? "Risultato sufficiente." :
+              pct >= 0.4 ? "Risultato da consolidare." :
+                          "Si consiglia di rivedere le note della lezione.";
+  document.getElementById('scoreMessage').textContent = msg;
+  document.getElementById('reviewList').innerHTML = questions.map((q, i) => {
+    const correct = userAnswers[i] === q.correct;
+    return `<div class="review-item"><span class="review-mark ${correct ? 'ok' : 'no'}">${correct ? '✓' : '✗'}</span><span><strong>D${i + 1}.</strong> ${q.q}</span></div>`;
+  }).join('');
+}
+
+function restartQuiz() {
+  buildQuestions();
+  currentQuestion = 0;
+  userAnswers = [];
+  score = 0;
+  results.classList.remove('show');
+  quizArea.style.display = 'block';
+  document.querySelector('.progress-info').style.display = 'flex';
+  document.querySelector('.progress-bar').style.display = 'block';
+  renderQuestion(0);
+}
+
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  try { if (sessionStorage.getItem('presMode') === '1') setPresentation(true); } catch(e) {}
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+buildQuestions();
+renderQuestion(0);
+</script>
+</body>
+</html>
