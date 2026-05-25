@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politica fiscale in cambi fissi — IS-LM-BP</title>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --accent: #6b4423;
+  --accent-strong: #9b3a1f;
+  --is-color: #1a4480;
+  --lm-color: #6b4423;
+  --bp-color: #2d5a2d;
+  --highlight: #c41e3a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.005em;
+}
+
+.subtitle {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+  align-items: start;
+}
+
+.chart-wrap {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 8px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+}
+
+.controls {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.85em;
+}
+
+.control-block {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.control-block h3 {
+  font-size: 0.92em;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.slider-block {
+  margin-top: 4px;
+}
+
+.slider-label {
+  font-size: 0.85em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input[type=range] {
+  flex: 1;
+  accent-color: var(--accent-strong);
+}
+
+.slider-value {
+  font-weight: 700;
+  font-size: 0.85em;
+  color: var(--accent-strong);
+  min-width: 70px;
+  text-align: right;
+}
+
+.slider-hint {
+  font-size: 0.75em;
+  color: var(--muted-light);
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.step-button, .reset-button {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.92em;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.005em;
+  transition: background 0.15s;
+}
+
+.step-button {
+  background: var(--accent-strong);
+  color: var(--paper);
+  border-color: var(--accent-strong);
+}
+
+.step-button:hover { background: #7a2d18; }
+.step-button:disabled {
+  background: var(--rule);
+  color: var(--muted-light);
+  cursor: not-allowed;
+  border-color: var(--rule);
+}
+
+.reset-button {
+  margin-top: 6px;
+  font-weight: 400;
+  font-size: 0.82em;
+}
+
+.reset-button:hover {
+  background: var(--paper-warm);
+}
+
+.step-indicator {
+  font-size: 0.78em;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.numeric {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.85em;
+}
+
+.numeric .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.numeric .row:last-child {
+  border-bottom: none;
+}
+
+.numeric .label {
+  color: var(--muted);
+}
+
+.numeric .value {
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.numeric .value.highlight {
+  color: var(--accent-strong);
+}
+
+.commentary {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--accent-strong);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-family: 'Georgia', serif;
+  font-size: 0.85em;
+  line-height: 1.5;
+  min-height: 100px;
+}
+
+.commentary strong {
+  color: var(--accent-strong);
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+}
+
+.axis-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 11px;
+  fill: var(--ink);
+}
+
+.curve-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.eq-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--highlight);
+}
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Politica fiscale espansiva in regime di cambi fissi</h1>
+<div class="subtitle">Aumento di G in IS-LM-BP — esito dipende dalla pendenza di BP (mobilità dei capitali)</div>
+
+<div class="layout">
+
+<div class="chart-wrap">
+  <svg viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <polygon points="0 0, 8 3, 0 6" fill="#c41e3a"/>
+      </marker>
+      <marker id="arrowAccent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <polygon points="0 0, 8 3, 0 6" fill="#9b3a1f"/>
+      </marker>
+      <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <polygon points="0 0, 8 3, 0 6" fill="#2d5a2d"/>
+      </marker>
+    </defs>
+    
+    <line x1="60" y1="40" x2="60" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
+    <line x1="60" y1="420" x2="560" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
+    
+    <text x="40" y="35" class="axis-label" text-anchor="end" font-weight="700">r</text>
+    <text x="565" y="438" class="axis-label" font-weight="700">Y</text>
+    
+    <g id="y-ticks">
+      <line x1="56" y1="380" x2="60" y2="380" stroke="#1a1a1a"/>
+      <text x="52" y="384" class="axis-label" text-anchor="end">4</text>
+      <line x1="56" y1="304" x2="60" y2="304" stroke="#1a1a1a"/>
+      <text x="52" y="308" class="axis-label" text-anchor="end">8</text>
+      <line x1="56" y1="228" x2="60" y2="228" stroke="#1a1a1a"/>
+      <text x="52" y="232" class="axis-label" text-anchor="end">12</text>
+      <line x1="56" y1="152" x2="60" y2="152" stroke="#1a1a1a"/>
+      <text x="52" y="156" class="axis-label" text-anchor="end">16</text>
+      <text x="40" y="55" class="axis-label" text-anchor="end" font-size="9">(%)</text>
+    </g>
+    
+    <g id="x-ticks">
+      <line x1="160" y1="420" x2="160" y2="424" stroke="#1a1a1a"/>
+      <text x="160" y="438" class="axis-label" text-anchor="middle">300</text>
+      <line x1="260" y1="420" x2="260" y2="424" stroke="#1a1a1a"/>
+      <text x="260" y="438" class="axis-label" text-anchor="middle">400</text>
+      <line x1="360" y1="420" x2="360" y2="424" stroke="#1a1a1a"/>
+      <text x="360" y="438" class="axis-label" text-anchor="middle">500</text>
+      <line x1="460" y1="420" x2="460" y2="424" stroke="#1a1a1a"/>
+      <text x="460" y="438" class="axis-label" text-anchor="middle">600</text>
+    </g>
+    
+    <g id="curves"></g>
+    <g id="annotations"></g>
+  </svg>
+  
+  <div class="legend">
+    <div class="legend-item"><span class="legend-color" style="background: #1a4480;"></span>IS</div>
+    <div class="legend-item"><span class="legend-color" style="background: #6b4423;"></span>LM</div>
+    <div class="legend-item"><span class="legend-color" style="background-image: linear-gradient(to right, #2d5a2d 4px, transparent 4px, transparent 8px, #2d5a2d 8px); height: 2px;"></span>BP</div>
+  </div>
+</div>
+
+<div class="controls">
+
+<div class="control-block">
+  <h3>Pendenza di BP</h3>
+  <div class="slider-block">
+    <span class="slider-label">Sensibilità di MK al tasso</span>
+    <div class="slider-row">
+      <input type="range" id="bpSlope" min="0" max="100" value="70" step="1">
+      <span class="slider-value" id="bpSlopeValue">media</span>
+    </div>
+    <div class="slider-hint">Slider a sinistra: capitali immobili, BP ripida (caso §4.2). A destra: capitali perfettamente mobili, BP piatta (caso §4.1).</div>
+  </div>
+</div>
+
+<div class="control-block">
+  <h3>Manovra di policy</h3>
+  <button class="step-button" id="advanceBtn">Avvia: politica fiscale espansiva</button>
+  <button class="reset-button" id="resetBtn">Riporta allo stato iniziale</button>
+  <div class="step-indicator" id="stepIndicator">Fase 0 di 3 — equilibrio iniziale</div>
+</div>
+
+<div class="numeric" id="numericBox">
+  <div class="row"><span class="label">Reddito iniziale (Y₀)</span><span class="value">500</span></div>
+  <div class="row"><span class="label">Reddito intermedio (Y₁)</span><span class="value" id="yInt">—</span></div>
+  <div class="row"><span class="label">Reddito finale (Y₂)</span><span class="value" id="yFin">—</span></div>
+  <div class="row"><span class="label">ΔY effettivo</span><span class="value highlight" id="deltaY">—</span></div>
+</div>
+
+<div class="commentary" id="commentary">
+  <span id="commentaryText"></span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+// --- Parametri del modello ---
+const PARAMS = {
+  is1: { alpha: 800, beta: 30 },     // IS originale: Y = 800 - 30r
+  is2: { alpha: 900, beta: 30 },     // IS dopo shock G: Y = 900 - 30r (ΔG → Δalpha=100)
+  lm: { gamma: -10, delta: 0.04 }    // LM: r = -10 + 0.04Y
+};
+
+let bpSlopeVal = 0.0105;  // slope iniziale, BP relativamente piatta
+
+function sliderToSlope(v) {
+  // v in [0,100]: v=100 -> slope quasi 0 (piatta); v=0 -> slope alta (ripida)
+  // Range: [0, 0.08] - LM ha slope 0.04, quindi per v < 50 BP è più ripida di LM (caso 4.2)
+  return 0.08 * (1 - v/100);
+}
+
+function bpIntercept() {
+  // BP passa per (500, 10): r = bpIntercept + bpSlopeVal * Y
+  return 10 - bpSlopeVal * 500;
+}
+
+function bpLine(Y) {
+  return bpIntercept() + bpSlopeVal * Y;
+}
+
+// --- Trasformazioni grafico ---
+function modelToSVG(Y, r) {
+  // Y in [200, 700] -> x in [60, 560]
+  // r in [0, 20]   -> y in [420, 40]
+  const x = 60 + (Y - 200);
+  const y = 420 - r * 19;
+  return { x, y };
+}
+
+function isLine(isKey, Y) { return (PARAMS[isKey].alpha - Y) / PARAMS[isKey].beta; }
+function lmLine(gamma, Y) { return gamma + PARAMS.lm.delta * Y; }
+
+function intersectISLM(isKey, gamma) {
+  // IS: r = (alpha - Y)/beta = alpha/beta - Y/beta
+  // LM: r = gamma + delta*Y
+  // alpha/beta - Y/beta = gamma + delta*Y
+  // alpha/beta - gamma = Y*(delta + 1/beta)
+  const is = PARAMS[isKey];
+  const Y = (is.alpha/is.beta - gamma) / (PARAMS.lm.delta + 1/is.beta);
+  const r = gamma + PARAMS.lm.delta * Y;
+  return { Y, r };
+}
+
+// LM che fa cadere E (equilibrio IS-LM) esattamente su BP
+// Vogliamo trovare gamma_new tale che, con IS2, IS2 ∩ LM_new ∈ BP
+// IS2: r = (alpha2 - Y)/beta2
+// BP: r = bpIntercept + bpSlopeVal*Y
+// Intersezione IS2 ∩ BP: (alpha2 - Y)/beta2 = bpIntercept + bpSlopeVal*Y
+// alpha2 - Y = beta2*(bpIntercept + bpSlopeVal*Y)
+// alpha2 - beta2*bpIntercept = Y*(1 + beta2*bpSlope)
+// Y_fin = (alpha2 - beta2*bpIntercept) / (1 + beta2*bpSlope)
+function finalEquilibrium() {
+  const Y = (PARAMS.is2.alpha - PARAMS.is2.beta * bpIntercept()) / 
+            (1 + PARAMS.is2.beta * bpSlopeVal);
+  const r = bpLine(Y);
+  return { Y, r };
+}
+
+// LM_new tale da passare per il punto (Y_fin, r_fin)
+// LM: r = gamma + delta*Y -> gamma = r - delta*Y
+function lmGammaForPoint(Y, r) {
+  return r - PARAMS.lm.delta * Y;
+}
+
+// --- Curve come path SVG ---
+function linePath(yFn, Y1, Y2) {
+  const p1 = modelToSVG(Y1, yFn(Y1));
+  const p2 = modelToSVG(Y2, yFn(Y2));
+  return `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+}
+
+// --- Stato dell'animazione ---
+let currentStep = 0;
+const TOTAL_STEPS = 3;
+
+function getStepData(step) {
+  const eq0 = intersectISLM('is1', PARAMS.lm.gamma);            // (500, 10)
+  const eq1 = intersectISLM('is2', PARAMS.lm.gamma);            // IS2 ∩ LM1
+  const eq2 = finalEquilibrium();                                // IS2 ∩ BP
+  
+  // Determino se eq1 sta sopra o sotto BP
+  const rOnBP_at_eq1 = bpLine(eq1.Y);
+  const aboveBP = eq1.r > rOnBP_at_eq1;  // se r > rOnBP allora E1 è sopra BP -> avanzo
+  
+  return [
+    { 
+      label: "Fase 0 di 3 — equilibrio iniziale", 
+      yInt: "—", yFin: "—", deltaY: "—", 
+      commentary: "<strong>Equilibrio iniziale.</strong> Le curve IS, LM e BP si intersecano in E₀ = (Y₀=500, r₀=10%). Lo Stato vuole stimolare il reddito con una manovra fiscale espansiva (ΔG > 0, finanziata in deficit)."
+    },
+    { 
+      label: "Fase 1 di 3 — shock fiscale",
+      yInt: Math.round(eq1.Y), yFin: "—", deltaY: "—",
+      commentary: aboveBP 
+        ? `<strong>Shock applicato.</strong> L'aumento di G fa traslare la IS verso destra (IS₁→IS₂). Il nuovo equilibrio IS-LM è E₁ con reddito maggiore e tasso più alto. Ma E₁ è <em>sopra BP</em>: la BP è in <strong>avanzo</strong>. Il maggior r attrae capitali dall'estero (effetto 2) più di quanto le importazioni peggiorino le PC (effetto 1).`
+        : `<strong>Shock applicato.</strong> L'aumento di G fa traslare la IS verso destra (IS₁→IS₂). Il nuovo equilibrio IS-LM è E₁ con reddito maggiore. Ma con BP molto ripida (capitali poco mobili) E₁ è <em>sotto BP</em>: la BP è in <strong>disavanzo</strong>. L'aumento delle importazioni (effetto 1) prevale sull'afflusso di capitali (effetto 2).`
+    },
+    { 
+      label: "Fase 2 di 3 — la BC difende il cambio",
+      yInt: Math.round(eq1.Y), yFin: "—", deltaY: "—",
+      commentary: aboveBP
+        ? "<strong>Aggiustamento in corso.</strong> Per mantenere il cambio fisso, la BC <em>acquista</em> la valuta estera in eccesso, immettendo moneta nazionale. La BM cresce, la LM trasla a destra. L'espansione iniziale è ulteriormente <em>amplificata</em>."
+        : "<strong>Aggiustamento in corso.</strong> Per difendere il cambio, la BC <em>vende</em> riserve in valuta estera, ritirando moneta nazionale. La BM si contrae, la LM trasla a sinistra. L'espansione iniziale è in parte <em>controbilanciata</em>."
+    },
+    { 
+      label: "Fase 3 di 3 — equilibrio finale",
+      yInt: Math.round(eq1.Y), yFin: Math.round(eq2.Y), deltaY: `+${Math.round(eq2.Y - eq0.Y)}`,
+      commentary: aboveBP
+        ? `<strong>Equilibrio finale.</strong> Il nuovo equilibrio E₂ = (${Math.round(eq2.Y)}, ${eq2.r.toFixed(1)}%) sta sulla BP. <em>Politica fiscale molto efficace</em>: ΔY = +${Math.round(eq2.Y - eq0.Y)} (con BP piatta, la spinta monetaria automatica si somma a quella fiscale). È il caso §4.1: cambi fissi + capitali mobili.`
+        : `<strong>Equilibrio finale.</strong> Il nuovo equilibrio E₂ = (${Math.round(eq2.Y)}, ${eq2.r.toFixed(1)}%) sta sulla BP. <em>Politica fiscale efficace, ma in misura ridotta</em>: ΔY = +${Math.round(eq2.Y - eq0.Y)}. Parte dell'effetto fiscale è stato eroso dal canale monetario. È il caso §4.2: cambi fissi + capitali immobili.`
+    }
+  ][step];
+}
+
+function updateBPSlopeLabel() {
+  const slider = document.getElementById('bpSlope');
+  const v = parseInt(slider.value);
+  let label;
+  if (v >= 90) label = "quasi piatta";
+  else if (v >= 65) label = "piatta";
+  else if (v >= 45) label = "media";
+  else if (v >= 20) label = "ripida";
+  else label = "molto ripida";
+  document.getElementById('bpSlopeValue').textContent = label;
+}
+
+function render() {
+  const eq0 = intersectISLM('is1', PARAMS.lm.gamma);
+  const eq1 = intersectISLM('is2', PARAMS.lm.gamma);
+  const eq2 = finalEquilibrium();
+  const gammaFin = lmGammaForPoint(eq2.Y, eq2.r);
+  
+  const COL_IS = '#1a4480';
+  const COL_LM = '#6b4423';
+  const COL_BP = '#2d5a2d';
+  const COL_HL = '#c41e3a';
+  
+  const curves = document.getElementById('curves');
+  const annotations = document.getElementById('annotations');
+  curves.innerHTML = '';
+  annotations.innerHTML = '';
+  
+  const isLine1 = (Y) => isLine('is1', Y);
+  const isLine2 = (Y) => isLine('is2', Y);
+  const lmLine1 = (Y) => lmLine(PARAMS.lm.gamma, Y);
+  const lmLine2 = (Y) => lmLine(gammaFin, Y);
+  
+  // --- Curve ombra delle fasi precedenti ---
+  if (currentStep >= 1) {
+    curves.innerHTML += `<path d="${linePath(isLine1, 250, 700)}" stroke="#bbb6a8" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>`;
+    curves.innerHTML += `<text x="${modelToSVG(370, isLine1(370)).x - 10}" y="${modelToSVG(370, isLine1(370)).y - 5}" class="curve-label" fill="#bbb6a8" font-size="10">IS₁</text>`;
+  }
+  if (currentStep >= 2) {
+    curves.innerHTML += `<path d="${linePath(lmLine1, 200, 700)}" stroke="#bbb6a8" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>`;
+    curves.innerHTML += `<text x="${modelToSVG(630, lmLine1(630)).x - 10}" y="${modelToSVG(630, lmLine1(630)).y + 13}" class="curve-label" fill="#bbb6a8" font-size="10">LM₁</text>`;
+  }
+  
+  // --- IS attuale ---
+  const isKeyCurr = currentStep >= 1 ? 'is2' : 'is1';
+  const isLineCurr = (Y) => isLine(isKeyCurr, Y);
+  curves.innerHTML += `<path d="${linePath(isLineCurr, 250, 700)}" stroke="${COL_IS}" stroke-width="2.5" fill="none"/>`;
+  const isLabel = currentStep >= 1 ? 'IS₂' : 'IS';
+  curves.innerHTML += `<text x="${modelToSVG(680, isLineCurr(680)).x - 10}" y="${modelToSVG(680, isLineCurr(680)).y - 5}" class="curve-label" fill="${COL_IS}">${isLabel}</text>`;
+  
+  // --- LM attuale ---
+  const gammaCurr = currentStep >= 3 ? gammaFin : PARAMS.lm.gamma;
+  const lmLineCurr = (Y) => lmLine(gammaCurr, Y);
+  curves.innerHTML += `<path d="${linePath(lmLineCurr, 200, 700)}" stroke="${COL_LM}" stroke-width="2.5" fill="none"/>`;
+  const lmLabel = currentStep >= 3 ? 'LM₂' : 'LM';
+  curves.innerHTML += `<text x="${modelToSVG(680, lmLineCurr(680)).x - 10}" y="${modelToSVG(680, lmLineCurr(680)).y + 13}" class="curve-label" fill="${COL_LM}">${lmLabel}</text>`;
+  
+  // --- BP ---
+  let bpY1 = 200, bpY2 = 700;
+  if (bpSlopeVal > 0.001) {
+    const Y_at_r0 = -bpIntercept() / bpSlopeVal;
+    const Y_at_r20 = (20 - bpIntercept()) / bpSlopeVal;
+    bpY1 = Math.max(200, Math.min(Y_at_r0, Y_at_r20));
+    bpY2 = Math.min(700, Math.max(Y_at_r0, Y_at_r20));
+  }
+  curves.innerHTML += `<path d="${linePath(bpLine, bpY1, bpY2)}" stroke="${COL_BP}" stroke-width="2" fill="none" stroke-dasharray="6,4"/>`;
+  curves.innerHTML += `<text x="${modelToSVG(bpY2, bpLine(bpY2)).x - 10}" y="${modelToSVG(bpY2, bpLine(bpY2)).y - 5}" class="curve-label" fill="${COL_BP}">BP</text>`;
+  
+  // --- Punto E0 sempre visibile ---
+  let p0 = modelToSVG(eq0.Y, eq0.r);
+  annotations.innerHTML += `<circle cx="${p0.x}" cy="${p0.y}" r="4" fill="${COL_HL}" stroke="#fff" stroke-width="1.5"/>`;
+  annotations.innerHTML += `<text x="${p0.x - 12}" y="${p0.y - 8}" class="eq-label" text-anchor="end">E₀</text>`;
+  
+  // --- Punto E1 (intermedio) ---
+  if (currentStep >= 1) {
+    let p1 = modelToSVG(eq1.Y, eq1.r);
+    annotations.innerHTML += `<circle cx="${p1.x}" cy="${p1.y}" r="4" fill="${COL_HL}" stroke="#fff" stroke-width="1.5"/>`;
+    annotations.innerHTML += `<text x="${p1.x + 8}" y="${p1.y - 5}" class="eq-label">E₁</text>`;
+    
+    // freccia traslazione IS
+    const arrowFromY = 470, arrowFromR = isLine('is1', arrowFromY);
+    const arrowToY = 570, arrowToR = isLine('is2', arrowToY);
+    const aF = modelToSVG(arrowFromY, arrowFromR);
+    const aT = modelToSVG(arrowToY, arrowToR);
+    annotations.innerHTML += `<path d="M ${aF.x} ${aF.y} L ${aT.x} ${aT.y}" stroke="${COL_HL}" stroke-width="1.8" fill="none" marker-end="url(#arrowRed)" opacity="0.7"/>`;
+  }
+  
+  // --- Punto E2 (finale) ---
+  if (currentStep >= 3) {
+    let p2 = modelToSVG(eq2.Y, eq2.r);
+    annotations.innerHTML += `<circle cx="${p2.x}" cy="${p2.y}" r="5" fill="${COL_HL}" stroke="#fff" stroke-width="2"/>`;
+    annotations.innerHTML += `<text x="${p2.x + 8}" y="${p2.y - 5}" class="eq-label">E₂</text>`;
+  }
+  
+  // --- Freccia LM (fase 2) ---
+  if (currentStep >= 2) {
+    const aboveBP = eq1.r > bpLine(eq1.Y);
+    const startY = 400, endY = aboveBP ? 480 : 320;
+    const lmStart = modelToSVG(startY, lmLine(PARAMS.lm.gamma, startY));
+    const lmEnd = modelToSVG(endY, lmLine(gammaFin, endY));
+    annotations.innerHTML += `<path d="M ${lmStart.x} ${lmStart.y} L ${lmEnd.x} ${lmEnd.y}" stroke="#9b3a1f" stroke-width="1.8" fill="none" marker-end="url(#arrowAccent)" opacity="0.7"/>`;
+  }
+  
+  // Aggiorno pannello laterale
+  const data = getStepData(currentStep);
+  document.getElementById('stepIndicator').textContent = data.label;
+  document.getElementById('yInt').textContent = data.yInt;
+  document.getElementById('yFin').textContent = data.yFin;
+  document.getElementById('deltaY').textContent = data.deltaY;
+  document.getElementById('commentaryText').innerHTML = data.commentary;
+  
+  // Pulsante
+  const btn = document.getElementById('advanceBtn');
+  if (currentStep === 0) btn.textContent = "Avvia: politica fiscale espansiva";
+  else if (currentStep === 1) btn.textContent = "Avanza: l'aggiustamento BC";
+  else if (currentStep === 2) btn.textContent = "Avanza: nuovo equilibrio";
+  else btn.textContent = "Animazione completa";
+  btn.disabled = (currentStep >= TOTAL_STEPS);
+}
+
+document.getElementById('bpSlope').addEventListener('input', (e) => {
+  bpSlopeVal = sliderToSlope(parseInt(e.target.value));
+  updateBPSlopeLabel();
+  render();
+});
+
+document.getElementById('advanceBtn').addEventListener('click', () => {
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    render();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  currentStep = 0;
+  render();
+});
+
+// Init
+bpSlopeVal = sliderToSlope(70);
+updateBPSlopeLabel();
+render();
+</script>
+
+</body>
+</html>
