@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Lezione 3 — Politica Economica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --green: #2d6a3a;
+  --red: #9b2920;
+  --base-size: 18px;
+  --max-width: 760px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --max-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  transition: max-width 0.2s ease, padding 0.2s ease;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.1em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.08em;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.progress-info {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  margin: 28px 0 8px;
+  font-weight: 500;
+}
+
+.progress-bar {
+  background: var(--paper-warm);
+  height: 4px;
+  margin-bottom: 40px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.question { display: none; }
+.question.active { display: block; }
+
+.q-num {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.q-text {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.22em;
+  line-height: 1.45;
+  margin-bottom: 28px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  max-width: 62ch;
+}
+
+.options { list-style: none; margin: 0; }
+
+.option {
+  border: 1px solid var(--rule);
+  background: #fdfcf7;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 0.96em;
+  line-height: 1.55;
+  transition: border-color 0.15s, background 0.15s;
+  max-width: 62ch;
+}
+
+.option:hover:not(.disabled) {
+  border-color: var(--ink);
+  background: #fff;
+}
+
+.option-letter {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--muted);
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+.option.correct {
+  border-color: var(--green);
+  border-left: 3px solid var(--green);
+  background: #f4f8f5;
+}
+.option.correct .option-letter { color: var(--green); }
+
+.option.wrong {
+  border-color: var(--red);
+  border-left: 3px solid var(--red);
+  background: #fbf3f2;
+}
+.option.wrong .option-letter { color: var(--red); }
+
+.option.disabled { cursor: default; }
+.option.disabled:not(.correct):not(.wrong) { opacity: 0.55; }
+
+.feedback {
+  display: none;
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  font-size: 0.92em;
+  line-height: 1.6;
+  max-width: 62ch;
+}
+.feedback.show { display: block; }
+.feedback.correct { border-left-color: var(--green); background: #f4f8f5; }
+.feedback.wrong { border-left-color: var(--red); background: #fbf3f2; }
+
+.feedback-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.feedback.correct .feedback-label { color: var(--green); }
+.feedback.wrong .feedback-label { color: var(--red); }
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+button {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 11px 22px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  background: var(--ink);
+  color: var(--paper);
+  transition: opacity 0.15s;
+  letter-spacing: 0.02em;
+}
+
+button:hover:not(:disabled) { opacity: 0.85; }
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+button.secondary { background: transparent; color: var(--ink); }
+
+.results {
+  display: none;
+  text-align: center;
+  padding: 48px 0;
+}
+.results.show { display: block; }
+
+.score-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78em;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.score-display {
+  font-family: 'Source Serif 4', serif;
+  font-size: 4em;
+  font-weight: 700;
+  margin: 8px 0 24px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.score-display .total {
+  color: var(--muted-light);
+  font-weight: 400;
+  font-size: 0.6em;
+}
+
+.score-message {
+  font-size: 1.05em;
+  color: var(--muted);
+  margin-bottom: 36px;
+  font-style: italic;
+}
+
+.review {
+  margin-top: 56px;
+  text-align: left;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.review h3 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.18em;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.review-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--rule);
+  display: flex;
+  gap: 14px;
+  font-size: 0.92em;
+  line-height: 1.5;
+}
+
+.review-mark {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 18px;
+}
+
+.review-mark.ok { color: var(--green); }
+.review-mark.no { color: var(--red); }
+
+footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 40px 20px 80px; }
+  h1 { font-size: 1.65em; }
+  .actions { flex-direction: column-reverse; }
+  .actions button { width: 100%; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="wrap">
+
+<header>
+  <div class="meta">Quiz · Lezione 3 · Politica Economica</div>
+  <h1>Verifica di ripasso</h1>
+  <p class="subtitle">Quindici domande a scelta multipla. Risposta unica.</p>
+</header>
+
+<div class="progress-info">
+  <span id="progressText">Domanda 1 di 15</span>
+  <span id="scoreText">Risposte corrette: 0</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="quiz-area" id="quizArea"></div>
+
+<div class="results" id="results">
+  <div class="score-label">Punteggio finale</div>
+  <div class="score-display"><span id="finalScore">0</span><span class="total">/15</span></div>
+  <div class="score-message" id="scoreMessage"></div>
+  <button onclick="restartQuiz()">Rifai il quiz</button>
+  <div class="review">
+    <h3>Riepilogo</h3>
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Quiz Lezione 3 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione3_note.html">← Note della lezione</a></p>
+</footer>
+
+</div>
+
+<script>
+const questionsRaw = [
+  {
+    q: "Perché una variabile possa essere considerata uno strumento di politica economica, secondo Tinbergen deve soddisfare:",
+    options: [
+      "Tre condizioni essenziali: controllabilità da parte delle autorità, efficacia rispetto all'obiettivo prefissato e separabilità (o indipendenza) rispetto ad altri strumenti",
+      "Due condizioni: controllabilità da parte delle autorità ed efficacia rispetto agli obiettivi",
+      "Quattro condizioni: controllabilità, efficacia, separabilità e neutralità distributiva",
+      "Una sola condizione: poter essere modificata dal policy-maker senza vincoli legislativi"
+    ],
+    explanation: "Le tre condizioni sono: (1) controllabilità (essere sotto il controllo delle autorità); (2) efficacia (misurata dalla derivata parziale ∂y/∂x); (3) separabilità o indipendenza (due variabili con identica efficacia sullo stesso obiettivo costituiscono un unico strumento, per indipendenza lineare). La sfumatura sbagliata coglie solo controllabilità ed efficacia, omettendo la separabilità."
+  },
+  {
+    q: "Nella classificazione di Tinbergen degli strumenti di politica economica, una politica qualitativa è:",
+    options: [
+      "L'introduzione di un nuovo strumento o la cancellazione di uno strumento esistente (es. nuove imposte, abolizione dell'IRAP)",
+      "La variazione del valore di uno strumento esistente (es. variazione della spesa pubblica)",
+      "L'introduzione/cancellazione di uno strumento che comporta modifiche sostanziali alle regole di funzionamento del sistema (nazionalizzazioni, privatizzazioni)",
+      "L'imposizione di comportamenti agli operatori economici (es. contingentamento delle importazioni)"
+    ],
+    explanation: "Tinbergen distingue: politiche quantitative (variazione di uno strumento esistente), qualitative (introduzione/cancellazione di uno strumento) e di riforma (introduzione/cancellazione con modifiche sostanziali alle regole). La sfumatura sbagliata confonde 'qualitativa' con 'quantitativa'. La quarta opzione descrive invece un controllo diretto, classificazione per meccanismo di azione."
+  },
+  {
+    q: "La forma ridotta invertita (FRI) di un modello con obiettivi fissi:",
+    options: [
+      "Assegna il valore target all'obiettivo e risolve rispetto allo strumento: se la FR è y = f(x), la FRI è x = g(y) con g inversa di f",
+      "Esprime la variabile obiettivo in funzione degli strumenti, eliminando le variabili irrilevanti",
+      "Si applica solo al caso di obiettivi flessibili nel quadro di un problema di massimizzazione vincolata",
+      "Coincide con la forma strutturale quando il sistema è determinato"
+    ],
+    explanation: "La FRI è la forma in cui si assegna il target all'obiettivo e si risolve rispetto allo strumento: x = g(y). La sfumatura sbagliata descrive invece la forma ridotta (FR), non la FRI. La FRI presuppone obiettivi fissi (non flessibili) ed è distinta dalla FS."
+  },
+  {
+    q: "La regola aurea (di Tinbergen) della politica economica afferma che:",
+    options: [
+      "Perché un sistema sia risolubile, il numero degli strumenti deve essere almeno pari al numero degli obiettivi",
+      "Per ogni obiettivo deve essere disponibile uno strumento dedicato e indipendente dagli altri",
+      "Il numero degli obiettivi deve essere sempre superiore al numero degli strumenti per evitare la sotto-determinazione del sistema",
+      "Gli strumenti di politica monetaria e fiscale devono essere usati congiuntamente per garantire la stabilità del sistema"
+    ],
+    explanation: "La regola di Tinbergen richiede che il numero di incognite (strumenti) sia almeno pari al numero di equazioni (obiettivi). La sfumatura sbagliata aggiunge un requisito di 'dedicazione' e indipendenza che non è parte della regola: la regola riguarda solo i numeri, non l'assegnazione strumento-obiettivo (è invece il principio di Mundell-Fleming a riguardare l'assegnazione efficiente)."
+  },
+  {
+    q: "Nella critica di Lucas all'approccio classico (Tinbergen), il problema centrale è che:",
+    options: [
+      "I parametri di comportamento stimati sono convoluzioni di parametri profondi (tecnologici, di preferenze) e di parametri di aspettativa, e non risultano invarianti rispetto agli interventi di policy",
+      "I modelli classici sono troppo aggregati e non distinguono adeguatamente tra agenti rappresentativi e popolazione reale",
+      "L'approccio normativo non considera i vincoli istituzionali (norme, regolamenti) imposti dall'ordinamento giuridico",
+      "I parametri stimati dipendono troppo dal regime di cambio considerato, mentre dovrebbero essere strutturali"
+    ],
+    explanation: "Il cuore della critica di Lucas è che i parametri stimati riflettono anche le aspettative degli agenti sulla policy in vigore; quando la policy cambia, gli operatori razionali aggiornano le aspettative, e i parametri cambiano. Il modello usato per calibrare la nuova policy 'non è più il modello rilevante dell'economia'. Va detto, come segnala il prof, che la critica non è devastante quanto spesso si dice: l'invarianza dei parametri è un'ipotesi verificabile econometricamente (test di cambiamento strutturale)."
+  },
+  {
+    q: "Tra le funzioni tipiche della moneta in un'economia monetaria NON figura:",
+    options: [
+      "Funzione di prestatore di ultima istanza per il sistema finanziario",
+      "Mezzo di pagamento (riduzione dei costi di transazione in mercati decentralizzati)",
+      "Unità di conto (bene nei cui termini si calcolano tutti i prezzi)",
+      "Riserva di valore (trasferimento del potere d'acquisto nel tempo)"
+    ],
+    explanation: "Le tre funzioni della moneta sono: mezzo di pagamento, unità di conto, riserva di valore. La 'funzione di prestatore di ultima istanza' è una funzione della Banca Centrale, non della moneta in sé. La sfumatura sbagliata mescola due piani diversi del ragionamento (proprietà della moneta vs ruoli istituzionali della BC)."
+  },
+  {
+    q: "Nell'aggregato monetario M1 dell'EMU sono inclusi:",
+    options: [
+      "Il circolante (monete e banconote nelle mani del pubblico) e i depositi a vista presso le banche",
+      "Solo le passività a vista emesse dalle autorità monetarie (monete e banconote)",
+      "Il circolante, i depositi a vista, i depositi vincolati fino a 2 anni e quelli con preavviso fino a 3 mesi",
+      "M1 coincide con la base monetaria delle banche (BMB) e non include il circolante del pubblico"
+    ],
+    explanation: "M1 = circolante + depositi a vista (narrow money). M2 aggiunge i depositi vincolati fino a 2 anni e con preavviso fino a 3 mesi. La sfumatura sbagliata confonde M1 con M2. La seconda opzione descrive solo la base monetaria delle autorità, non M1. La quarta confonde aggregati monetari con base monetaria."
+  },
+  {
+    q: "I quattro canali di creazione della base monetaria identificati dalla BC sono:",
+    options: [
+      "Estero, Tesoro, operazioni di mercato aperto, rifinanziamento bancario",
+      "Estero, Tesoro, riserva obbligatoria, tasso ufficiale di sconto",
+      "Bilancia dei pagamenti, debito pubblico, mercato azionario, mercato obbligazionario",
+      "Banche commerciali, Tesoro, fondi pensione, mercato dei capitali"
+    ],
+    explanation: "I quattro canali sono: (1) Estero (acquisto/cessione riserve in valuta o oro); (2) Tesoro (acquisto titoli sul mercato primario — in Italia venuto meno dal 1993 con Maastricht); (3) Operazioni di mercato aperto (titoli sul mercato secondario, pienamente discrezionali); (4) Rifinanziamento bancario (tasso ufficiale di sconto). La sfumatura sbagliata mescola canali di creazione con strumenti di controllo della BC."
+  },
+  {
+    q: "Definendo h = BMP/D (rapporto pubblico) e j = BMB/D (rapporto banche), il moltiplicatore della moneta che lega L^S = M1 a BM è:",
+    options: [
+      "(1 + h) / (h + j)",
+      "1 / (h + j)",
+      "1 / (1 − h − j)",
+      "(h + j) / (1 + h)"
+    ],
+    explanation: "Da BM = BMP + BMB = hD + jD = D(h+j) si ha D = BM/(h+j) (moltiplicatore dei depositi). Poi L^S = M1 = BMP + D = hD + D = (1+h)D = (1+h)/(h+j) · BM. La sfumatura sbagliata fornisce il moltiplicatore dei depositi (1/(h+j)) invece di quello della moneta, che è sempre maggiore perché h > 0."
+  },
+  {
+    q: "L'endogeneità dei coefficienti h e j al tasso di interesse:",
+    options: [
+      "Tende a muovere il moltiplicatore in direzione opposta agli intenti della politica monetaria, riducendone l'efficacia (al salire di r, sia h sia j diminuiscono e il moltiplicatore aumenta)",
+      "Tende a rinforzare gli effetti della politica monetaria, perché al salire di r il moltiplicatore si riduce automaticamente, amplificando la stretta",
+      "È una proprietà che riguarda solo h (preferenze del pubblico per la liquidità), mentre j è esogeno per scelta della BC",
+      "Si manifesta solo in regimi di cambio fisso, mentre in cambi flessibili i due coefficienti sono stabili"
+    ],
+    explanation: "Al salire di r, le banche riducono le riserve libere (il credito diventa più redditizio): j diminuisce. Anche il pubblico tiene meno circolante (i depositi sono più convenienti): h diminuisce. Risultato: il moltiplicatore (1+h)/(h+j) tende ad aumentare con r, controbilanciando una manovra monetaria restrittiva. La sfumatura sbagliata inverte la direzione dell'effetto."
+  },
+  {
+    q: "In regime di cambi fissi, una politica monetaria espansiva (aumento di BM) produce, come esito finale sul reddito:",
+    options: [
+      "Nessuna variazione (ΔY = 0): la BC è costretta a difendere il cambio vendendo riserve, e l'offerta di moneta torna al punto di partenza",
+      "Un aumento di Y proporzionale all'aumento di BM, perché la LM si sposta a destra senza vincoli",
+      "Un aumento di Y tanto maggiore quanto più ripida è BP (capitali immobili)",
+      "Una contrazione di Y, perché il deflusso di capitali deprime la domanda interna"
+    ],
+    explanation: "In cambi fissi, l'aumento di BM riduce r e attira capitali fuori dal paese; la BP va in disavanzo. Per difendere il cambio, la BC deve vendere riserve in valuta, ritirando la moneta nazionale precedentemente immessa. La BM torna al punto di partenza e con essa la LM. L'esito finale è ΔY = 0. L'inefficacia è tanto più forte quanto più piatta è BP (capitali mobili), non più ripida."
+  },
+  {
+    q: "In regime di cambi flessibili, una politica monetaria espansiva è efficace e l'efficacia è tanto maggiore quanto:",
+    options: [
+      "Più piatta è la BP (capitali perfettamente mobili): l'aggiustamento avviene tutto via deprezzamento del cambio, che amplifica l'effetto LM puro",
+      "Più ripida è la BP (capitali immobili): il deprezzamento del cambio non viene 'sterilizzato' dai movimenti di capitale",
+      "Più alta è la sensibilità della domanda di moneta al tasso (parametro v), perché la LM è quasi piatta",
+      "Minore è la propensione marginale al consumo, perché si riduce la retroazione monetaria"
+    ],
+    explanation: "In cambi flessibili, l'aumento di BM riduce r e fa deprezzare la moneta nazionale. Il deprezzamento sposta BP verso il basso e stimola le esportazioni (X↑, M↓), spostando IS verso destra. Più mobili sono i capitali (BP piatta), più forte è il movimento del cambio richiesto, e più ampio il ΔY finale. La sfumatura sbagliata inverte completamente la relazione fra mobilità dei capitali ed efficacia."
+  },
+  {
+    q: "Il vantaggio comparato della politica monetaria rispetto a quella fiscale risiede principalmente nel:",
+    options: [
+      "Ritardo amministrativo inferiore, grazie all'autonomia della BC (assenza di mediazione politica e legislativa)",
+      "Ritardo di cognizione inferiore, perché la BC dispone di informazioni in tempo reale sui mercati",
+      "Ritardo negli effetti inferiore sull'obiettivo della stabilizzazione di prezzi, reddito e occupazione",
+      "Maggiore efficacia in fasi cicliche negative, grazie allo stimolo diretto agli investimenti"
+    ],
+    explanation: "Il ritardo amministrativo è quello in cui la politica monetaria ha un chiaro vantaggio: l'autonomia della BC permette di decidere e attuare la manovra senza mediazione politica e legislativa. Per il ritardo di cognizione le due politiche sono simili. Per il ritardo negli effetti la politica monetaria è in svantaggio (aggiustamenti di portafoglio lenti). Per l'asimmetria degli effetti, la politica monetaria è poco efficace in fasi cicliche negative (espansive)."
+  },
+  {
+    q: "L'asimmetria degli effetti della politica monetaria significa che:",
+    options: [
+      "È più efficace in senso restrittivo, e poco efficace in senso espansivo (specie in fasi recessive con aspettative negative e capacità produttiva inutilizzata)",
+      "Ha effetti diversi in cambi fissi rispetto a cambi flessibili, indipendentemente dal verso della manovra",
+      "Produce effetti reali nel breve periodo ma solo nominali nel lungo periodo (visione monetarista)",
+      "Influenza prima il tasso di interesse e solo successivamente il reddito reale"
+    ],
+    explanation: "L'asimmetria di cui parla il prof è quella tra direzione restrittiva (efficace) ed espansiva (poco efficace): la politica monetaria agisce attraverso lo stimolo all'investimento, ma in fasi di recessione le imprese con capacità inutilizzata non hanno alcun incentivo a investire — 'si può portare il cavallo all'abbeveratoio ma non si può obbligarlo a bere'. La terza opzione descrive un'altra asimmetria (la dicotomia BP-LP dei monetaristi), distinta da questa."
+  },
+  {
+    q: "Quando il prof afferma che 'la politica monetaria è tanto più efficace quanto più piatta è BP' in regime di cambi flessibili, intende che:",
+    options: [
+      "Con capitali perfettamente mobili (BP orizzontale) l'aggiustamento avviene tutto via cambio e ΔY è massimo; con capitali immobili (BP verticale) resta solo il debole effetto LM puro",
+      "La piattezza di BP indica un mercato dei capitali poco sviluppato, e in questo caso la politica monetaria opera prevalentemente attraverso il canale del credito interno",
+      "L'inclinazione di BP non incide sull'esito finale; è la posizione iniziale di BP a determinare l'efficacia della manovra",
+      "Quando BP è piatta, il deprezzamento richiesto è minimo e quindi l'effetto sulle esportazioni è limitato"
+    ],
+    explanation: "BP piatta significa che basta una piccolissima riduzione di r per generare un grosso deflusso di capitali; per riequilibrare la BP serve un forte deprezzamento del cambio, che a sua volta sposta la IS molto a destra. Risultato: ΔY massimo. BP verticale significa nessun deflusso di capitali → nessuna pressione sul cambio → nessun effetto cambio: resta solo lo spostamento di LM. La quarta opzione inverte la logica del meccanismo del cambio."
+  }
+];
+
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+let questions = [];
+function buildQuestions() {
+  questions = questionsRaw.map(qRaw => {
+    const indexed = qRaw.options.map((opt, i) => ({ text: opt, originalIdx: i }));
+    const shuffled = shuffleArray(indexed);
+    const correctIdx = shuffled.findIndex(o => o.originalIdx === 0);
+    return {
+      q: qRaw.q,
+      options: shuffled.map(o => o.text),
+      correct: correctIdx,
+      explanation: qRaw.explanation
+    };
+  });
+}
+
+let currentQuestion = 0;
+let userAnswers = [];
+let score = 0;
+
+const quizArea = document.getElementById('quizArea');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('scoreText');
+const results = document.getElementById('results');
+
+function renderQuestion(idx) {
+  const q = questions[idx];
+  const html = `
+    <div class="question active" id="q${idx}">
+      <div class="q-num">Domanda ${idx + 1} di ${questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options" id="options-${idx}">
+        ${q.options.map((opt, i) => `
+          <li class="option" data-idx="${i}" onclick="selectOption(${idx}, ${i})">
+            <span class="option-letter">${String.fromCharCode(65 + i)}.</span>
+            <span>${opt}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="feedback" id="feedback-${idx}">
+        <div class="feedback-label" id="feedback-label-${idx}"></div>
+        <div id="feedback-text-${idx}"></div>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="prevQuestion()" ${idx === 0 ? 'disabled' : ''}>← Precedente</button>
+        <button id="next-btn-${idx}" onclick="nextQuestion()" disabled>${idx === questions.length - 1 ? 'Vedi risultati →' : 'Prossima →'}</button>
+      </div>
+    </div>
+  `;
+  quizArea.innerHTML = html;
+  updateProgress();
+  if (userAnswers[idx] !== undefined) showAnswerState(idx);
+}
+
+function selectOption(qIdx, optIdx) {
+  if (userAnswers[qIdx] !== undefined) return;
+  userAnswers[qIdx] = optIdx;
+  if (optIdx === questions[qIdx].correct) score++;
+  showAnswerState(qIdx);
+  updateProgress();
+}
+
+function showAnswerState(qIdx) {
+  const q = questions[qIdx];
+  const userAnswer = userAnswers[qIdx];
+  const options = document.querySelectorAll(`#options-${qIdx} .option`);
+  options.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === q.correct) opt.classList.add('correct');
+    else if (i === userAnswer) opt.classList.add('wrong');
+  });
+  const feedback = document.getElementById(`feedback-${qIdx}`);
+  const label = document.getElementById(`feedback-label-${qIdx}`);
+  const text = document.getElementById(`feedback-text-${qIdx}`);
+  const isCorrect = userAnswer === q.correct;
+  feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  label.textContent = isCorrect ? 'Risposta corretta' : 'Risposta errata';
+  text.innerHTML = q.explanation;
+  document.getElementById(`next-btn-${qIdx}`).disabled = false;
+}
+
+function nextQuestion() {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    renderQuestion(currentQuestion);
+  } else showResults();
+}
+
+function prevQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion(currentQuestion);
+  }
+}
+
+function updateProgress() {
+  const answered = userAnswers.filter(a => a !== undefined).length;
+  progressFill.style.width = (answered / questions.length) * 100 + '%';
+  progressText.textContent = `Domanda ${currentQuestion + 1} di ${questions.length}`;
+  scoreText.textContent = `Risposte corrette: ${score}`;
+}
+
+function showResults() {
+  quizArea.style.display = 'none';
+  document.querySelector('.progress-info').style.display = 'none';
+  document.querySelector('.progress-bar').style.display = 'none';
+  results.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  const pct = score / questions.length;
+  const msg = pct === 1 ? "Risultato eccellente." :
+              pct >= 0.8 ? "Buon risultato." :
+              pct >= 0.6 ? "Risultato sufficiente." :
+              pct >= 0.4 ? "Risultato da consolidare." :
+                          "Si consiglia di rivedere le note della lezione.";
+  document.getElementById('scoreMessage').textContent = msg;
+  document.getElementById('reviewList').innerHTML = questions.map((q, i) => {
+    const correct = userAnswers[i] === q.correct;
+    return `<div class="review-item"><span class="review-mark ${correct ? 'ok' : 'no'}">${correct ? '✓' : '✗'}</span><span><strong>D${i + 1}.</strong> ${q.q}</span></div>`;
+  }).join('');
+}
+
+function restartQuiz() {
+  buildQuestions();
+  currentQuestion = 0;
+  userAnswers = [];
+  score = 0;
+  results.classList.remove('show');
+  quizArea.style.display = 'block';
+  document.querySelector('.progress-info').style.display = 'flex';
+  document.querySelector('.progress-bar').style.display = 'block';
+  renderQuestion(0);
+}
+
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  try { if (sessionStorage.getItem('presMode') === '1') setPresentation(true); } catch(e) {}
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+buildQuestions();
+renderQuestion(0);
+</script>
+</body>
+</html>
