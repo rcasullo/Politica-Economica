@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lezione 4 — Politica Economica: politica fiscale, redditi, bilancia dei pagamenti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #2a2a2a;
+  --paper: #fafaf5;
+  --paper-warm: #f2efe5;
+  --paper-cool: #f5f4ee;
+  --muted: #5a5550;
+  --muted-light: #8a857d;
+  --rule: #d8d4c8;
+  --rule-strong: #b8b3a5;
+  --link: #1a4480;
+  --base-size: 18px;
+  --max-width: 1200px;
+  --content-width: 720px;
+  --sidebar-width: 240px;
+  --pad-v: 60px;
+  --pad-h: 32px;
+}
+
+body.presentation {
+  --base-size: 22px;
+  --content-width: 920px;
+  --pad-v: 50px;
+  --pad-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: var(--base-size);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: font-size 0.2s ease;
+}
+
+.layout {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--pad-v) var(--pad-h) 100px;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: 60px;
+  transition: padding 0.2s ease;
+}
+
+body.presentation .layout {
+  grid-template-columns: 1fr;
+  max-width: var(--content-width);
+}
+
+aside.sidebar {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-family: 'Source Sans 3', sans-serif;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+body.presentation aside.sidebar { display: none; }
+
+.sidebar-title {
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar nav ol {
+  list-style: none;
+  counter-reset: sec;
+}
+
+.sidebar nav > ol > li {
+  counter-increment: sec;
+  margin-bottom: 6px;
+}
+
+.sidebar nav a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 0.78em;
+  padding: 6px 0 6px 26px;
+  position: relative;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.4;
+}
+
+.sidebar nav > ol > li > a {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sidebar nav > ol > li > a::before {
+  content: counter(sec);
+  position: absolute;
+  left: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-light);
+  font-weight: 500;
+}
+
+.sidebar nav a:hover {
+  color: var(--ink);
+  border-left-color: var(--rule-strong);
+}
+
+.sidebar nav a.active {
+  color: var(--ink);
+  border-left-color: var(--ink);
+  font-weight: 600;
+}
+
+.sidebar nav ol ol {
+  list-style: none;
+  margin-left: 0;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.sidebar nav ol ol a {
+  font-size: 0.74em;
+  padding: 3px 0 3px 26px;
+  font-weight: 400;
+}
+
+.pres-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s, background 0.15s;
+  opacity: 0.5;
+}
+
+.pres-toggle:hover { opacity: 1; }
+
+body.presentation .pres-toggle {
+  background: var(--ink);
+  color: var(--paper);
+  opacity: 1;
+}
+
+@media print { .pres-toggle { display: none; } }
+
+main.content {
+  max-width: var(--content-width);
+  min-width: 0;
+}
+
+header.lezione-header {
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.lezione-meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  color: var(--muted-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 2.4em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.015em;
+}
+
+.subtitle {
+  font-size: 1.18em;
+  color: var(--muted);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+section {
+  margin: 72px 0 0;
+  scroll-margin-top: 24px;
+}
+
+h2 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 700;
+  font-size: 1.65em;
+  line-height: 1.25;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  letter-spacing: -0.01em;
+}
+
+h2 .h2-num {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--muted-light);
+  vertical-align: middle;
+  margin-right: 16px;
+  letter-spacing: 0.05em;
+}
+
+h3 {
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+  font-size: 1.22em;
+  margin: 44px 0 16px;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
+}
+
+h4 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.82em;
+  margin: 28px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+p {
+  margin-bottom: 18px;
+  text-align: left;
+  hyphens: auto;
+  max-width: 65ch;
+}
+
+body.presentation p { max-width: 75ch; }
+
+.lead {
+  font-size: 1.08em;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+}
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+ul, ol {
+  margin: 16px 0 22px 28px;
+  max-width: 62ch;
+}
+
+li {
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+code {
+  font-family: 'Source Sans 3', monospace;
+  font-size: 0.92em;
+  background: var(--paper-warm);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.formula {
+  font-family: 'Source Sans 3', monospace;
+  background: var(--paper-warm);
+  padding: 12px 18px;
+  margin: 16px 0;
+  font-size: 0.95em;
+  border-left: 2px solid var(--rule-strong);
+  max-width: 62ch;
+  overflow-x: auto;
+}
+
+.box {
+  background: var(--paper-cool);
+  border-left: 3px solid var(--rule-strong);
+  padding: 20px 24px;
+  margin: 24px 0;
+  max-width: 65ch;
+  position: relative;
+}
+
+.box-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.box p { margin-bottom: 12px; }
+.box p:last-child { margin-bottom: 0; }
+
+.box.teorema {
+  background: #f0eee3;
+  border-left-color: var(--ink);
+  padding: 24px 28px;
+}
+
+.box.teorema .box-label { color: var(--ink); }
+
+.box.teorema .teorema-enunciato {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 1.05em;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.box.definizione {
+  background: var(--paper-cool);
+  border-left-color: var(--rule-strong);
+}
+
+.box.esempio {
+  background: var(--paper-warm);
+  border-left-color: var(--rule-strong);
+}
+
+.figure-placeholder {
+  margin: 28px 0;
+  padding: 32px 24px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--paper-warm),
+    var(--paper-warm) 10px,
+    var(--paper-cool) 10px,
+    var(--paper-cool) 20px
+  );
+  border: 1px dashed var(--rule-strong);
+  text-align: center;
+  font-family: 'Source Sans 3', sans-serif;
+  max-width: 62ch;
+}
+
+.figure-placeholder .placeholder-label {
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.figure-placeholder .placeholder-desc {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.95em;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.86em;
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+th {
+  background: var(--paper-warm);
+  font-weight: 600;
+  font-size: 0.94em;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+}
+
+footer {
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 32px; }
+  aside.sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
+  }
+  .sidebar nav { display: none; }
+  .sidebar.expanded nav { display: block; }
+  .sidebar-title { cursor: pointer; }
+  .sidebar-title::after { content: " ▾"; color: var(--muted-light); }
+  .sidebar.expanded .sidebar-title::after { content: " ▴"; }
+}
+
+@media (max-width: 640px) {
+  .layout { padding: 40px 20px 80px; }
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.35em; }
+  .pres-toggle { top: 8px; right: 8px; padding: 6px 10px; font-size: 11px; }
+  body { font-size: 17px; }
+}
+
+@media print {
+  body { font-size: 11pt; background: white; }
+  .layout { grid-template-columns: 1fr; padding: 0; max-width: 100%; }
+  aside.sidebar { display: none; }
+  h2 { page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  .box, .figure-placeholder { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<button class="pres-toggle" id="presToggle" title="Modalità presentazione (tasto P)">Presentazione</button>
+
+<div class="layout">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title" onclick="this.parentElement.classList.toggle('expanded')">Indice</div>
+  <nav>
+    <ol>
+      <li>
+        <a href="#sec1">Il bilancio pubblico e la sua manovra</a>
+        <ol>
+          <li><a href="#sec1-1">Identità contabile</a></li>
+          <li><a href="#sec1-2">Entrate e spese</a></li>
+          <li><a href="#sec1-3">Saldi di bilancio</a></li>
+          <li><a href="#sec1-4">DPEF e legge finanziaria</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec2">Le forme dell'imposizione</a>
+        <ol>
+          <li><a href="#sec2-1">Imposte in somma fissa</a></li>
+          <li><a href="#sec2-2">Imposte proporzionali</a></li>
+          <li><a href="#sec2-3">Imposte progressive</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec3">La spesa e il suo finanziamento</a>
+        <ol>
+          <li><a href="#sec3-1">Finanziamento in deficit</a></li>
+          <li><a href="#sec3-2">Finanziamento con base monetaria</a></li>
+          <li><a href="#sec3-3">Critiche al deficit spending</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec4">Politica fiscale in IS-LM-BP</a>
+        <ol>
+          <li><a href="#sec4-1">Cambi fissi, capitali mobili</a></li>
+          <li><a href="#sec4-2">Cambi fissi, capitali immobili</a></li>
+          <li><a href="#sec4-3">Cambi flessibili, capitali mobili</a></li>
+          <li><a href="#sec4-4">Cambi flessibili, capitali immobili</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec5">Debito pubblico</a>
+        <ol>
+          <li><a href="#sec5-1">Dinamica del rapporto debito/PIL</a></li>
+          <li><a href="#sec5-2">Sostenibilità</a></li>
+          <li><a href="#sec5-3">Politiche di rientro</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec6">Politica dei redditi e dei prezzi</a>
+        <ol>
+          <li><a href="#sec6-1">Costo pieno e distribuzione</a></li>
+          <li><a href="#sec6-2">Politiche dirigistiche</a></li>
+          <li><a href="#sec6-3">Politiche di mercato</a></li>
+          <li><a href="#sec6-4">Politiche istituzionali</a></li>
+          <li><a href="#sec6-5">Politiche della produttività</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#sec7">Politiche per la bilancia dei pagamenti</a>
+        <ol>
+          <li><a href="#sec7-1">Riequilibrio automatico</a></li>
+          <li><a href="#sec7-2">Politiche per la MK</a></li>
+          <li><a href="#sec7-3">Eccesso/difetto di domanda</a></li>
+          <li><a href="#sec7-4">Competitività di prezzo</a></li>
+          <li><a href="#sec7-5">Marshall-Lerner ed effetto J</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+</aside>
+
+<main class="content">
+
+<header class="lezione-header">
+  <div class="lezione-meta">Lezione 4 / 4 — Politica Economica</div>
+  <h1>Politica fiscale, redditi, bilancia dei pagamenti</h1>
+  <p class="subtitle">Bilancio pubblico, imposizione, debito. Politica fiscale in IS-LM-BP. Politica dei redditi e del costo pieno. Politiche per la bilancia dei pagamenti, condizione di Marshall-Lerner ed effetto J.</p>
+</header>
+
+<section id="sec1">
+  <h2><span class="h2-num">§1</span>Il bilancio pubblico e la sua manovra</h2>
+
+  <p class="lead">La politica fiscale si sostanzia nella manovra del bilancio pubblico (stato ed altri enti pubblici) ai fini della regolazione del reddito, dell'occupazione e — in tempi più recenti — del contenimento del debito. Per affrontarla in modo formale, partiamo dall'identità contabile fondamentale.</p>
+
+  <h3 id="sec1-1">1.1 L'identità contabile fondamentale</h3>
+
+  <p>L'identità contabile fondamentale del bilancio pubblico è la seguente:</p>
+
+  <p>$$T - C_g - I_g - Tr_c - Tr_k - INT = B_s$$</p>
+
+  <p>Dove:</p>
+
+  <ul>
+    <li>\(T\) = <strong>entrate pubbliche</strong></li>
+    <li>\(C_g\) = <strong>consumi pubblici</strong></li>
+    <li>\(I_g\) = <strong>investimenti pubblici</strong></li>
+    <li>\(Tr_c\) = <strong>trasferimenti correnti</strong>, esclusi gli interessi</li>
+    <li>\(Tr_k\) = <strong>trasferimenti in conto capitale</strong></li>
+    <li>\(INT\) = <strong>interessi sul debito pubblico</strong> (costo del servizio)</li>
+    <li>\(B_s\) = <strong>saldo del bilancio</strong></li>
+  </ul>
+
+  <p>Con riferimento alla simbologia utilizzata nei modelli IS-LM delle lezioni precedenti, va notato che la spesa pubblica \(G\) includeva sia \(C_g\) (consumi pubblici) sia \(I_g\) (investimenti pubblici), cioè \(G = C_g + I_g\), mentre i trasferimenti \(Tr = Tr_c + Tr_k + INT\) erano impliciti nel rapporto tra T e Y. Ora, trattando esplicitamente di politica fiscale, è necessario considerare anche i trasferimenti.</p>
+
+  <h3 id="sec1-2">1.2 Le voci di entrata e spesa</h3>
+
+  <h4>Entrate pubbliche</h4>
+
+  <p>Le entrate pubbliche includono:</p>
+
+  <ul>
+    <li>Le <strong>entrate correnti</strong>, in larga parte connesse a tributi (imposte dirette, indirette, tasse, contributi sociali) e in minima parte da altre fonti, come eventuali avanzi di gestione di enti o aziende pubbliche. La finalità principale della manovra delle entrate è quella della stabilizzazione economica (a parte la necessità ovvia del finanziamento della spesa) e del controllo del debito. L'articolazione delle entrate correnti, delle spese e dei trasferimenti ha anche finalità redistributive.</li>
+    <li>Le <strong>entrate in conto capitale</strong>, che derivano da alienazione di immobili e aziende pubbliche (privatizzazioni) e dal rimborso dei crediti dello stato.</li>
+  </ul>
+
+  <h4>Spese pubbliche</h4>
+
+  <ul>
+    <li><strong>Spesa per consumi pubblici</strong>: deriva dal costo del personale pubblico e dagli acquisti di beni e servizi da parte del settore pubblico. È finalizzata a finanziare l'attività di produzione di beni e servizi pubblici.</li>
+    <li><strong>Spesa per investimenti pubblici</strong>: destinata all'integrazione e all'aumento della dotazione di capitale infrastrutturale pubblico (scuole, ponti, strade).</li>
+    <li><strong>Trasferimenti correnti</strong>: includono trasferimenti alle famiglie con finalità redistributive (assegni di disoccupazione, sostegno alla famiglia, assistenza monetaria, eccedenze di spesa previdenziale) e trasferimenti e contributi alle imprese con finalità eterogenee, in genere di sostegno alla produzione.</li>
+    <li><strong>Trasferimenti in conto capitale</strong>: trasferimenti alle imprese finalizzati al sostegno della loro attività di investimento.</li>
+    <li><strong>Interessi</strong>: si tratta di trasferimenti correnti monetari ai possessori di titoli di debito pubblico.</li>
+  </ul>
+
+  <h3 id="sec1-3">1.3 I saldi di bilancio</h3>
+
+  <p>Il <strong>saldo complessivo</strong> è definito dalla somma algebrica del saldo della parte corrente e di quella in conto capitale. Il <strong>saldo corrente</strong> definisce il <em>risparmio pubblico</em>: l'eccedenza delle entrate correnti sulle spese correnti.</p>
+
+  <p>Se la spesa per interessi viene scorporata dalle spese correnti, si ottiene la <strong>spesa pubblica primaria</strong>, da cui deriva il <strong>saldo primario</strong>. In formule:</p>
+
+  <div class="box definizione">
+    <span class="box-label">Saldi di bilancio</span>
+    <p>$$\begin{aligned} \text{Saldo primario:} \quad &T - C_g - I_g - Tr_c - Tr_k = B_p \\ \text{Saldo corrente primario:} \quad &T_c - C_g - Tr_c = B_{cp} \end{aligned}$$</p>
+  </div>
+
+  <p>La distinzione tra saldo complessivo e saldo primario è cruciale per la valutazione della politica fiscale, perché distingue ciò che dipende dalle scelte correnti del governo (saldo primario) da ciò che dipende dal passato (interessi sul debito accumulato).</p>
+
+  <h3 id="sec1-4">1.4 DPEF e legge finanziaria</h3>
+
+  <p>Le linee guida della manovra di bilancio vengono presentate nel <strong>Documento di Programmazione Economica e Finanziaria</strong> dello stato (DPEF), entro il 30 giugno di ogni anno. Il DPEF si costituisce di:</p>
+
+  <ul>
+    <li>un <strong>bilancio annuale</strong> di competenza e cassa,</li>
+    <li>un <strong>bilancio pluriennale di competenza</strong>, fornito in due versioni: 
+      <ul>
+        <li>il <em>bilancio pluriennale a legislazione vigente</em>, in assenza di manovra;</li>
+        <li>il <em>bilancio pluriennale programmatico</em>, inclusivo della manovra di bilancio.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>Lo scopo della rappresentazione duale è evidenziare gli effetti sul bilancio (e quindi sulle principali variabili macroeconomiche) connessi alla manovra finanziaria.</p>
+
+  <p>Lo strumento che dà attuazione alla manovra di bilancio contenuta nel DPEF è la <strong>legge finanziaria</strong>. La legge finanziaria non può disporre l'istituzione di nuovi tributi: questi devono essere stabiliti in un atto distinto, il collegato alla legge finanziaria.</p>
+</section>
+
+<section id="sec2">
+  <h2><span class="h2-num">§2</span>Le forme dell'imposizione</h2>
+
+  <p class="lead">L'imposizione è il principale strumento di finanziamento della spesa pubblica e uno dei più potenti strumenti di politica economica. Si distinguono tre tipi di imposizione, ciascuno con effetti specifici sul moltiplicatore del reddito e sull'equità distributiva.</p>
+
+  <h3 id="sec2-1">2.1 Imposte in somma fissa</h3>
+
+  <div class="box definizione">
+    <span class="box-label">Imposte in somma fissa</span>
+    <p>Si ha imposta in somma fissa quando l'imposta non è definita rispetto alla dimensione di una base imponibile (per esempio il reddito). Esempi sono le imposte di bollo e i ticket per alcuni servizi pubblici.</p>
+  </div>
+
+  <p>Abbiamo visto nella Lezione 2 la rilevanza di tale tipo di imposizione per definire il <strong>teorema del bilancio in pareggio</strong> (teorema di Haavelmo): una spesa pubblica finanziata con imposte in somma fissa produce un effetto sul reddito pari all'entità della manovra (ΔY = ΔG = ΔT), nel modello reddito-spesa puro.</p>
+
+  <h3 id="sec2-2">2.2 Imposte proporzionali</h3>
+
+  <p>Si hanno <strong>imposte proporzionali</strong> quando l'imposta è definita proporzionalmente alla base imponibile, come nel caso delle imposte dirette con aliquota unica:</p>
+
+  <p>$$T = tY$$</p>
+
+  <p>Si è visto nella Lezione 2 (§3.3) che la dimensione del <em>moltiplicatore del reddito</em> diminuisce rispetto al caso di imposizione in somma fissa, poiché gli effetti espansivi vengono attenuati dalla presenza di un livello di tassazione che varia proporzionalmente con il reddito. Il moltiplicatore passa da \(1/(1-c)\) a \(1/(1-c(1-t))\), che è minore.</p>
+
+  <h3 id="sec2-3">2.3 Imposte progressive</h3>
+
+  <p>Si hanno <strong>imposte progressive</strong> quando l'aliquota di imposta (o pressione fiscale) varia (cresce) al variare (crescere) della base imponibile <em>pro-capite</em>, e non della base imponibile aggregata. È il caso delle imposte dirette nelle esperienze delle principali economie occidentali e soprattutto europee (in Italia: IRPEF).</p>
+
+  <p>L'imposta progressiva definisce l'esistenza di uno <strong>stabilizzatore automatico</strong>: poiché a variazioni di reddito pro-capite corrispondono variazioni dello stesso segno dell'aliquota di imposta, l'effetto sul moltiplicatore è di segno opposto. In altri termini, in fase di espansione, la quota di reddito drenata dallo stato cresce in modo automatico — frenando l'espansione; in fase di recessione, la quota drenata si riduce — sostenendo i redditi.</p>
+
+  <p>Connesso a tale effetto è il fenomeno del <strong>drenaggio fiscale</strong> (<em>fiscal drag</em>): in presenza di inflazione, l'aliquota effettiva cresce per il solo fatto che il reddito nominale cresce, anche se quello reale resta invariato. Il fisco "drena" gettito addizionale senza che il legislatore abbia deciso un aumento delle imposte.</p>
+</section>
+
+<section id="sec3">
+  <h2><span class="h2-num">§3</span>La spesa e il suo finanziamento</h2>
+
+  <p class="lead">La spesa pubblica può essere finanziata in tre modi: con tributi (pareggio del bilancio primario), con emissione di titoli di debito (deficit spending), oppure con creazione di base monetaria. I tre canali hanno effetti diversi sull'economia e implicazioni diverse per la sostenibilità di lungo periodo.</p>
+
+  <p>Avendo già analizzato il caso di finanziamento con tributi (teorema di Haavelmo, Lezione 2 §3.2), ci concentriamo ora sul finanziamento in deficit. La <strong>relazione fondamentale di bilancio</strong>, definendo \(B\) lo stock di debito pubblico, può scriversi:</p>
+
+  <p>$$T - G_p - INT + \frac{\Delta B}{P} + \frac{\Delta BM}{P} = 0$$</p>
+
+  <p>Dove \(G_p\) è la spesa pubblica primaria. L'equazione dice che gli sbilanci tra spesa primaria + interessi e prelievo tributario devono essere finanziati da emissione di debito o creazione di base monetaria.</p>
+
+  <h3 id="sec3-1">3.1 Il finanziamento in deficit</h3>
+
+  <p>Se la spesa pubblica non viene finanziata con imposte, essa determina effetti più elevati sul reddito. Ciò giustificherebbe — e in passato ha giustificato — pratiche di bilancio ispirate al concetto di <strong>deficit spending</strong>. Tale pratica consiste nel finanziare la spesa attraverso emissione di titoli di debito pubblico.</p>
+
+  <p>Gli effetti espansivi di breve/medio termine sono connessi al fatto che il risparmio privato viene attratto dallo stato e inserito nel circuito del reddito. In altri termini, un potere d'acquisto potenziale (il risparmio inattivo) viene reso effettivo nell'immediato attraverso il canale della spesa pubblica.</p>
+
+  <h3 id="sec3-2">3.2 Il finanziamento con base monetaria</h3>
+
+  <p>Il finanziamento con base monetaria, a differenza del finanziamento in deficit, è <em>meno costoso</em> per lo Stato. Nel caso di finanziamento con emissione di banconote non è affatto costoso; nel caso di finanziamento su conto corrente di tesoreria lo è in misura ridotta (storicamente in Italia, tasso all'1%). In altri termini, manca, in tutto o in parte, il <strong>costo del servizio del debito</strong>. Si parla in tal caso di <strong>signoraggio</strong>.</p>
+
+  <p>Il termine signoraggio assume anche un secondo significato: la creazione eccessiva di base monetaria, e quindi di potere d'acquisto, rispetto alle potenzialità produttive del sistema economico determina un eccesso di domanda e spinte inflazionistiche. L'inflazione riduce il valore reale dei redditi e dello stock di debito. Si parla in tal caso di <strong>tassa da inflazione</strong>: il debito viene "pagato" dall'inflazione, a vantaggio del debitore (lo Stato) e a svantaggio del creditore (i possessori di titoli pubblici e i percettori di reddito in generale).</p>
+
+  <p>Trascurando gli effetti connessi al regime di cambio, il finanziamento attraverso BM risulta, con riferimento ad uno schema IS-LM, <strong>particolarmente espansivo</strong>: di fatto l'effetto di retroazione monetaria (spiazzamento finanziario) discusso in Lezione 2 non si applica, perché la BM cresce contestualmente alla spesa.</p>
+
+  <p>Va ricordato però che, come visto in Lezione 3 (§5.3), dal 1993 in Italia il canale di finanziamento monetario diretto è vietato in attuazione degli accordi di Maastricht.</p>
+
+  <h3 id="sec3-3">3.3 Critiche al deficit spending</h3>
+
+  <p>L'idea che il deficit spending sia uno strumento efficace di politica fiscale è stata messa in discussione dalle impostazioni teoriche monetarista e nuovo-classica.</p>
+
+  <h4>Critica monetarista: spiazzamento finanziario</h4>
+
+  <p>I monetaristi sostengono l'inefficacia della politica fiscale in deficit sottolineando il ruolo dello <strong>spiazzamento finanziario</strong> connesso all'aumento del tasso di interesse e all'effetto di retroazione monetaria. Il ragionamento, già visto in Lezione 2, è il seguente:</p>
+
+  <p>↑G → ↑Y → ↑\(L^D_1\) (in ragione \(k\)) → (offerta data) ↑r → ↓\(L^D_2\) (in ragione \(v\)) → ↑r → ↓I (in ragione \(a\)) → ↓Y</p>
+
+  <p>L'effetto freno, nel modello IS-LM, è dato dal coefficiente \(ak/v\). La politica fiscale produce comunque effetti, ma attenuati rispetto al puro effetto moltiplicatore.</p>
+
+  <h4>Critica nuovo-classica: equivalenza di Barro-Ricardo</h4>
+
+  <p>I nuovo-classici sottolineano — in un'economia in pieno impiego e con aspettative razionali — il ruolo dell'<strong>equivalenza ricardiana</strong> (o teorema di Barro-Ricardo). L'idea: gli operatori razionali, anticipando che il debito emesso oggi dovrà essere ripagato in futuro con imposte più alte, riducono i consumi attuali per accantonare risparmio sufficiente a far fronte alle imposte future. L'aumento del risparmio privato compensa esattamente l'aumento del disavanzo pubblico. La politica fiscale è completamente inefficace.</p>
+
+  <p>La tesi è teoricamente elegante ma empiricamente discutibile, perché richiede ipotesi forti (orizzonte di pianificazione infinito, perfetta razionalità intergenerazionale, mercati dei capitali perfetti).</p>
+</section>
+
+<section id="sec4">
+  <h2><span class="h2-num">§4</span>Politica fiscale nel modello IS-LM-BP</h2>
+
+  <p class="lead">Come per la politica monetaria (Lezione 3, §8), anche l'efficacia della politica fiscale dipende in modo cruciale dal regime di cambio e dalla mobilità dei capitali. Possiamo distinguere quattro casi attraverso la combinazione di due variabili: regime di cambio (fissi o flessibili) e grado di mobilità dei capitali (alti o bassi).</p>
+
+  <h3 id="sec4-1">4.1 Cambi fissi e capitali mobili</h3>
+
+  <p>Ipotizziamo una <strong>manovra fiscale espansiva</strong> (aumento di G non finanziato con creazione di BM), in regime di <strong>cambi fissi</strong> e in presenza di <em>capitali relativamente mobili</em>.</p>
+
+  <p>L'aumento di G fa traslare la IS verso destra; il nuovo equilibrio IS-LM si caratterizza per Y maggiore e r maggiore. Due effetti contrastanti sulla bilancia dei pagamenti:</p>
+
+  <ol>
+    <li>Aumento delle importazioni, dovuto al maggior reddito, con peggioramento delle PC.</li>
+    <li>Afflusso di capitali dall'estero, dovuto al maggior tasso di interesse, con miglioramento della MK.</li>
+  </ol>
+
+  <p>Data la forte mobilità dei capitali, l'<em>effetto 2 domina l'effetto 1</em>: la BP va in <strong>avanzo</strong>. In cambi fissi la BC è obbligata ad acquistare la valuta estera in eccesso per difendere il cambio, espandendo così la BM. L'offerta di moneta cresce, la LM trasla a destra. Esito: l'espansione iniziale è <strong>amplificata</strong>. <strong>La politica fiscale risulta molto efficace</strong>.</p>
+
+  <p>Il <a href="grafici/PolFiscale-CambiFissi.html" target="_blank">grafico interattivo</a> qui sotto mostra le tre fasi del meccanismo. Lo <strong>slider "Pendenza di BP"</strong> consente di esplorare entrambi i casi: spostandolo verso destra (capitali mobili, BP piatta) si ottiene il caso §4.1 con amplificazione fiscale; spostandolo verso sinistra (capitali immobili, BP ripida) si ottiene il caso §4.2, in cui la BC è costretta a contrarre la BM e l'efficacia fiscale è ridotta.</p>
+
+  <iframe src="grafici/PolFiscale-CambiFissi.html" style="width:100%; max-width:62ch; height:820px; border:1px solid var(--rule); margin:16px 0;"></iframe>
+
+  <h3 id="sec4-2">4.2 Cambi fissi e capitali immobili</h3>
+
+  <p>Stessa manovra espansiva, ma in presenza di <em>capitali relativamente immobili</em>.</p>
+
+  <p>Ora l'<em>effetto 1 domina l'effetto 2</em> (le importazioni reagiscono al reddito più di quanto la MK reagisca al tasso di interesse): la BP va in <strong>disavanzo</strong>. In cambi fissi la BC deve vendere valuta estera per difendere il cambio, contraendo la BM. La LM trasla verso sinistra. Esito: l'espansione iniziale è in parte controbilanciata dal canale monetario. <strong>La politica fiscale è efficace, ma in misura ridotta</strong>.</p>
+
+  <p><em>Esplora questo caso nel grafico interattivo sopra spostando lo slider della pendenza di BP completamente verso sinistra.</em></p>
+
+  <h3 id="sec4-3">4.3 Cambi flessibili e capitali mobili</h3>
+
+  <p>Stessa manovra espansiva, in regime di <strong>cambi flessibili</strong> e <em>capitali mobili</em>.</p>
+
+  <p>L'equilibrio IS-LM cade sopra BP (avanzo, come nel caso §4.1). Ma ora il cambio non è fisso: l'afflusso di capitali e il miglioramento dei conti con l'estero fanno <strong>apprezzare</strong> la moneta nazionale. La BP trasla verso l'alto (l'apprezzamento peggiora le PC, richiedendo un r maggiore per il pareggio). L'apprezzamento peggiora anche la posizione netta sui beni: la <strong>IS torna verso sinistra</strong>, riducendo l'effetto espansivo iniziale. <strong>La politica fiscale risulta relativamente inefficace</strong>; nel caso limite di BP perfettamente piatta (perfetta mobilità) <em>del tutto inefficace</em>.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">IS-LM-BP, cambi flessibili, alta mobilità: politica fiscale espansiva. IS₁ trasla in IS₂; squilibrio in avanzo; cambio si apprezza, BP₁ trasla in BP₂ (verso l'alto); IS₂ torna in IS₃ (verso sinistra). Efficacia attenuata.</div>
+  </div>
+
+  <h3 id="sec4-4">4.4 Cambi flessibili e capitali immobili</h3>
+
+  <p>Stessa manovra in regime di <em>cambi flessibili</em> e <em>capitali immobili</em>.</p>
+
+  <p>L'equilibrio IS-LM cade sotto BP (disavanzo, come §4.2). Il cambio si deprezza, la BP trasla verso il basso. Il deprezzamento migliora le PC e la IS si rinforza. <strong>La politica fiscale torna efficace</strong> anche in cambi flessibili, perché il canale del cambio gioca a suo favore quando la mobilità dei capitali è limitata.</p>
+
+  <h4>Riepilogo</h4>
+
+  <table>
+    <thead>
+      <tr><th>Regime di cambio</th><th>Mobilità capitali</th><th>Esito della politica fiscale espansiva</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fisso</td><td>Alta</td><td><strong>Massima efficacia</strong> (LM amplifica)</td></tr>
+      <tr><td>Fisso</td><td>Bassa</td><td>Efficacia ridotta (LM frena)</td></tr>
+      <tr><td>Flessibile</td><td>Alta</td><td><strong>Minima efficacia</strong> o nulla (cambio apprezza)</td></tr>
+      <tr><td>Flessibile</td><td>Bassa</td><td>Efficacia recuperata (cambio deprezza)</td></tr>
+    </tbody>
+  </table>
+
+  <p>Confrontando con la politica monetaria (Lezione 3, §8), si ottiene un quadro complementare: la politica monetaria è efficace in cambi flessibili (inefficace in cambi fissi), la politica fiscale è efficace soprattutto in cambi fissi con alta mobilità di capitali. La scelta dello strumento dipende quindi dal regime di cambio dell'economia.</p>
+</section>
+
+<section id="sec5">
+  <h2><span class="h2-num">§5</span>Debito pubblico, sostenibilità e politiche di rientro</h2>
+
+  <p class="lead">Il debito pubblico deriva dall'accumularsi dei disavanzi di bilancio finanziati attraverso emissione di titoli. L'Italia è tra i paesi con il più alto rapporto debito/PIL: nel 2019 era pari al 134,8% del PIL (Istat); nel 2020 era previsto in aumento al 159% (Commissione Europea) a causa della crisi pandemica.</p>
+
+  <h3 id="sec5-1">5.1 Dinamica del rapporto debito/PIL</h3>
+
+  <p>La crescita del rapporto tra debito e PIL non dipende esclusivamente dalla condotta del bilancio corrente, ma anche da:</p>
+
+  <ul>
+    <li>l'entità dello <strong>stock di debito accumulato</strong>,</li>
+    <li>il <strong>tasso di interesse medio</strong> sul debito (che definisce, insieme allo stock, il costo del servizio),</li>
+    <li>l'<strong>andamento del PIL</strong>.</li>
+  </ul>
+
+  <p>Considerando il rapporto tra debito e PIL in termini nominali e in variazioni, l'evoluzione di \(B/PY\) sarà positiva se il numeratore cresce ad un tasso superiore a quello del denominatore:</p>
+
+  <p>$$\frac{\Delta B}{B} - \frac{\Delta P}{P} - \frac{\Delta Y}{Y} > 0$$</p>
+
+  <p>In presenza di un <strong>pareggio del bilancio corrente primario</strong>, la variazione percentuale del debito \(\Delta B/B\) è pari al tasso di interesse medio sul debito (poiché \(\Delta B = iB\), e quindi \(iB/B = i\)). Da ciò si ricava la <strong>condizione di crescita del rapporto debito/PIL</strong>:</p>
+
+  <div class="box teorema">
+    <span class="box-label">Condizione dinamica fondamentale</span>
+    <p class="teorema-enunciato">In presenza di pareggio del bilancio primario corrente, il rapporto debito/PIL cresce se il <strong>tasso di interesse reale</strong> sul debito eccede il <strong>tasso di crescita reale del PIL</strong>:</p>
+    <p>$$i - \frac{\Delta P}{P} - \frac{\Delta Y}{Y} > 0 \quad \Longleftrightarrow \quad r_{\text{reale}} > g_{\text{PIL}}$$</p>
+  </div>
+
+  <p>È la relazione \(r > g\) celebre nel dibattito sull'aggiustamento del debito pubblico: se l'interesse reale è superiore alla crescita reale, il debito esplode anche senza nuovo disavanzo primario. Se invece la crescita reale supera il tasso di interesse reale, lo stato può sostenere persino piccoli disavanzi primari senza che il rapporto debito/PIL aumenti.</p>
+
+  <h3 id="sec5-2">5.2 Sostenibilità</h3>
+
+  <p>Esistono limiti alla crescita del debito pubblico? Fino a che livello il debito è sostenibile? <strong>Non esiste una regola formale</strong> che permetta di rispondere a questa domanda in maniera univoca. L'esito finale di una crescita costante del debito non può che essere o la dichiarazione di insolvenza da parte dello Stato (default), o la <em>cessazione del credito da parte del mercato</em>: la mancata sottoscrizione di nuovi titoli di debito. Quale dei due esiti si materializzi dipende da molteplici fattori, tra cui la credibilità delle istituzioni, l'evoluzione del bilancio primario, e — in un sistema monetario unificato come l'euro-zona — la capacità di intervento della BC.</p>
+
+  <p>In presenza di un elevato stock di debito si rendono pertanto necessarie <strong>politiche di rientro</strong>.</p>
+
+  <h3 id="sec5-3">5.3 Politiche di rientro</h3>
+
+  <p>Le politiche di rientro si articolano in tre famiglie.</p>
+
+  <h4>Politiche del saldo primario</h4>
+
+  <p>La presenza di <strong>avanzi primari</strong> facilita il contenimento del debito, rendendo meno stringente la condizione dinamica precedente. Esse possono essere perseguite attraverso:</p>
+
+  <ul>
+    <li><strong>Contenimento della spesa pubblica</strong>: politica restrittiva con effetti negativi sulla dinamica del PIL. Per l'Italia è particolarmente difficile, posto che la spesa corrente primaria è già <em>inferiore</em> alla media UE.</li>
+    <li><strong>Aumento della pressione fiscale</strong>: anch'essa politica restrittiva. Per l'Italia è particolarmente difficile, posto che la pressione fiscale è già <em>superiore</em> alla media UE.</li>
+    <li><strong>Lotta all'evasione fiscale</strong>: aumento del gettito senza aumento delle aliquote, con effetti redistributivi positivi.</li>
+  </ul>
+
+  <p>In entrambi i primi due casi si tratta di politiche restrittive, che hanno effetti negativi sulla dinamica del PIL (denominatore del rapporto debito/PIL). Se tali effetti sono forti, <em>l'efficacia di tali politiche può risultare nulla</em>: la contrazione del numeratore è compensata o eccede dalla contrazione del denominatore.</p>
+
+  <h4>Politiche del saggio di interesse</h4>
+
+  <p>Il controllo del tasso di interesse medio sul debito può ottenersi attraverso:</p>
+
+  <ul>
+    <li>Una opportuna <strong>calibrazione della struttura a termine del debito</strong> (mix tra titoli a breve, medio e lungo termine).</li>
+    <li>Utilizzo di <strong>aste per il collocamento</strong> dei titoli, che inducono concorrenza tra sottoscrittori.</li>
+    <li>Adesione ad <strong>aree valutarie forti</strong> (UME): l'integrazione nell'euro ha consentito all'Italia di abbattere drasticamente il tasso medio sul debito rispetto al periodo pre-euro.</li>
+  </ul>
+
+  <h4>Politiche di sviluppo del reddito</h4>
+
+  <p>Si tratta di politiche certamente efficaci per ridurre il rapporto debito/PIL, ma <em>costose</em>: a breve termine hanno effetti negativi sul numeratore (deficit aggiuntivo per finanziarle). Per i paesi con elevato rapporto debito/PIL, l'unica soluzione sembra essere quella di stimolare la crescita attraverso una <strong>riqualificazione della spesa pubblica</strong> — destinazione di fondi a ricerca e innovazione, infrastrutture — piuttosto che attraverso un aumento del livello assoluto della spesa.</p>
+</section>
+
+<section id="sec6">
+  <h2><span class="h2-num">§6</span>Politica dei redditi e dei prezzi</h2>
+
+  <p class="lead">La politica dei redditi ha per obiettivo il controllo della dinamica del livello generale dei prezzi (inflazione). Si attua attraverso il controllo della dinamica delle variabili distributive (salari e profitti) e si basa sul presupposto, già emerso nella Lezione 2, che la dinamica dei prezzi dipende in larga misura dall'esito del conflitto distributivo. Data la logica del costo pieno, uno strumento efficace può essere individuato anche nelle politiche per la produttività.</p>
+
+  <h3 id="sec6-1">6.1 Costo pieno e distribuzione dei redditi</h3>
+
+  <p>Riprendiamo lo schema del costo pieno introdotto in Lezione 2 (§2.2). Consideriamo per semplicità un'economia chiusa con due sole classi sociali, lavoratori e capitalisti. I primi offrono lavoro ricevendo un salario; i secondi posseggono i mezzi di produzione.</p>
+
+  <p>Il valore complessivo della produzione può essere scomposto in massa salariale \(W\) e massa dei profitti \(R\):</p>
+
+  <p>$$pY = W + R$$</p>
+
+  <p>Considerando che \(W = wN\) (salario unitario per numero di occupati), e dividendo per il prodotto reale \(Y\), si ottiene:</p>
+
+  <p>$$p = \frac{wN}{Y} + \frac{R}{Y}$$</p>
+
+  <p>Definendo \(g\) come margine di profitto sui costi del lavoro (mark-up), il prezzo si scrive:</p>
+
+  <p>$$p = \frac{wN}{Y}(1 + g)$$</p>
+
+  <p>Considerando inoltre la produttività media del lavoro \(\pi = Y/N\), si ottiene:</p>
+
+  <p>$$p = \frac{w}{\pi}(1+g)$$</p>
+
+  <p>In variazioni:</p>
+
+  <p>$$\frac{\Delta p}{p} = \frac{\Delta w}{w} - \frac{\Delta \pi}{\pi} + \frac{\Delta(1+g)}{(1+g)}$$</p>
+
+  <div class="box teorema">
+    <span class="box-label">Condizione di stabilità dei prezzi</span>
+    <p class="teorema-enunciato">Una condizione sufficiente perché non si abbia inflazione è che il <strong>salario vari allo stesso tasso della produttività</strong> e che <strong>il margine di profitto resti costante</strong>. In tal caso si realizza anche la costanza delle quote distributive: il rapporto tra massa salariale e reddito rimane costante.</p>
+  </div>
+
+  <p>L'enunciato ha implicazioni di policy potenti: la politica dei redditi consiste sostanzialmente in misure finalizzate a mantenere costante il rapporto tra variazione salariale e variazione della produttività, e a contenere le variazioni del margine di profitto.</p>
+
+  <h4>Limiti dello schema</h4>
+
+  <p>Le relazioni scritte sopra hanno finalità esclusivamente descrittive. Le ipotesi (economia chiusa, senza stato, prodotto unico, tecnologia che usa solo lavoro) sono molto restrittive. Nella realtà:</p>
+
+  <ul>
+    <li>In presenza di prodotti multipli, esistono diversi livelli di produttività: rende difficile individuare il "riferimento" per la variazione salariale compatibile con la stabilità dei prezzi.</li>
+    <li>Il costo del lavoro è solo una delle voci di costo. Variazioni dei prezzi delle materie prime ed energetiche sono spesso la causa fondamentale di inflazione (shock petroliferi).</li>
+    <li>In economia aperta, una fonte di inflazione è la variazione dei prezzi delle merci importate o il deprezzamento del cambio (<strong>inflazione importata</strong>).</li>
+    <li>Con capitale, il margine di profitto deve includere anche la remunerazione e ammortamento del capitale: difficile ancorare la quota di mark-up.</li>
+    <li>Con uno stato che finanzia la spesa con tributi, le imposte indirette agiscono direttamente sui prezzi.</li>
+  </ul>
+
+  <p>Le misure di politica dei redditi possono avere carattere <strong>coercitivo</strong> (dirigistiche), <strong>di incentivo</strong> (di mercato) o <strong>cooperativo</strong> (istituzionali).</p>
+
+  <h3 id="sec6-2">6.2 Politiche dei redditi di tipo dirigistico</h3>
+
+  <p>Consistono nell'imposizione di determinati comportamenti ai soggetti sociali che prendono parte al conflitto distributivo: <strong>blocco dei salari</strong>, <strong>fissazione di prezzi massimi e minimi</strong>. Costituiscono misure di controllo diretto.</p>
+
+  <p>Il controllo diretto della dinamica salariale, e il suo agganciamento alla dinamica della produttività, non garantisce in linea di principio la stabilità dei prezzi. Le imprese che sperimentassero, in virtù del controllo della dinamica salariale, un costo del lavoro in contrazione, <em>non necessariamente</em> traducono tale riduzione in riduzione dei prezzi. In determinati mercati, e in determinate circostanze economiche, è molto probabile che la variazione negativa dei costi si traduca in variazioni <em>positive del mark-up</em>, piuttosto che in variazioni negative dei prezzi.</p>
+
+  <p>Anche ammesso che le variazioni dei costi si traducano nei prezzi, risulta molto problematico l'agganciamento della dinamica del salario alla dinamica della produttività: quale misura utilizzare? La definizione deve avvenire a livello di industria, area geografica, mercato? Sorgono inoltre problemi di equità: la produttività del lavoro dipende solo in piccola misura dallo sforzo del lavoratore — dipende principalmente dalla qualità e quantità dei mezzi di produzione (capitale e tecnologie in uso).</p>
+
+  <h3 id="sec6-3">6.3 Politiche dei redditi di mercato</h3>
+
+  <p>Consistono nella fissazione di un sistema di incentivi/disincentivi che orientino i comportamenti dei privati in senso anti-inflazionistico (sgravi fiscali). Si distinguono due tipi.</p>
+
+  <h4>Permessi all'aumento dei prezzi</h4>
+
+  <p>Partendo dall'idea che l'inflazione sia una forma di diseconomia esterna (come l'inquinamento), lo stato può fissare un limite massimo nella variazione dei prezzi e attribuire diritti negoziabili per oltrepassare tale limite. È un meccanismo simile al <em>cap and trade</em> dei permessi di inquinamento. Sebbene finalizzate al raggiungimento di una stabilità dei prezzi compatibile con la flessibilità aziendale, non si registrano applicazioni pratiche di tali politiche.</p>
+
+  <h4>Politiche dei redditi legate all'imposizione (TIP)</h4>
+
+  <p>Variazioni della pressione fiscale legate alla variazione dei prezzi e dei salari, dette <strong>Tax-based Income Policies</strong> (TIP). Si distinguono due varianti:</p>
+
+  <ul>
+    <li><strong>TIP-carota</strong>: riduzioni di carico fiscale per il contenimento della dinamica dei prezzi e dei salari.</li>
+    <li><strong>TIP-bastone</strong>: aumenti di carico fiscale per aumenti eccessivi dei prezzi e dei salari.</li>
+  </ul>
+
+  <h3 id="sec6-4">6.4 Politiche dei redditi di tipo istituzionale</h3>
+
+  <p>Consistono nella fissazione di regole finalizzate a trasformare in senso <strong>cooperativo</strong> le relazioni industriali tra rappresentanti delle imprese e rappresentanti del lavoro (sindacati) in materia contrattuale e salariale. Tali regole possono sostanziarsi in tre modi:</p>
+
+  <ul>
+    <li>Fissazione di un obbligo di cooperazione (<strong>neo-corporativismo</strong>);</li>
+    <li>Fissazione di <strong>sistemi di scambio economico</strong>: incentivazione di comportamenti anti-inflazionistici;</li>
+    <li>Fissazione di <strong>sistemi di scambio politico</strong>, attraverso la stipulazione di <em>patti sociali</em>.</li>
+  </ul>
+
+  <p>L'Italia ha avuto esperienze rilevanti di accordi sociali tripartiti (governo-sindacati-imprese), in particolare l'accordo del 1993 (cosiddetto "Protocollo Ciampi") che ha avuto un ruolo cruciale nella disinflazione preparatoria all'ingresso nell'euro.</p>
+
+  <h3 id="sec6-5">6.5 Politiche della produttività</h3>
+
+  <p>Date le difficoltà delle politiche dirette sui salari e prezzi, una strada complementare è agire sulla produttività. Occorre conoscere i fattori determinanti delle variazioni di produttività. Tali fattori possono essere interni o esterni all'impresa.</p>
+
+  <p>Tra i <strong>fattori interni</strong> sono rilevanti il tempo e il ritmo di lavoro, la qualificazione e l'aggiornamento professionale, l'organizzazione del lavoro, la dotazione di capitale, il livello della tecnologia (rinvio alla funzione di produzione).</p>
+
+  <p>Tra i <strong>fattori esterni</strong> all'impresa rivestono importanza il livello e la qualità delle infrastrutture pubbliche (comunicazioni, trasporti) e private (reti), la qualità del sistema di istruzione, dei sistemi nazionali e internazionali di ricerca, del sistema bancario, finanziario e dei servizi in generale. Da qui il legame stretto tra politica dei redditi e politiche industriali.</p>
+</section>
+
+<section id="sec7">
+  <h2><span class="h2-num">§7</span>Politiche per la bilancia dei pagamenti</h2>
+
+  <p class="lead">L'equilibrio della bilancia dei pagamenti rappresenta un obiettivo di politica economica di lungo periodo: un paese deve tendere al bilanciamento dei conti con l'estero in media. Una situazione di disavanzo persistente non è sostenibile (esaurimento delle riserve di valuta e impossibilità di pagamenti); una situazione di avanzo persistente, sebbene apparentemente sostenibile, di fatto non lo è perché continui avanzi in un paese corrispondono a continui disavanzi di altri (caso del "centro" dell'euro-zona).</p>
+
+  <p>Sebbene esistano meccanismi automatici di riequilibrio, nella realtà tali forze autonome possono risultare insufficienti, rendendo necessari interventi delle autorità.</p>
+
+  <h3 id="sec7-1">7.1 Meccanismi automatici di riequilibrio</h3>
+
+  <p>In regime di <strong>cambi flessibili</strong> gli squilibri della BP tendono ad essere corretti da variazioni del cambio nominale, che modificano la competitività di prezzo. Faremo quindi riferimento ai meccanismi di equilibrio automatico operanti in regime di <strong>cambi fissi</strong> (o amministrati dalla BC).</p>
+
+  <h4>Riequilibrio attraverso variazione dei prezzi</h4>
+
+  <p>Si considerino due paesi A e B. Si assuma che si realizzi un avanzo di BP in A e un disavanzo in B. Data la fissità del cambio, ciò induce <em>creazione di BM in A</em> e <em>distruzione di BM in B</em> (per l'intervento delle BC, vedi Lezione 3, §5.3 — canale estero).</p>
+
+  <p>Seguendo uno schema classico, l'aumento di moneta indurrebbe un aumento del livello generale dei prezzi in A e una riduzione in B. La variazione dei prezzi nei due paesi determina un <strong>apprezzamento del cambio reale</strong> di A rispetto a B: una riduzione di competitività delle merci prodotte in A rispetto a quelle prodotte in B. Il riequilibrio avviene quindi attraverso una variazione del cambio reale, ottenuta tramite variazioni dei prezzi e non — come in cambi flessibili — tramite variazioni del cambio nominale.</p>
+
+  <p>L'eventuale asimmetria nei movimenti di prezzo non costituisce un problema, poiché conta solo la variazione dei <em>prezzi relativi</em>. Il principale limite di tale meccanismo è la <strong>viscosità degli aggiustamenti di prezzo</strong>: questi sono lenti e asimmetrici, e nel frattempo lo squilibrio della BP può persistere a lungo.</p>
+
+  <h4>Riequilibrio attraverso variazione dei redditi</h4>
+
+  <p>Si consideri uno shock di propensione ad importare in B che genera avanzo in A e disavanzo in B. L'aumento delle esportazioni in A determina un aumento di produzione, quindi di reddito e domanda interna. Ciò porta anche all'aumento delle importazioni di A, che parzialmente compensa l'avanzo originario delle PC.</p>
+
+  <p>Il contrario avviene in B: la contrazione di reddito connessa all'aumento di importazioni (che riducono la domanda per prodotti nazionali) determina riduzione delle importazioni stesse, con parziale riequilibrio della BP.</p>
+
+  <p>Tale meccanismo, come quello affidato alla logica dei prezzi, determina <strong>instabilità economica</strong>: il riequilibrio si paga in termini di variazioni della produzione, dei redditi e dell'occupazione.</p>
+
+  <h3 id="sec7-2">7.2 Politiche per il riequilibrio dei movimenti di capitale</h3>
+
+  <p>Eventuali squilibri nella bilancia dei movimenti di capitale dipendono dal differenziale tra tasso di interesse interno ed estero. Più specificamente, si ha equilibrio quando il tasso di interesse interno uguaglia il tasso di interesse estero corretto per il tasso di variazione atteso del cambio (certo per incerto). Tale relazione è nota come <strong>parità scoperta dei tassi di interesse</strong>:</p>
+
+  <p>$$i = i_w - \dot{e}^e$$</p>
+
+  <p>Dove \(\dot{e}^e\) è il tasso di apprezzamento atteso del cambio. Date le attese sul cambio e il tasso estero, la politica monetaria può influire sui movimenti di capitale attraverso variazioni del tasso interno (variazione del tasso ufficiale di sconto, operazioni di mercato aperto).</p>
+
+  <p>Il problema fondamentale è che le <strong>attese sulla variazione del cambio non sono indipendenti</strong> dalle mosse di politica monetaria: una manovra di politica monetaria modifica le attese, e quindi l'efficacia stessa della manovra.</p>
+
+  <p>Un secondo problema è che, se le attese di variazione del cambio sono di misura notevole, le variazioni di tasso di interesse necessarie al riequilibrio devono essere di un ordine di grandezza spesso impraticabile, dati gli effetti macroeconomici e quelli sul costo del servizio del debito (questo punto fu cruciale per l'Italia nel 1992, allo SME).</p>
+
+  <p>In generale, i movimenti di capitale sono divenuti molto sensibili alle variazioni delle aspettative sui cambi, generano essi stessi instabilità nelle aspettative, e costituiscono una massa di liquidità talmente grande che i suoi effetti possono essere contrastati con difficoltà attraverso la politica monetaria. Si rendono necessari <strong>strumenti di controllo diretto</strong> (esempio: <em>Tobin tax</em>, tassa sulle transazioni finanziarie internazionali).</p>
+
+  <h3 id="sec7-3">7.3 Politiche per eccesso o difetto di domanda</h3>
+
+  <p>Gli squilibri della BP possono dipendere da eccesso o difetto di domanda interna. Nel primo caso si avranno disavanzi delle PC (l'eccesso di domanda si rivolge anche alle importazioni); nel secondo, avanzi.</p>
+
+  <p>In presenza di squilibri della bilancia commerciale le autorità di politica economica possono intervenire attraverso operazioni restrittive o espansive di politica monetaria e fiscale (analizzate nei modelli AD-AS).</p>
+
+  <p>Il fatto che la manovra sulla domanda sia strumentale all'obiettivo della stabilità esterna può determinare <strong>conflitti tra obiettivi</strong>. Un caso tipico: economia con problema di bilancia commerciale (disavanzo per eccesso di importazioni) e al contempo disoccupazione (per difetto di competitività). La politica monetaria/fiscale restrittiva finalizzata al pareggio della bilancia commerciale entrerebbe in conflitto con l'obiettivo del pieno impiego. Si rinforza qui l'idea della necessità di una <em>chiara comprensione delle cause</em> del disequilibrio dei conti con l'estero.</p>
+
+  <h3 id="sec7-4">7.4 Politiche per la competitività di prezzo</h3>
+
+  <p>Gli squilibri della bilancia commerciale possono derivare da situazioni di eccesso o difetto di <strong>competitività</strong> dei beni e servizi interni sui mercati internazionali. In assenza di costi di trasporto e di contrattazione, e sotto perfetta informazione, l'arbitraggio internazionale implicherebbe la parità dei prezzi di vendita dei beni omogenei prodotti nelle diverse economie. È la <strong>legge di Cassell</strong>, o della <em>parità dei poteri di acquisto</em>:</p>
+
+  <p>$$P \cdot e_e = P_w$$</p>
+
+  <p>Dove \(P\) è il prezzo interno, \(e_e\) il cambio nominale effettivo (certo per incerto), \(P_w\) il prezzo estero. Se \(P \cdot e_e > P_w\) si ha difetto di competitività; se \(P \cdot e_e < P_w\) si ha eccesso di competitività.</p>
+
+  <p>La politica economica ha tre possibilità per ripristinare l'equilibrio:</p>
+
+  <ol>
+    <li><strong>Intervenire sui prezzi interni</strong> attraverso politiche dei redditi e della produttività (rinvio a §6 di questa lezione).</li>
+    <li><strong>Intervenire sui prezzi esteri</strong> attraverso politiche protezionistiche di tipo tariffario.</li>
+    <li><strong>Intervenire sul tasso di cambio</strong>: svalutare in caso di difetto di competitività, rivalutare in caso di eccesso.</li>
+  </ol>
+
+  <h3 id="sec7-5">7.5 Controllabilità del cambio, Marshall-Lerner ed effetto J</h3>
+
+  <p>In <strong>cambi fissi</strong>, il cambio è controllabile nei limiti in cui può essere modificata la parità centrale (operazione di svalutazione/rivalutazione).</p>
+
+  <p>In <strong>cambi flessibili</strong>, la controllabilità del cambio dipende dalla possibilità delle autorità di influenzare le oscillazioni del cambio. In realtà, le oscillazioni sono il risultato congiunto dell'azione delle forze di mercato e dell'azione delle autorità — si parla in tal caso di <strong>fluttuazioni sporche</strong>, o amministrate. Lo strumento eletto per il controllo del cambio, in economie finanziarizzate, è la variazione del tasso ufficiale di sconto e il controllo della struttura a termine dei tassi di interesse.</p>
+
+  <h4>La condizione di Marshall-Lerner</h4>
+
+  <p>La questione dell'efficacia della manovra del cambio si affronta facendo riferimento all'<strong>elasticità delle importazioni e delle esportazioni</strong> rispetto a variazioni della competitività di prezzo. Il saldo dei movimenti di beni, espresso in termini monetari e in valuta estera, è:</p>
+
+  <p>$$PC_{\text{mon}} = P \cdot e_e \cdot q_X - P_w \cdot q_M$$</p>
+
+  <p>Dove \(q_X\) sono le quantità esportate e \(q_M\) quelle importate. Assumiamo una situazione iniziale di pareggio: \(PC = 0\), quindi:</p>
+
+  <p>$$\frac{P \cdot e_e \cdot q_X}{P_w \cdot q_M} = 1$$</p>
+
+  <p>Una <em>svalutazione del cambio</em> (riduzione di \(e_e\)) farà aumentare le esportazioni e ridurre le importazioni. Ma al contempo il <em>valore</em> dell'export in valuta estera diminuisce, mentre il valore dell'import aumenta: si parla di <strong>peggioramento delle ragioni di scambio</strong>. L'effetto complessivo sulle PC in valore dipende dal confronto fra variazione di valore e variazione delle quantità.</p>
+
+  <div class="box teorema">
+    <span class="box-label">Condizione di Marshall-Lerner</span>
+    <p class="teorema-enunciato">Una svalutazione del cambio migliora le partite correnti (in termini monetari) se e solo se la somma delle elasticità delle importazioni e delle esportazioni al cambio reale è superiore a uno:</p>
+    <p>$$\varepsilon_M + \varepsilon_X > 1$$</p>
+  </div>
+
+  <p>Se la condizione non vale (\(\varepsilon_M + \varepsilon_X < 1\)), la svalutazione <em>peggiora</em> le PC: la riduzione del valore dell'export e l'aumento del valore dell'import non vengono compensati dalla risposta in quantità di X ed M.</p>
+
+  <h4>L'effetto J</h4>
+
+  <p>Si devono considerare alcuni limiti dell'impostazione:</p>
+
+  <ul>
+    <li>I prezzi, a seguito della manovra del cambio, tendono a variare;</li>
+    <li>Possono incontrarsi limiti di offerta dei beni da esportare o da importare;</li>
+    <li>L'adeguamento delle quantità non è istantaneo;</li>
+    <li>Possono variare le attese sul cambio.</li>
+  </ul>
+
+  <p>Con riferimento ai ritardi di adeguamento delle quantità e dei prezzi è stato sottolineato il cosiddetto <strong>effetto J</strong> (J-curve effect): l'andamento delle PC a seguito di una svalutazione del cambio sarebbe <em>prima negativo</em> (perché le quantità sono ancora bloccate dai contratti precedenti, mentre il valore in valuta estera dell'import è già peggiorato) e <em>solo nel medio/lungo periodo positivo</em>, una volta che le quantità si sono adeguate.</p>
+
+  <p>Il grafico classico mostra le PC nel tempo dopo una svalutazione: un primo tratto in cui peggiorano (la pancia della J), poi un tratto in cui migliorano fino a superare il livello iniziale (la coda lunga della J). Da qui il nome.</p>
+
+  <div class="figure-placeholder">
+    <div class="placeholder-label">Grafico — da inserire dalle slide del prof.</div>
+    <div class="placeholder-desc">Effetto J: andamento di (X − M) nel tempo dopo una svalutazione. Tratto iniziale negativo (ε<sub>M</sub> + ε<sub>X</sub> &lt; 1), poi recupero (ε<sub>M</sub> + ε<sub>X</sub> = 1), poi miglioramento (ε<sub>M</sub> + ε<sub>X</sub> &gt; 1).</div>
+  </div>
+
+  <p>Conclusivamente: la manovra del cambio è uno strumento potente ma a doppio taglio. Funziona solo se la condizione di Marshall-Lerner è soddisfatta, e anche in tal caso produce risultati distribuiti nel tempo, con un periodo iniziale di peggioramento — un fatto da tenere in conto nella valutazione politica della manovra.</p>
+</section>
+
+<footer>
+  <p>Lezione 4 di 4 — Politica Economica<br>
+  <a href="index.html">↑ Indice del corso</a> · <a href="lezione3_note.html">← Lezione 3</a> · <a href="lezione4_quiz.html">→ Quiz di ripasso</a></p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function() {
+  const btn = document.getElementById('presToggle');
+  const body = document.body;
+  
+  function setPresentation(on) {
+    if (on) {
+      body.classList.add('presentation');
+      btn.textContent = 'Esci';
+      try { sessionStorage.setItem('presMode', '1'); } catch(e) {}
+    } else {
+      body.classList.remove('presentation');
+      btn.textContent = 'Presentazione';
+      try { sessionStorage.removeItem('presMode'); } catch(e) {}
+    }
+  }
+  
+  try {
+    if (sessionStorage.getItem('presMode') === '1') setPresentation(true);
+  } catch(e) {}
+  
+  btn.addEventListener('click', () => setPresentation(!body.classList.contains('presentation')));
+  
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'p' || e.key === 'P') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea') return;
+      e.preventDefault();
+      setPresentation(!body.classList.contains('presentation'));
+    }
+  });
+})();
+
+(function() {
+  const sidebarLinks = document.querySelectorAll('aside.sidebar nav a');
+  const sections = Array.from(sidebarLinks).map(link => {
+    const id = link.getAttribute('href').slice(1);
+    return { id, element: document.getElementById(id), link };
+  }).filter(s => s.element);
+
+  function updateActive() {
+    const scrollPos = window.scrollY + 100;
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.element.offsetTop <= scrollPos) current = s;
+      else break;
+    }
+    sidebarLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+</body>
+</html>
